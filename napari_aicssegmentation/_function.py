@@ -47,3 +47,7 @@ def image_arithmetic(
 ) -> "LayerDataTuple":
     """Adds, subtracts, multiplies, or divides two same-shaped image layers."""
     return (operation.value(layerA, layerB), {"colormap": "turbo"})
+
+
+def test_sanity():
+    assert True
