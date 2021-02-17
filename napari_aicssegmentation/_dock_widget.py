@@ -29,7 +29,6 @@ class MyWidget(QWidget):
         print("napari has", len(self.viewer.layers), "layers")
 
 
-
 @napari_hook_implementation
 def napari_experimental_provide_dock_widget():
     return MyWidget

@@ -1,5 +1,7 @@
 # napari-aicssegmentation
 
+# This project has just started. It is not yet in a usable state.
+
 [![License](https://img.shields.io/pypi/l/napari-aicssegmentation.svg?color=green)](https://github.com/heeler/napari-aicssegmentation/raw/master/LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/napari-aicssegmentation.svg?color=green)](https://pypi.org/project/napari-aicssegmentation)
 [![Python Version](https://img.shields.io/pypi/pyversions/napari-aicssegmentation.svg?color=green)](https://python.org)
