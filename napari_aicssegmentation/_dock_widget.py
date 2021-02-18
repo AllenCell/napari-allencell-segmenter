@@ -9,8 +9,12 @@ Replace code below according to your needs.
 from napari_plugin_engine import napari_hook_implementation
 from qtpy.QtWidgets import QWidget, QHBoxLayout, QPushButton
 
-
-class MyWidget(QWidget):
+"""
+The class name here gets converted to title case and gets displayed as both the title of the
+plugin window ("napari-aicssegmentation: QWidget Class Name") and the title displayed
+in the app menu dropdown (Plugins -> Add Dock Widget -> napari-aicssegmentation -> QWidget Class Name).
+"""
+class AllenCellStructureSegmenter(QWidget):
     # your QWidget.__init__ can optionally request the napari viewer instance
     # in one of two ways:
     # 1. use a parameter called `napari_viewer`, as done here
@@ -31,4 +35,4 @@ class MyWidget(QWidget):
 
 @napari_hook_implementation
 def napari_experimental_provide_dock_widget():
-    return MyWidget
+    return AllenCellStructureSegmenter
