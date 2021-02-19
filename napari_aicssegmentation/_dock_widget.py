@@ -2,7 +2,7 @@
 
 from aicssegmentation.core.pre_processing_utils import image_smoothing_gaussian_3d
 from napari_plugin_engine import napari_hook_implementation
-from qtpy.QtWidgets import QWidget, QHBoxLayout, QPushButton, QLabel
+from qtpy.QtWidgets import QWidget, QHBoxLayout, QPushButton, QLabel, QMessageBox
 
 """
 The class name here gets converted to title case and gets displayed as both the title of the
@@ -14,7 +14,7 @@ class AllenCellStructureSegmenter(QWidget):
         self.viewer = napari_viewer
 
         btn = QPushButton("Gaussian kernel size = 3.0")
-        btn.clicked.connect(self._smooth_image)
+        btn.clicked.connect(self.smooth_image)
 
         desc = QLabel("Click button to smooth the current viewport image, higher numbers blur more. Result is displayed as a new channel.")
         desc.setWordWrap(True)
@@ -24,9 +24,21 @@ class AllenCellStructureSegmenter(QWidget):
         self.layout().addWidget(desc)
         self.layout().addWidget(btn)
 
-    def _smooth_image(self):
+    def smooth_image(self):
         self.viewer.layers[0].data = image_smoothing_gaussian_3d(self.viewer.layers[0].data, sigma=3.0)
+        self.show_message_box("test", "message")
 
+    def has_image(self):
+        if len(self.viewer.leyers) == 0:
+            return false
+        else:
+            return true
+
+    def show_message_box(self, title, message):
+        msg = QMessageBox()
+        msg.setWindowTitle(title)
+        msg.setText(message)
+        return msg.exec()
 
 @napari_hook_implementation
 def napari_experimental_provide_dock_widget():
