@@ -16,6 +16,7 @@ def read(fname):
 requirements = [
     "napari-plugin-engine>=0.1.4",
     "numpy",
+    "aicssegmentation",
 ]
 
 test_requirements = [
