@@ -6,31 +6,30 @@ see: https://napari.org/docs/dev/plugins/hook_specifications.html
 
 Replace code below according to your needs.
 """
+from aicssegmentation.core.pre_processing_utils import image_smoothing_gaussian_3d
 from napari_plugin_engine import napari_hook_implementation
-from qtpy.QtWidgets import QWidget, QHBoxLayout, QPushButton
+from qtpy.QtWidgets import QWidget, QHBoxLayout, QPushButton, QLabel
 
 """
 The class name here gets converted to title case and gets displayed as both the title of the
-plugin window ("napari-aicssegmentation: QWidget Class Name") and the title displayed
-in the app menu dropdown (Plugins -> Add Dock Widget -> napari-aicssegmentation -> QWidget Class Name).
+plugin window and the title displayed in the app menu dropdown.
 """
 class AllenCellStructureSegmenter(QWidget):
-    # your QWidget.__init__ can optionally request the napari viewer instance
-    # in one of two ways:
-    # 1. use a parameter called `napari_viewer`, as done here
-    # 2. use a type annotation of 'napari.viewer.Viewer' for any parameter
     def __init__(self, napari_viewer):
         super().__init__()
         self.viewer = napari_viewer
 
-        btn = QPushButton("Click me!")
-        btn.clicked.connect(self._on_click)
+        btn = QPushButton("Gaussian kernel size = 3.0")
+        btn.clicked.connect(self._smooth_image)
+
+        desc = QLabel("Click button to smooth the current viewport image,\n higher numbers blur more. Result is displayed as a new channel.")
 
         self.setLayout(QHBoxLayout())
+        self.layout().addWidget(desc)
         self.layout().addWidget(btn)
 
-    def _on_click(self):
-        print("napari has", len(self.viewer.layers), "layers")
+    def _smooth_image(self):
+        self.viewer.layers[0].data = image_smoothing_gaussian_3d(self.viewer.layers[0].data, sigma=3.0)
 
 
 @napari_hook_implementation
