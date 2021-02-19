@@ -1,11 +1,5 @@
-"""
-This module is an example of a barebones QWidget plugin for napari
+# Hook specifications: https://napari.org/docs/dev/plugins/hook_specifications.html
 
-It implements the ``napari_experimental_provide_dock_widget`` hook specification.
-see: https://napari.org/docs/dev/plugins/hook_specifications.html
-
-Replace code below according to your needs.
-"""
 from aicssegmentation.core.pre_processing_utils import image_smoothing_gaussian_3d
 from napari_plugin_engine import napari_hook_implementation
 from qtpy.QtWidgets import QWidget, QHBoxLayout, QPushButton, QLabel
