@@ -25,20 +25,30 @@ class AllenCellStructureSegmenter(QWidget):
         self.layout().addWidget(btn)
 
     def smooth_image(self):
-        self.viewer.layers[0].data = image_smoothing_gaussian_3d(self.viewer.layers[0].data, sigma=3.0)
-        self.show_message_box("test", "message")
+        """Guassian Blur on an image, and add it as a new layer"""
+        if self.has_image():
+            # Name to add based off previous image's name
+            name = self.viewer.layers[len(self.viewer.layers) - 1].name + ": Guassian Blur"
+
+            # Adding the image to the viewer
+            self.viewer.add_image(image_smoothing_gaussian_3d(self.viewer.layers[0].data, sigma=3.0), name=name)
+        else:
+            self.show_message_box("Error: No Image", "Load an image before running guassian blur")
 
     def has_image(self):
-        if len(self.viewer.leyers) == 0:
-            return false
+        """Determines if there is already an image loaded onto napari"""
+        if len(self.viewer.layers) == 0:
+            return False
         else:
-            return true
+            return True
 
     def show_message_box(self, title, message):
+        """Show a message box with the specified title and message"""
         msg = QMessageBox()
         msg.setWindowTitle(title)
         msg.setText(message)
         return msg.exec()
+
 
 @napari_hook_implementation
 def napari_experimental_provide_dock_widget():
