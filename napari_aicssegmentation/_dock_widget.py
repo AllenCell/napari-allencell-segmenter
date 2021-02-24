@@ -18,7 +18,6 @@ class AllenCellStructureSegmenter(QWidget):
 
         desc = QLabel("Click button to smooth the current viewport image, higher numbers blur more. Result is displayed as a new channel.")
         desc.setWordWrap(True)
-        # desc.setAlignment(Qt.AlignCenter)
 
         self.setLayout(QHBoxLayout())
         self.layout().addWidget(desc)
