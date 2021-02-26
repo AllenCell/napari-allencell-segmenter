@@ -26,10 +26,9 @@ class AllenCellStructureSegmenter(QWidget):
 
             #TODO use DI
             ui_manager=UIManager(napari_viewer, self.layout())
-            model=MppModel()
-            view=MppView(self.layout())
-            mpp = MppController(ui_manager, model, view)
-            mpp.index()
+            view=MppView(ui_manager)
+            view.present()
+
         except Exception as ex:
             log.error("=============================================")
             log.error("\n\n" + traceback.format_exc())
