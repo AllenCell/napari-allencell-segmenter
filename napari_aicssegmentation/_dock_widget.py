@@ -5,11 +5,11 @@ import logging
 from napari_aicssegmentation.ui_manager import UIManager
 from aicssegmentation.core.pre_processing_utils import image_smoothing_gaussian_3d
 from napari_plugin_engine import napari_hook_implementation
-from qtpy.QtWidgets import QWidget, QHBoxLayout, QPushButton, QLabel, QMessageBox
+from qtpy.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QMessageBox
 from .mvc.mpp_controller import MppController
 from .mvc.mpp_model import MppModel
 from .mvc.mpp_view import MppView
-
+from .core.view_manager import ViewManager
 """
 The class name here gets converted to title case and gets displayed as both the title of the
 plugin window and the title displayed in the app menu dropdown.
@@ -22,12 +22,12 @@ class AllenCellStructureSegmenter(QWidget):
 
         try:
             self.viewer = napari_viewer
-            self.setLayout(QHBoxLayout())
-
-            #TODO use DI
-            ui_manager=UIManager(napari_viewer, self.layout())
+            self.setLayout(QVBoxLayout())
+            view_manager = ViewManager(self.layout())
+            
+            ui_manager=UIManager(napari_viewer)
             view=MppView(ui_manager)
-            view.present()
+            view_manager.load_view(view)
 
         except Exception as ex:
             log.error("=============================================")

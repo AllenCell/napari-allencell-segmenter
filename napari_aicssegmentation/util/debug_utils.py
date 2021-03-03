@@ -1,8 +1,7 @@
 import functools
 import logging
 import time
-
-log = logging.getLogger(__name__)
+import traceback
 
 def debug_func(func, _cls=None):
     """
@@ -10,17 +9,24 @@ def debug_func(func, _cls=None):
     """
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        name = func.__name__ if _cls is None else f"{_cls.__name__}::{func.__name__}"
-        log.setLevel(logging.DEBUG)        
-        log.debug(f"START {name}")
+        try:
+            name = func.__name__ if _cls is None else f"{_cls.__name__}::{func.__name__}"
+            log = logging.getLogger(__name__)
+            log.setLevel(logging.DEBUG)        
+            log.debug(f"START {name}")
 
-        start_time = time.perf_counter()
-        value = func(*args, **kwargs)
-        end_time = time.perf_counter()    
-        run_time = end_time - start_time
+            start_time = time.perf_counter()
+            value = func(*args, **kwargs)
+            end_time = time.perf_counter()    
+            run_time = end_time - start_time
 
-        log.debug(f"END {name}. Finished in {run_time:.4f} secs")
-        return value
+            log.debug(f"END {name}. Finished in {run_time:.4f} secs")
+            return value
+        except Exception as ex:
+            log.error("=============================================")
+            log.error("\n\n" + traceback.format_exc())
+            log.error("=============================================")      
+            raise ex            
     return wrapper
 
 def debug_class(_cls=None):
