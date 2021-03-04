@@ -1,9 +1,10 @@
 import logging
-from abc import ABC, abstractmethod
-from napari_aicssegmentation.mvc.mpp_interfaces import IMppController, IMppView
-from ..ui_manager import UIManager
-from ..util.debug_utils import debug_class
+
 from aicssegmentation.core.pre_processing_utils import image_smoothing_gaussian_3d
+from napari_aicssegmentation.view.interfaces import IMppView
+from napari_aicssegmentation.ui_manager import UIManager
+from napari_aicssegmentation.controller.interfaces import IMppController
+from napari_aicssegmentation.util.debug_utils import debug_class
 
 log = logging.getLogger(__name__)
 
