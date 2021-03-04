@@ -1,4 +1,6 @@
 import logging
+
+from PyQt5.QtWidgets import QBoxLayout
 from napari_aicssegmentation.mvc.mpp_interfaces import IMppView
 from qtpy.QtWidgets import QLayout, QPushButton, QLabel, QVBoxLayout
 from .mpp_controller import MppController
@@ -19,29 +21,9 @@ class MppView(IMppView):
             raise ValueError("ui_manager")
                 
         self._layout = QVBoxLayout()
-        #ui_manager.base_layout.addLayout(self._layout)
         self._controller = MppController(ui_manager, self)
-    
-    # def setup_ui(self):        
-    #     self._btn_gaussian_blur = QPushButton("Gaussian kernel size = 3.0")
-    #     self._btn_gaussian_blur.clicked.connect(self.btn_gaussian_blur_clicked)
 
-    #     self._lbl_description = QLabel("Click button to smooth the current viewport image, higher numbers blur more. Result is displayed as a new channel.")
-    #     self._lbl_description.setWordWrap(True)
-        
-    #     self._layout.addWidget(self._lbl_description)
-    #     self._layout.addWidget(self._btn_gaussian_blur)
-        
-    #     self._btn_show_layout = QPushButton("Show info")
-    #     self._btn_show_layout.clicked.connect(self.btn_show_layout_clicked)
-        
-    #     self._btn_hide_layout = QPushButton("Hide info")
-    #     self._btn_hide_layout.clicked.connect(self.btn_hide_layout_clicked)
-
-    #     self._layout.addWidget(self._btn_show_layout)
-    #     self._layout.addWidget(self._btn_hide_layout)
-
-    def get_layout(self):
+    def get_layout(self) -> QLayout:
         return self._layout
         
     def setup_ui(self):        

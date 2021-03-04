@@ -11,7 +11,3 @@ class Controller(ABC):
     @property
     def ui_manager(self):
         return self._ui_manager
-
-    @abstractmethod
-    def index(self):
-        pass

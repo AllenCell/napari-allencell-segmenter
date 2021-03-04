@@ -15,9 +15,6 @@ class MppController(IMppController):
                 
         self._view = view
         super().__init__(ui_manager)
-
-    def index(self):
-        self._view.present()
     
     def run_gaussian_blur(self):        
         if self.ui_manager.is_image_loaded():
@@ -27,7 +24,6 @@ class MppController(IMppController):
             name = viewer.layers[len(viewer.layers) - 1].name + ": Gaussian Blur"
 
             # Adding the image to the viewer
-            #result = self._model.smooth_image(viewer.layers[0].data)
             result = image_smoothing_gaussian_3d(viewer.layers[0].data, sigma=3.0)
             viewer.add_image(result, name=name)            
         else:
