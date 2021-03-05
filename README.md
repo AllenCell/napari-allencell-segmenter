@@ -2,11 +2,11 @@
 
 # This project has just started. It is not yet in a usable state.
 
-[![License](https://img.shields.io/pypi/l/napari-aicssegmentation.svg?color=green)](https://github.com/heeler/napari-aicssegmentation/raw/master/LICENSE)
+[![License](https://img.shields.io/pypi/l/napari-aicssegmentation.svg?color=green)](https://github.com/AllenCell/napari-aicssegmentation/raw/main/LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/napari-aicssegmentation.svg?color=green)](https://pypi.org/project/napari-aicssegmentation)
 [![Python Version](https://img.shields.io/pypi/pyversions/napari-aicssegmentation.svg?color=green)](https://python.org)
-[![tests](https://github.com/heeler/napari-aicssegmentation/workflows/tests/badge.svg)](https://github.com/heeler/napari-aicssegmentation/actions)
-[![codecov](https://codecov.io/gh/heeler/napari-aicssegmentation/branch/master/graph/badge.svg)](https://codecov.io/gh/heeler/napari-aicssegmentation)
+[![tests](https://github.com/AllenCell/napari-aicssegmentation/workflows/tests/badge.svg)](https://github.com/AllenCell/napari-aicssegmentation/actions)
+[![codecov](https://codecov.io/gh/AllenCell/napari-aicssegmentation/branch/main/graph/badge.svg?token=r13WnHORsR)](https://codecov.io/gh/AllenCell/napari-aicssegmentation)
 
 A plugin that enables image segmentation provided by AICS
 
