@@ -6,7 +6,7 @@
 [![PyPI](https://img.shields.io/pypi/v/napari-aicssegmentation.svg?color=green)](https://pypi.org/project/napari-aicssegmentation)
 [![Python Version](https://img.shields.io/pypi/pyversions/napari-aicssegmentation.svg?color=green)](https://python.org)
 [![tests](https://github.com/AllenCell/napari-aicssegmentation/workflows/tests/badge.svg)](https://github.com/AllenCell/napari-aicssegmentation/actions)
-[![codecov](https://codecov.io/gh/AllenCell/napari-aicssegmentation/branch/main/graph/badge.svg?token=r13WnHORsR)](https://codecov.io/gh/AllenCell/napari-aicssegmentation)
+[![codecov](https://codecov.io/gh/AllenCell/napari-aicssegmentation/branch/main/graph/badge.svg)](https://codecov.io/gh/AllenCell/napari-aicssegmentation)
 
 A plugin that enables image segmentation provided by AICS
 
