@@ -35,13 +35,13 @@ class ViewManager:
                               Views must provide a valid QLayout through the View.get_layout method.")
 
         if self._current_view is not None:
-            self.unload_view(self._current_view)
+            self._unload_view()
         
         self._base_layout.addLayout(view_layout)
         view.setup_ui()
         self._current_view = view
 
-    def unload_view(self):
+    def _unload_view(self):
         if self._current_view is not None:            
             view_layout = self._current_view.get_layout()      
             self._delete_items_of_layout(view_layout)
