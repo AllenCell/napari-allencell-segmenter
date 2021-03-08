@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from napari_aicssegmentation.core.view import View
 from napari_aicssegmentation.util.debug_utils import debug_class
 from napari.layers import Layer
 from napari.components.layerlist import LayerList
@@ -6,9 +7,7 @@ from qtpy.QtWidgets import QMessageBox
 from napari_aicssegmentation.core._interfaces import IApplication, IRouter
 
 @debug_class
-class Controller(ABC):
-    _application: IApplication
-
+class Controller(ABC):    
     def __init__(self, application: IApplication):
         if application is None:
             raise ValueError("application")
@@ -17,6 +16,9 @@ class Controller(ABC):
     @property
     def router(self) -> IRouter:
         return self._application.router
+
+    def load_view(self, view: View):
+        return self._application.view_manager.load_view(view)
 
     def add_layer(self, image_data, name: str):
         self._application.viewer.add_image(image_data, name=name)

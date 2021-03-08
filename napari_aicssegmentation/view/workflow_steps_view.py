@@ -1,15 +1,15 @@
 from napari_aicssegmentation.util.debug_utils import debug_class
 from qtpy.QtWidgets import QLabel, QPushButton, QVBoxLayout
-from napari_aicssegmentation.controller.workflow_steps_controller import WorkflowStepsController
-from napari_aicssegmentation.core._interfaces import IApplication
+from napari_aicssegmentation.controller._interfaces import IWorkflowStepsController
 from napari_aicssegmentation.core.view import View
-from napari_aicssegmentation.view._interfaces import IWorkflowStepsView
 
 @debug_class
-class WorkflowStepsView(View, IWorkflowStepsView):
-    def __init__(self, application: IApplication):
+class WorkflowStepsView(View):
+    def __init__(self, controller: IWorkflowStepsController):
+        if controller is None:
+            raise ValueError("controller")
         self._layout = QVBoxLayout()
-        self._controller = WorkflowStepsController(application, self)
+        self._controller = controller
 
     def get_layout(self):
         return self._layout

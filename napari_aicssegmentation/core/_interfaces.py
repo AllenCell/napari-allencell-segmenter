@@ -1,3 +1,4 @@
+from napari_aicssegmentation.core.view_manager import ViewManager
 import napari
 
 from abc import ABC, abstractmethod, abstractproperty
@@ -44,6 +45,13 @@ class IApplication(ABC):
     @abstractproperty
     def router(self) -> IRouter:
         """
-        Get the application Router
+        Get the Router
+        """
+        pass
+
+    @abstractproperty
+    def view_manager(self) -> ViewManager:    
+        """
+        Get the View Manager
         """
         pass

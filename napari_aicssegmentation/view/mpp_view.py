@@ -1,18 +1,19 @@
 import logging
-from napari_aicssegmentation.core._interfaces import IApplication
 from napari_aicssegmentation.core.view import View
-from napari_aicssegmentation.controller.mpp_controller import MppController
+from napari_aicssegmentation.controller._interfaces import IMppController
 from napari_aicssegmentation.util.debug_utils import debug_class
 from qtpy.QtWidgets import QLayout, QPushButton, QLabel, QVBoxLayout
-from ._interfaces import IMppView
 
 log = logging.getLogger(__name__)
 
 @debug_class
-class MppView(View, IMppView):
-    def __init__(self, application: IApplication):
+class MppView(View):
+    def __init__(self, controller: IMppController):
+        if controller is None:
+            raise ValueError("controller")
+
         self._layout = QVBoxLayout()
-        self._controller = MppController(application, self)
+        self._controller = controller
 
     def get_layout(self) -> QLayout:
         return self._layout
