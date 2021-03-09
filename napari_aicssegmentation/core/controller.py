@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from napari_aicssegmentation.core.state import State
 from napari_aicssegmentation.core.view import View
 from napari_aicssegmentation.util.debug_utils import debug_class
 from napari.layers import Layer
@@ -13,6 +14,10 @@ class Controller(ABC):
             raise ValueError("application")
         self._application = application
     
+    @property
+    def state(self) -> State:
+        return self._application.state
+        
     @property
     def router(self) -> IRouter:
         return self._application.router

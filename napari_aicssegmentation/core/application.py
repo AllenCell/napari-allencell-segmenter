@@ -1,9 +1,11 @@
 import napari
 
 from qtpy.QtWidgets import QLayout
+from napari_aicssegmentation.core.state import State
 from .router import Router
 from .view_manager import ViewManager
 from ._interfaces import IApplication
+
 
 class Application(IApplication):
     def __init__(self, viewer: napari.Viewer, root_layout: QLayout):
@@ -17,6 +19,7 @@ class Application(IApplication):
         # build object tree
         self._view_manager = ViewManager(root_layout)
         self._router = Router(self)
+        self._state = State()
 
     @property
     def router(self) -> Router:
@@ -30,5 +33,7 @@ class Application(IApplication):
     def view_manager(self) -> ViewManager:
         return self._view_manager
 
-    # TODO - Application State
+    @property
+    def state(self) -> State:
+        return self._state
 

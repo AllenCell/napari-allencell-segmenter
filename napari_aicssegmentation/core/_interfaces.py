@@ -1,7 +1,8 @@
-from napari_aicssegmentation.core.view_manager import ViewManager
 import napari
 
 from abc import ABC, abstractmethod, abstractproperty
+from napari_aicssegmentation.core.view_manager import ViewManager
+from napari_aicssegmentation.core.state import State
 
 class IRouter(ABC):
     """
@@ -53,5 +54,12 @@ class IApplication(ABC):
     def view_manager(self) -> ViewManager:    
         """
         Get the View Manager
+        """
+        pass
+
+    @abstractproperty
+    def state(self) -> State:
+        """
+        Get the application State object
         """
         pass

@@ -25,6 +25,10 @@ class IWorkflowSelectController(ABC):
         pass
 
     @abstractmethod
+    def select_workflow(self, workflow: str):
+        pass
+
+    @abstractmethod
     def navigate_back(self):
         pass
 
