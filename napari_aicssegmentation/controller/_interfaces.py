@@ -1,7 +1,5 @@
 from abc import ABC, abstractmethod
 
-# TODO These interfaces are not needed as of now - 
-# reminder to remove if Controller interfaces end up unnecessary when models get added to the mix
 class IMppController(ABC):
     @abstractmethod
     def index(self):
