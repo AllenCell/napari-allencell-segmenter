@@ -7,8 +7,8 @@ from napari_plugin_engine import napari_hook_implementation
 from qtpy.QtWidgets import QWidget, QVBoxLayout
 
 """
-The class name here gets converted to title case and gets displayed as both the title of the
-plugin window and the title displayed in the app menu dropdown.
+The class name here gets converted to title case and gets displayed as both the title 
+of the plugin window and the title displayed in the app menu dropdown.
 """
 @debug_class
 class AllenCellStructureSegmenter(QWidget):
