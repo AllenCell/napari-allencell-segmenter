@@ -11,7 +11,7 @@ class ViewManager:
         self._base_layout = base_layout
         self._current_view: View = None
 
-    def _delete_items_of_layout(self, layout: QBoxLayout):
+    def _delete_items_from_layout(self, layout: QBoxLayout):
         if layout is not None:
             while layout.count():
                 item = layout.takeAt(0)
@@ -19,12 +19,18 @@ class ViewManager:
                 if widget is not None:
                     widget.setParent(None)
                 else:
-                    self._delete_items_of_layout(item.layout())
+                    self._delete_items_from_layout(item.layout())
     @property
     def current_view(self) -> View:
         return self._current_view
     
     def load_view(self, view: View):
+        """
+        Loads the given view
+        The currently active view will be removed and garbage collected
+        and the given View will become the new active view
+        :param: view: View to load
+        """        
         if view is None:
             raise ValueError("View can't be None")
 
@@ -44,8 +50,6 @@ class ViewManager:
     def _unload_view(self):
         if self._current_view is not None:            
             view_layout = self._current_view.get_layout()      
-            self._delete_items_of_layout(view_layout)
+            self._delete_items_from_layout(view_layout)
             self._base_layout.removeItem(view_layout)
             self._currentView = None
-        
-      
