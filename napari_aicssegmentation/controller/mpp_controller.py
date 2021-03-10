@@ -9,7 +9,7 @@ from ._interfaces import IMppController
 log = logging.getLogger(__name__)
 
 @debug_class
-class MppController(Controller, IMppController):
+class MppController(Controller, IMppController): # pragma: no-cover
     def __init__(self, application: IApplication):        
         super().__init__(application)        
     

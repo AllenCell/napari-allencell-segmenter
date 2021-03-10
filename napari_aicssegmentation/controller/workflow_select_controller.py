@@ -10,19 +10,26 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
     def __init__(self, application: IApplication):
         super().__init__(application)
         self._view = WorkflowSelectView(self)
-        self._model: SegmenterModel = self.state.segmenter_model
-            
+    
+    @property
+    def view(self) -> WorkflowSelectView:
+        return self._view
+
+    @property
+    def model(self) -> SegmenterModel:
+        return self.state.segmenter_model
+
     def index(self):
         self.load_view(self._view)
-        self._model.channel_list = ["brightfield", "405nm", "488nm"] #TODO read channels from image
-        self._model.workflows = ["SEC61B", "LMNB1", "ACTN1"] #TODO load workflow objects from Segmenter workflow engine
-        self._view.load_model(self._model)
+        self.model.channel_list = ["brightfield", "405nm", "488nm"] #TODO read channels from image
+        self.model.workflows = ["SEC61B", "LMNB1", "ACTN1"] #TODO load workflow objects from Segmenter workflow engine
+        self._view.load_model(self.model)
         
     def select_channel(self, channel_index: int):
-        self._model.active_channel = channel_index        
+        self.model.active_channel = channel_index
 
     def select_workflow(self, workflow: str):
-        self._model.active_workflow = workflow
+        self.model.active_workflow = workflow
 
     def navigate_back(self):
         self.router.mpp()

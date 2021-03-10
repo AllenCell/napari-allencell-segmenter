@@ -15,7 +15,7 @@ class AllenCellStructureSegmenter(QWidget):
     def __init__(self, napari_viewer: napari.Viewer):
         super().__init__()        
                    
-        self.setLayout(QVBoxLayout())        
+        self.setLayout(QVBoxLayout())
         self._application = Application(napari_viewer, self.layout())
         self._application.router.mpp() # Initialize first screen
             

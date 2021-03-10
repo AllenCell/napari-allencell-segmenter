@@ -7,7 +7,7 @@ from qtpy.QtWidgets import QLayout, QPushButton, QLabel, QVBoxLayout
 log = logging.getLogger(__name__)
 
 @debug_class
-class MppView(View):
+class MppView(View): # pragma: no-cover
     def __init__(self, controller: IMppController):
         if controller is None:
             raise ValueError("controller")
