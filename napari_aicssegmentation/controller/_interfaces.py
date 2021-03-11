@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+
 class IMppController(ABC):
     @abstractmethod
     def index(self):
@@ -12,6 +13,7 @@ class IMppController(ABC):
     @abstractmethod
     def navigate_next(self):
         pass
+
 
 class IWorkflowSelectController(ABC):
     @abstractmethod
@@ -33,6 +35,7 @@ class IWorkflowSelectController(ABC):
     @abstractmethod
     def navigate_next(self):
         pass
+
 
 class IWorkflowStepsController(ABC):
     @abstractmethod

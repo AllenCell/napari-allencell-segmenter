@@ -4,6 +4,7 @@ from napari_aicssegmentation.controller.workflow_select_controller import Workfl
 from napari_aicssegmentation.controller.workflow_steps_controller import WorkflowStepsController
 from ._interfaces import IApplication, IRouter
 
+
 # TODO it would be nice to have all controllers injected as dependencies (better for testing)
 # However I would want them to be lazily instianciated to avoid loading all Controllers/Views in memory immediately
 @debug_class

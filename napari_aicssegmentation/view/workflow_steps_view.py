@@ -4,8 +4,9 @@ from qtpy.QtWidgets import QLabel, QPushButton, QVBoxLayout
 from napari_aicssegmentation.controller._interfaces import IWorkflowStepsController
 from napari_aicssegmentation.core.view import View
 
+
 @debug_class
-class WorkflowStepsView(View): # pragma: no-cover
+class WorkflowStepsView(View):  # pragma: no-cover
     _lbl_selected_workflow: QLabel
 
     def __init__(self, controller: IWorkflowStepsController):
@@ -32,5 +33,5 @@ class WorkflowStepsView(View): # pragma: no-cover
         self._lbl_selected_workflow.setText(f"Selected workflow: {model.active_workflow}")
         self._lbl_selected_workflow.repaint()
     
-    def _btn_back_clicked(self, checked:bool):
+    def _btn_back_clicked(self, checked: bool):
         self._controller.navigate_back()

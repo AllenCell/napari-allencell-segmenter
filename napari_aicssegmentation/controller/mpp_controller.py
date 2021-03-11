@@ -1,4 +1,3 @@
-import logging
 from napari_aicssegmentation.core._interfaces import IApplication
 from napari_aicssegmentation.view.mpp_view import MppView
 from aicssegmentation.core.pre_processing_utils import image_smoothing_gaussian_3d
@@ -6,10 +5,9 @@ from napari_aicssegmentation.core.controller import Controller
 from napari_aicssegmentation.util.debug_utils import debug_class
 from ._interfaces import IMppController
 
-log = logging.getLogger(__name__)
 
 @debug_class
-class MppController(Controller, IMppController): # pragma: no-cover
+class MppController(Controller, IMppController):  # pragma: no-cover
     def __init__(self, application: IApplication):        
         super().__init__(application)        
     

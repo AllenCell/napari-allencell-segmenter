@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import List
 
+
 @dataclass
 class SegmenterModel:
     """
@@ -11,4 +12,3 @@ class SegmenterModel:
     active_channel: int = None
     workflows: List[str] = None
     active_workflow: str = None
-

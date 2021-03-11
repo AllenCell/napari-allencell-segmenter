@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod, abstractproperty
 from napari_aicssegmentation.core.view_manager import ViewManager
 from napari_aicssegmentation.core.state import State
 
+
 class IRouter(ABC):
     """
     Application Router
@@ -30,6 +31,7 @@ class IRouter(ABC):
         Navigate to workflow selection screen
         """
         pass
+
 
 class IApplication(ABC):
     """

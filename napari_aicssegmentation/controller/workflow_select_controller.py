@@ -5,6 +5,7 @@ from napari_aicssegmentation.core._interfaces import IApplication
 from napari_aicssegmentation.controller._interfaces import IWorkflowSelectController
 from napari_aicssegmentation.core.controller import Controller
 
+
 @debug_class
 class WorkflowSelectController(Controller, IWorkflowSelectController):
     def __init__(self, application: IApplication):
@@ -21,8 +22,8 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
 
     def index(self):
         self.load_view(self._view)
-        self.model.channel_list = ["brightfield", "405nm", "488nm"] #TODO read channels from image
-        self.model.workflows = ["SEC61B", "LMNB1", "ACTN1"] #TODO load workflow objects from Segmenter workflow engine
+        self.model.channel_list = ["brightfield", "405nm", "488nm"]  # TODO read channels from image
+        self.model.workflows = ["SEC61B", "LMNB1", "ACTN1"]  # TODO load workflow objects from Segmenter workflow engine
         self._view.load_model(self.model)
         
     def select_channel(self, channel_index: int):
@@ -36,4 +37,3 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
 
     def navigate_next(self):
         self.router.workflow_steps()
-    

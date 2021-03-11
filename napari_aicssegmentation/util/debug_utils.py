@@ -3,6 +3,7 @@ import logging
 import time
 import traceback
 
+
 def debug_func(func, _cls=None): # pragma: no cover
     """
     Decorator: applies set of debug features (such as logging and performance counter) to a function
@@ -28,6 +29,7 @@ def debug_func(func, _cls=None): # pragma: no cover
             log.error("=============================================")      
             raise ex            
     return wrapper
+
 
 def debug_class(_cls=None): # pragma: no cover
     """

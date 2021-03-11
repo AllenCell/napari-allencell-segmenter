@@ -36,4 +36,3 @@ class Application(IApplication):
     @property
     def state(self) -> State:
         return self._state
-

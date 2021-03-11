@@ -4,10 +4,11 @@ from qtpy.QtWidgets import QComboBox, QLabel, QPushButton, QVBoxLayout
 from napari_aicssegmentation.controller._interfaces import IWorkflowSelectController
 from napari_aicssegmentation.core.view import View
 
+
 @debug_class
-class WorkflowSelectView(View): # pragma: no-cover
+class WorkflowSelectView(View):  # pragma: no-cover
     _combo_channels: QComboBox
-    _combo_workflows: QComboBox #TODO this will be a fancy grid later
+    _combo_workflows: QComboBox  # TODO this will be a fancy grid later
 
     def __init__(self, controller: IWorkflowSelectController):
         if controller is None:
@@ -44,10 +45,10 @@ class WorkflowSelectView(View): # pragma: no-cover
         self._combo_channels.addItems(model.channel_list)
         self._combo_workflows.addItems(model.workflows)
 
-    def _btn_back_clicked(self, checked:bool):
+    def _btn_back_clicked(self, checked: bool):
         self._controller.navigate_back()
 
-    def _btn_next_clicked(self, checked:bool):
+    def _btn_next_clicked(self, checked: bool):
         self._controller.navigate_next()
 
     def _combo_channels_index_changed(self, index: int):

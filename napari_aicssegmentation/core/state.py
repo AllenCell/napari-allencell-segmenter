@@ -1,6 +1,6 @@
-from dataclasses import dataclass
 from napari_aicssegmentation.util.lazy import lazy_property
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
+
 
 class State:
     """
@@ -11,4 +11,3 @@ class State:
     @lazy_property    
     def segmenter_model(self) -> SegmenterModel:
         return SegmenterModel()
-    

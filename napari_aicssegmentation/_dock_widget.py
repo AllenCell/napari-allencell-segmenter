@@ -10,6 +10,8 @@ from qtpy.QtWidgets import QWidget, QVBoxLayout
 The class name here gets converted to title case and gets displayed as both the title 
 of the plugin window and the title displayed in the app menu dropdown.
 """
+
+
 @debug_class
 class AllenCellStructureSegmenter(QWidget): # pragma: no-cover
     def __init__(self, napari_viewer: napari.Viewer):
@@ -19,6 +21,7 @@ class AllenCellStructureSegmenter(QWidget): # pragma: no-cover
         self._application = Application(napari_viewer, self.layout())
         self._application.router.mpp() # Initialize first screen
             
+
 @napari_hook_implementation
 def napari_experimental_provide_dock_widget(): # pragma: no-cover
     return AllenCellStructureSegmenter
