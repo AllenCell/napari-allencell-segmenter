@@ -21,7 +21,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
     def setup_ui(self):
         lbl_title = QLabel("Workflow steps")
         self._lbl_selected_workflow = QLabel()
-                        
+
         btn_back = QPushButton("Back")
         btn_back.clicked.connect(self._btn_back_clicked)
 
@@ -32,6 +32,6 @@ class WorkflowStepsView(View):  # pragma: no-cover
     def load_model(self, model: SegmenterModel):
         self._lbl_selected_workflow.setText(f"Selected workflow: {model.active_workflow}")
         self._lbl_selected_workflow.repaint()
-    
+
     def _btn_back_clicked(self, checked: bool):
         self._controller.navigate_back()

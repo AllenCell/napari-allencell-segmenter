@@ -4,6 +4,7 @@ from unittest import mock
 from unittest.mock import MagicMock, create_autospec
 from napari_aicssegmentation.core.router import Router, IApplication
 
+
 class TestRouter:
     def setup_method(self):
         self._mock_application: MagicMock = create_autospec(IApplication)
@@ -28,4 +29,4 @@ class TestRouter:
         # Act
         self._router.workflow_steps()
         # Assert
-        mock_workflow_steps_controller.return_value.index.assert_called_once()        
+        mock_workflow_steps_controller.return_value.index.assert_called_once()

@@ -13,15 +13,15 @@ of the plugin window and the title displayed in the app menu dropdown.
 
 
 @debug_class
-class AllenCellStructureSegmenter(QWidget): # pragma: no-cover
+class AllenCellStructureSegmenter(QWidget):  # pragma: no-cover
     def __init__(self, napari_viewer: napari.Viewer):
-        super().__init__()        
-                   
+        super().__init__()
+
         self.setLayout(QVBoxLayout())
         self._application = Application(napari_viewer, self.layout())
-        self._application.router.mpp() # Initialize first screen
-            
+        self._application.router.mpp()  # Initialize first screen
+
 
 @napari_hook_implementation
-def napari_experimental_provide_dock_widget(): # pragma: no-cover
+def napari_experimental_provide_dock_widget():  # pragma: no-cover
     return AllenCellStructureSegmenter

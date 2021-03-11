@@ -4,6 +4,7 @@ from unittest import mock
 from unittest.mock import MagicMock, create_autospec
 from napari_aicssegmentation.core.state import State, SegmenterModel
 
+
 class TestRouter:
     def setup_method(self):
         self._state = State()
@@ -12,4 +13,3 @@ class TestRouter:
         # Assert
         assert self._state.segmenter_model is not None
         assert type(self._state.segmenter_model) == SegmenterModel
-    

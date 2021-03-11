@@ -21,7 +21,7 @@ class Controller(ABC):
         Get the application State object
         """
         return self._application.state
-        
+
     @property
     def router(self) -> IRouter:
         """
@@ -31,7 +31,7 @@ class Controller(ABC):
 
     def load_view(self, view: View):
         """
-        Loads the given view        
+        Loads the given view
         :param: view: the View to load
         """
         return self._application.view_manager.load_view(view)

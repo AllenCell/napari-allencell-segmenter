@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 
 
 class View(ABC):
-    
     @abstractmethod
     def get_layout(self):
         pass

@@ -8,15 +8,15 @@ from ._interfaces import IMppController
 
 @debug_class
 class MppController(Controller, IMppController):  # pragma: no-cover
-    def __init__(self, application: IApplication):        
-        super().__init__(application)        
-    
-    def index(self):        
+    def __init__(self, application: IApplication):
+        super().__init__(application)
+
+    def index(self):
         self.load_view(MppView(self))
-        
+
     def run_gaussian_blur(self):
         if self.is_image_loaded():
-            
+
             layers = self.get_layers()
             # Name to add based off previous image's name
             name = layers[len(layers) - 1].name + ": Gaussian Blur"

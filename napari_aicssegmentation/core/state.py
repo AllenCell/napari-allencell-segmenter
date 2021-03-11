@@ -8,6 +8,6 @@ class State:
     Use this class as a way to easily store and access stateful data that needs to be shared accross controllers
     """
 
-    @lazy_property    
+    @lazy_property
     def segmenter_model(self) -> SegmenterModel:
         return SegmenterModel()

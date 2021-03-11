@@ -5,6 +5,7 @@ from unittest import mock
 from unittest.mock import MagicMock, create_autospec
 from napari_aicssegmentation.core.view_manager import ViewManager, View
 
+
 class TestViewManager:
     def setup_method(self):
         self._base_layout = QVBoxLayout()
@@ -37,7 +38,7 @@ class TestViewManager:
         view.setup_ui.assert_called_once()
 
     def test_load_view_replaces_existing_layout(self):
-        # Arrange        
+        # Arrange
         view1: MagicMock = create_autospec(View)
         view1.get_layout.return_value = QVBoxLayout()
         view2: MagicMock = create_autospec(View)
@@ -48,8 +49,8 @@ class TestViewManager:
         self._view_manager.load_view(view2)
 
         # Assert
-        assert len(self._base_layout.children()) == 1         
-    
+        assert len(self._base_layout.children()) == 1
+
     def test_load_view_null_view(self):
         # Assert
         with pytest.raises(ValueError):
@@ -64,5 +65,3 @@ class TestViewManager:
         # Assert
         with pytest.raises(ValueError):
             self._view_manager.load_view(view)
-
-    

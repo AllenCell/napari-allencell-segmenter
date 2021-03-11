@@ -26,3 +26,6 @@ test: ## run pytest with coverage report
 lint: ## run a lint check / report
 	flake8 napari_aicssegmentation --count --verbose --show-source --statistics
 	black --check --exclude vendor napari_aicssegmentation
+
+lint-format: ## reformat files with black
+	black --exclude vendor napari_aicssegmentation -l 120

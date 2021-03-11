@@ -22,12 +22,12 @@ class WorkflowSelectView(View):  # pragma: no-cover
     def setup_ui(self):
         lbl_title = QLabel("Segmentation workflow selection")
         lbl_select = QLabel("Select a channel")
-        
+
         self._combo_channels = QComboBox()
         self._combo_channels.currentIndexChanged.connect(self._combo_channels_index_changed)
         self._combo_workflows = QComboBox()
         self._combo_workflows.currentIndexChanged.connect(self._combo_workflows_index_changed)
-        
+
         btn_back = QPushButton("Back")
         btn_back.clicked.connect(self._btn_back_clicked)
 
@@ -40,7 +40,7 @@ class WorkflowSelectView(View):  # pragma: no-cover
         self._layout.addWidget(self._combo_workflows)
         self._layout.addWidget(btn_back)
         self._layout.addWidget(btn_next)
-        
+
     def load_model(self, model: SegmenterModel):
         self._combo_channels.addItems(model.channel_list)
         self._combo_workflows.addItems(model.workflows)

@@ -28,7 +28,7 @@ class Application(IApplication):
     @property
     def viewer(self) -> napari.Viewer:
         return self._viewer
-    
+
     @property
     def view_manager(self) -> ViewManager:
         return self._view_manager

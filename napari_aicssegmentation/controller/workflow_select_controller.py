@@ -11,7 +11,7 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
     def __init__(self, application: IApplication):
         super().__init__(application)
         self._view = WorkflowSelectView(self)
-    
+
     @property
     def view(self) -> WorkflowSelectView:
         return self._view
@@ -25,7 +25,7 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
         self.model.channel_list = ["brightfield", "405nm", "488nm"]  # TODO read channels from image
         self.model.workflows = ["SEC61B", "LMNB1", "ACTN1"]  # TODO load workflow objects from Segmenter workflow engine
         self._view.load_model(self.model)
-        
+
     def select_channel(self, channel_index: int):
         self.model.active_channel = channel_index
 

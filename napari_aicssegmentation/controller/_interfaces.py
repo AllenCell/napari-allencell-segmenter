@@ -41,7 +41,7 @@ class IWorkflowStepsController(ABC):
     @abstractmethod
     def index(self):
         pass
-        
+
     @abstractmethod
     def navigate_back(self):
-        pass    
+        pass

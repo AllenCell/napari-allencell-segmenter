@@ -8,6 +8,7 @@ from napari_aicssegmentation.core.state import State
 from napari_aicssegmentation.core.view_manager import ViewManager
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
 
+
 class TestWorkflowSelectController:
     def setup_method(self):
         self._mock_application: MagicMock = create_autospec(IApplication)
@@ -19,34 +20,42 @@ class TestWorkflowSelectController:
         type(self._mock_application).view_manager = PropertyMock(return_value=self._mock_view_manager)
         self._model = SegmenterModel()
         type(self._mock_state).segmenter_model = PropertyMock(return_value=self._model)
-            
+
         with mock.patch("napari_aicssegmentation.controller.workflow_select_controller.WorkflowSelectView"):
             self._controller = WorkflowSelectController(self._mock_application)
-        
-    def test_index(self):    
+
+    def test_index(self):
         # Act
         self._controller.index()
 
         # Assert
         self._mock_view_manager.load_view.assert_called_once_with(self._controller.view)
         self._controller.view.load_model.assert_called_once_with(self._controller.model)
-        self._controller.model.channel_list == ["brightfield", "405nm", "488nm"] # TODO update once channels are loaded from image 
-        self._controller.model.workflows == ["SEC61B", "LMNB1", "ACTN1"] # TODO update once workflows loaded from Segmenter
+        self._controller.model.channel_list == [
+            "brightfield",
+            "405nm",
+            "488nm",
+        ]  # TODO update once channels are loaded from image
+        self._controller.model.workflows == [
+            "SEC61B",
+            "LMNB1",
+            "ACTN1",
+        ]  # TODO update once workflows loaded from Segmenter
 
-    def test_select_channel(self):        
+    def test_select_channel(self):
         # Act
         self._controller.select_channel(3)
 
         # Assert
         assert self._controller.model.active_channel == 3
-    
-    def test_select_workflow(self):        
+
+    def test_select_workflow(self):
         # Act
         workflow = "LMNB1"
         self._controller.select_workflow(workflow)
 
         # Assert
-        assert self._controller.model.active_workflow == workflow 
+        assert self._controller.model.active_workflow == workflow
 
     def test_navigate_back(self):
         # Act

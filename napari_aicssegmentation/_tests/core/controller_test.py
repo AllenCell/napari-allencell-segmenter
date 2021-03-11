@@ -10,7 +10,7 @@ from napari_aicssegmentation.core.view import View
 
 class TestController:
     def setup_method(self):
-        self._mock_application: MagicMock = create_autospec(IApplication)        
+        self._mock_application: MagicMock = create_autospec(IApplication)
         self._controller = Controller(self._mock_application)
 
     def test_properties(self):
@@ -35,7 +35,7 @@ class TestController:
 
         # Assert
         view_manager.load_view.assert_called_once_with(view)
-        
+
     def test_add_layer(self):
         # Arrange
         viewer: MagicMock = create_autospec(napari.Viewer)
@@ -51,46 +51,34 @@ class TestController:
 
     def test_get_layers(self):
         # Arrange
-        viewer: MagicMock = create_autospec(napari.Viewer)        
+        viewer: MagicMock = create_autospec(napari.Viewer)
         type(self._mock_application).viewer = PropertyMock(return_value=viewer)
-        layers = [
-                    create_autospec(Layer),
-                    create_autospec(Layer),
-                    create_autospec(Layer)
-                 ]
+        layers = [create_autospec(Layer), create_autospec(Layer), create_autospec(Layer)]
         viewer.layers = layers
 
-        # Assert        
+        # Assert
         assert self._controller.get_layers() == layers
 
     def test_get_active_layer(self):
-        # Arrange        
-        viewer: MagicMock = create_autospec(napari.Viewer)                
+        # Arrange
+        viewer: MagicMock = create_autospec(napari.Viewer)
         type(self._mock_application).viewer = PropertyMock(return_value=viewer)
         type(viewer).active_layer = PropertyMock(return_value=1)
-        layer2 = create_autospec(Layer)        
-        layers = [
-                    create_autospec(Layer),
-                    layer2,
-                    create_autospec(Layer)
-                 ]        
-        viewer.layers = layers        
+        layer2 = create_autospec(Layer)
+        layers = [create_autospec(Layer), layer2, create_autospec(Layer)]
+        viewer.layers = layers
 
         # Act
         active_layer = self._controller.get_active_layer()
-        
-        # Assert        
+
+        # Assert
         assert active_layer == layer2
 
     def test_is_image_loaded_true(self):
         # Arrange
         viewer: MagicMock = create_autospec(napari.Viewer)
         type(self._mock_application).viewer = PropertyMock(return_value=viewer)
-        layers = [
-                    create_autospec(Layer),
-                    create_autospec(Layer),
-                    create_autospec(Layer)
-                 ]
+        layers = [create_autospec(Layer), create_autospec(Layer), create_autospec(Layer)]
         viewer.layers = layers
 
         # Assert
@@ -99,7 +87,7 @@ class TestController:
     def test_is_image_loaded_false(self):
         # Arrange
         viewer: MagicMock = create_autospec(napari.Viewer)
-        type(self._mock_application).viewer = PropertyMock(return_value=viewer)        
+        type(self._mock_application).viewer = PropertyMock(return_value=viewer)
         viewer.layers = []
 
         # Assert

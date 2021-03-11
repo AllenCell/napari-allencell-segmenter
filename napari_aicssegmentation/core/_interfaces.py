@@ -24,7 +24,7 @@ class IRouter(ABC):
         Navigate to workflow selection screen
         """
         pass
-    
+
     @abstractmethod
     def workflow_steps(self):
         """
@@ -53,7 +53,7 @@ class IApplication(ABC):
         pass
 
     @abstractproperty
-    def view_manager(self) -> ViewManager:    
+    def view_manager(self) -> ViewManager:
         """
         Get the View Manager
         """

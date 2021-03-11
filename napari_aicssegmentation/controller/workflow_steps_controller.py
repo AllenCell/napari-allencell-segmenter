@@ -14,7 +14,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
     @property
     def view(self):
         return self._view
-    
+
     @property
     def model(self):
         return self.state.segmenter_model

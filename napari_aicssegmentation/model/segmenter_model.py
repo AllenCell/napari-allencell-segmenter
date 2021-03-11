@@ -7,7 +7,7 @@ class SegmenterModel:
     """
     Main Segmenter plugin model
     """
-    
+
     channel_list: List[str] = None
     active_channel: int = None
     workflows: List[str] = None
