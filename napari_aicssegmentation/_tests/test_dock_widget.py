@@ -1,3 +1,0 @@
-# from napari_aicssegmentation import napari_experimental_provide_dock_widget
-
-# add your tests here...

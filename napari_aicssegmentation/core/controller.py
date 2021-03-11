@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC, abstractmethod, abstractproperty
 from napari_aicssegmentation.core.state import State
 from napari_aicssegmentation.core.view import View
 from napari_aicssegmentation.util.debug_utils import debug_class
@@ -13,7 +13,7 @@ class Controller(ABC):
         if application is None:
             raise ValueError("application")
         self._application = application
-    
+
     @property
     def state(self) -> State:
         """

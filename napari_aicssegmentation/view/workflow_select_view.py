@@ -5,7 +5,7 @@ from napari_aicssegmentation.controller._interfaces import IWorkflowSelectContro
 from napari_aicssegmentation.core.view import View
 
 @debug_class
-class WorkflowSelectView(View):
+class WorkflowSelectView(View): # pragma: no-cover
     _combo_channels: QComboBox
     _combo_workflows: QComboBox #TODO this will be a fancy grid later
 
@@ -23,15 +23,15 @@ class WorkflowSelectView(View):
         lbl_select = QLabel("Select a channel")
         
         self._combo_channels = QComboBox()
-        self._combo_channels.currentIndexChanged.connect(self.combo_channels_index_changed)
+        self._combo_channels.currentIndexChanged.connect(self._combo_channels_index_changed)
         self._combo_workflows = QComboBox()
-        self._combo_workflows.currentIndexChanged.connect(self.combo_workflows_index_changed)        
+        self._combo_workflows.currentIndexChanged.connect(self._combo_workflows_index_changed)
         
         btn_back = QPushButton("Back")
-        btn_back.clicked.connect(self.btn_back_clicked)
+        btn_back.clicked.connect(self._btn_back_clicked)
 
         btn_next = QPushButton("Next")
-        btn_next.clicked.connect(self.btn_next_clicked)
+        btn_next.clicked.connect(self._btn_next_clicked)
 
         self._layout.addWidget(lbl_title)
         self._layout.addWidget(lbl_select)
@@ -42,16 +42,16 @@ class WorkflowSelectView(View):
         
     def load_model(self, model: SegmenterModel):
         self._combo_channels.addItems(model.channel_list)
-        self._combo_workflows.addItems(model.workflows)    
+        self._combo_workflows.addItems(model.workflows)
 
-    def btn_back_clicked(self, checked:bool):
+    def _btn_back_clicked(self, checked:bool):
         self._controller.navigate_back()
 
-    def btn_next_clicked(self, checked:bool):
+    def _btn_next_clicked(self, checked:bool):
         self._controller.navigate_next()
 
-    def combo_channels_index_changed(self, index: int):
+    def _combo_channels_index_changed(self, index: int):
         self._controller.select_channel(index)
 
-    def combo_workflows_index_changed(self, index: int):
+    def _combo_workflows_index_changed(self, index: int):
         self._controller.select_workflow(self._combo_workflows.currentText())

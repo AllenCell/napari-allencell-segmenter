@@ -10,11 +10,18 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
     def __init__(self, application: IApplication):
         super().__init__(application)
         self._view = WorkflowStepsView(self)
-        self._model: SegmenterModel = self.state.segmenter_model        
     
+    @property
+    def view(self):
+        return self._view
+    
+    @property
+    def model(self):
+        return self.state.segmenter_model
+
     def index(self):
         self.load_view(self._view)
-        self._view.load_model(self._model)
+        self._view.load_model(self.model)
 
     def navigate_back(self):
         self.router.workflow_selection()
