@@ -13,16 +13,19 @@ The class name here gets converted to title case and gets displayed as both the 
 of the plugin window and the title displayed in the app menu dropdown.
 """
 
-
-@debug_class
-class AllenCellStructureSegmenter(QWidget):  # pragma: no-cover
-    def __init__(self, napari_viewer: napari.Viewer):
+class AllenCellStructureSegmenter(QWidget):
+    def __init__(self, napari_viewer):
         super().__init__()
         self.viewer = napari_viewer
         self.setStyleSheet(GLOBAL_STYLESHEET)
+        self.set_page_layout()
+    
+    def set_page_layout(self):
+        self.setLayout(QVBoxLayout())
 
         title = QLabel("Segmentation workflow selection")
-        title.setStyleSheet("QLabel { font-weight: bold; font-size: 20px; margin-bottom: 1em }")
+        title.setStyleSheet(
+            "QLabel { font-weight: bold; font-size: 20px; margin-bottom: 1em }")
 
         # Need to supply HTML because of this bug: https://bugreports.qt.io/browse/QTBUG-90853
         step_1 = QLabel("<span>1.&nbsp;Select a channel to segment:</span>")
@@ -31,17 +34,19 @@ class AllenCellStructureSegmenter(QWidget):  # pragma: no-cover
         dropdown.addItem("Channel 2")
         dropdown.addItem("Channel 3")
 
-        step_2 = QLabel("<span>2.&nbsp;Select segmentation workflow.&nbsp;The image I want to segment most closely resembles <b>(click an image)</b>:</span>")
+        step_2 = QLabel(
+            "<span>2.&nbsp;Select segmentation workflow.&nbsp;"
+            "The image I want to segment most closely resembles <b>(click an image)</b>:</span>"
+        )
         step_2.setWordWrap(True)
         step_2.setStyleSheet("QLabel { margin-top: 1em }")
 
-        self.setLayout(QVBoxLayout())
-        self.layout().addWidget(title)
-        self.layout().addWidget(step_1)
-        self.layout().addWidget(dropdown)
-        self.layout().addWidget(step_2)
+        widgets = [title, step_1, dropdown, step_2]
+        for widget in widgets:
+            self.layout().addWidget(widget)
+
         self.layout().addStretch()
-    
+
     # def smooth_image(self):
     #     """Guassian Blur on an image, and add it as a new layer"""
     #     if self.has_image():
