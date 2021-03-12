@@ -3,8 +3,9 @@ import os
 from napari_aicssegmentation.core.application import Application
 from napari_aicssegmentation.util.debug_utils import debug_class
 from napari_plugin_engine import napari_hook_implementation
-from qtpy.QtCore import Qt
-from qtpy.QtWidgets import QComboBox, QLabel, QMessageBox, QPushButton, QTextEdit, QVBoxLayout, QWidget
+from qtpy.QtCore import Qt, QSize
+from qtpy.QtGui import QIcon, QPixmap
+from qtpy.QtWidgets import QComboBox, QLabel, QMessageBox, QPushButton, QScrollArea, QTextEdit, QVBoxLayout, QWidget
 
 from ._stylesheet import GLOBAL_STYLESHEET
 
@@ -23,6 +24,10 @@ class AllenCellStructureSegmenter(QWidget):
         self.set_page_layout()
 
     def set_page_layout(self):
+        # scroll = QScrollArea()
+        # scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        # scroll.setWidgetResizable(True)
+        # scroll.setWidget(self)
         self.setLayout(QVBoxLayout())
 
         title = QLabel("Segmentation workflow selection")
@@ -45,17 +50,22 @@ class AllenCellStructureSegmenter(QWidget):
         column_labels = QLabel("Input image            Segmentation")
         column_labels.setStyleSheet("QLabel { font-size: 12px; font-weight: bold }")
         column_labels.setAlignment(Qt.AlignCenter)
-        workflow_buttons = self.create_workflow_buttons()
 
-        widgets = [title, step_1, dropdown, step_2, column_labels, workflow_buttons]
+        widgets = [title, step_1, dropdown, step_2, column_labels]
+
+        image_files = os.listdir(os.path.join(DIR, '_assets/_workflow_images'))
+        for image_file in image_files:
+            # pixmap = QPixmap(os.path.join(DIR, '_assets/_workflow_images', image_file))
+            button = QPushButton("")
+            # button.setStyleSheet("QPushButton { background-image: url(os.path.join(DIR, '_assets/_workflow_images', image_file)) }")
+            button.setIcon(QIcon(os.path.join(DIR, '_assets/_workflow_images', image_file)))
+            button.setIconSize(QSize(200, 200))
+            widgets.append(button)
+
         for widget in widgets:
             self.layout().addWidget(widget)
 
         self.layout().addStretch()
-    
-    def create_workflow_buttons(self):
-        buttons = []
-        return buttons
 
     # def smooth_image(self):
     #     """Guassian Blur on an image, and add it as a new layer"""
