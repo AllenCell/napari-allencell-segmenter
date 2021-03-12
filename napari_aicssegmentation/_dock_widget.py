@@ -4,6 +4,7 @@ import napari
 from napari_aicssegmentation.core.application import Application
 from napari_aicssegmentation.util.debug_utils import debug_class
 from napari_plugin_engine import napari_hook_implementation
+from qtpy.QtCore import Qt
 from qtpy.QtWidgets import QComboBox, QLabel, QMessageBox, QPushButton, QTextEdit, QVBoxLayout, QWidget
 
 from ._stylesheet import GLOBAL_STYLESHEET
@@ -25,7 +26,7 @@ class AllenCellStructureSegmenter(QWidget):
 
         title = QLabel("Segmentation workflow selection")
         title.setStyleSheet(
-            "QLabel { font-weight: bold; font-size: 20px; margin-bottom: 1em }")
+            "QLabel { font-weight: bold; font-size: 20px; margin-top: 0.3em }")
 
         # Need to supply HTML because of this bug: https://bugreports.qt.io/browse/QTBUG-90853
         step_1 = QLabel("<span>1.&nbsp;Select a channel to segment:</span>")
@@ -39,9 +40,12 @@ class AllenCellStructureSegmenter(QWidget):
             "The image I want to segment most closely resembles <b>(click an image)</b>:</span>"
         )
         step_2.setWordWrap(True)
-        step_2.setStyleSheet("QLabel { margin-top: 1em }")
 
-        widgets = [title, step_1, dropdown, step_2]
+        column_labels = QLabel("Input image            Segmentation")
+        column_labels.setStyleSheet("QLabel { font-size: 12px; font-weight: bold }")
+        column_labels.setAlignment(Qt.AlignCenter)
+
+        widgets = [title, step_1, dropdown, step_2, column_labels]
         for widget in widgets:
             self.layout().addWidget(widget)
 

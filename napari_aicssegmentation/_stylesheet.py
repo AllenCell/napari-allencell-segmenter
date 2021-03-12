@@ -9,6 +9,7 @@ GLOBAL_STYLESHEET = (
     """
     QLabel {
         font-size: 16px;
+        margin-top: 1em;
     }
     """
 )
