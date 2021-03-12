@@ -21,19 +21,27 @@ class AllenCellStructureSegmenter(QWidget):
         super().__init__()
         self.viewer = napari_viewer
         self.setStyleSheet(GLOBAL_STYLESHEET)
+        self.setLayout(QVBoxLayout())
 
-        # This widget is necessary because QScrollArea needs a child that is not AllenCellStructureSegmenter
-        self.widget = QWidget()
+        # Add page widget that holds all other widgets except for the scroll bar
+        self.page = QWidget()
+        self.page.setStyleSheet("QWidget { margin-right: 20px }")
         self.set_page_layout()
+        self.layout().addWidget(self.page)
+        
+        # Add scroll widget that holds the page widget
+        scroll = QScrollArea()
+        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        scroll.setWidgetResizable(True)
+        scroll.setWidget(self.page)
+        self.layout().addWidget(scroll)
 
     def set_page_layout(self):
-        self.setLayout(QVBoxLayout())
-        self.layout().addWidget(self.widget)
-        self.widget.setLayout(QVBoxLayout())
+        self.page.setLayout(QVBoxLayout())
 
         title = QLabel("Segmentation workflow selection")
         title.setStyleSheet(
-            "QLabel { font-weight: bold; font-size: 20px; margin-top: 0.3em }")
+            "QLabel { font-weight: bold; font-size: 20px; margin-top: 0px }")
 
         # Need to supply HTML because of this bug: https://bugreports.qt.io/browse/QTBUG-90853
         step_1 = QLabel("<span>1.&nbsp;Select a channel to segment:</span>")
@@ -64,16 +72,9 @@ class AllenCellStructureSegmenter(QWidget):
             widgets.append(button)
 
         for widget in widgets:
-            self.widget.layout().addWidget(widget)
+            self.page.layout().addWidget(widget)
         
-        self.widget.layout().addStretch()
-        
-        scroll = QScrollArea()
-        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        scroll.setWidgetResizable(True)
-        scroll.setWidget(self.widget)
-        
-        self.layout().addWidget(scroll)
+        self.page.layout().addStretch()
 
 
     # def smooth_image(self):
