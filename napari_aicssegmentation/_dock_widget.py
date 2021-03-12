@@ -21,14 +21,15 @@ class AllenCellStructureSegmenter(QWidget):
         super().__init__()
         self.viewer = napari_viewer
         self.setStyleSheet(GLOBAL_STYLESHEET)
+
+        # This widget is necessary because QScrollArea needs a child that is not AllenCellStructureSegmenter
+        self.widget = QWidget()
         self.set_page_layout()
 
     def set_page_layout(self):
-        # scroll = QScrollArea()
-        # scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
-        # scroll.setWidgetResizable(True)
-        # scroll.setWidget(self)
         self.setLayout(QVBoxLayout())
+        self.layout().addWidget(self.widget)
+        self.widget.setLayout(QVBoxLayout())
 
         title = QLabel("Segmentation workflow selection")
         title.setStyleSheet(
@@ -63,9 +64,17 @@ class AllenCellStructureSegmenter(QWidget):
             widgets.append(button)
 
         for widget in widgets:
-            self.layout().addWidget(widget)
+            self.widget.layout().addWidget(widget)
+        
+        self.widget.layout().addStretch()
+        
+        scroll = QScrollArea()
+        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        scroll.setWidgetResizable(True)
+        scroll.setWidget(self.widget)
+        
+        self.layout().addWidget(scroll)
 
-        self.layout().addStretch()
 
     # def smooth_image(self):
     #     """Guassian Blur on an image, and add it as a new layer"""
