@@ -22,7 +22,6 @@ class AllenCellStructureSegmenter(QWidget):  # pragma: no-cover
         self.setStyleSheet(GLOBAL_STYLESHEET)
 
         title = QLabel("Segmentation workflow selection")
-        title.setWordWrap(True)
         title.setStyleSheet("QLabel { font-weight: bold; font-size: 20px; margin-bottom: 1em }")
 
         # Need to supply HTML because of this bug: https://bugreports.qt.io/browse/QTBUG-90853
@@ -32,10 +31,15 @@ class AllenCellStructureSegmenter(QWidget):  # pragma: no-cover
         dropdown.addItem("Channel 2")
         dropdown.addItem("Channel 3")
 
+        step_2 = QLabel("<span>2.&nbsp;Select segmentation workflow.&nbsp;The image I want to segment most closely resembles <b>(click an image)</b>:</span>")
+        step_2.setWordWrap(True)
+        step_2.setStyleSheet("QLabel { margin-top: 1em }")
+
         self.setLayout(QVBoxLayout())
         self.layout().addWidget(title)
         self.layout().addWidget(step_1)
         self.layout().addWidget(dropdown)
+        self.layout().addWidget(step_2)
         self.layout().addStretch()
     
     # def smooth_image(self):
