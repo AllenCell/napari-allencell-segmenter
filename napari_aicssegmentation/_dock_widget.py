@@ -1,5 +1,4 @@
-# Hook specifications: https://napari.org/docs/dev/plugins/hook_specifications.html
-import napari
+import os
 
 from napari_aicssegmentation.core.application import Application
 from napari_aicssegmentation.util.debug_utils import debug_class
@@ -8,6 +7,8 @@ from qtpy.QtCore import Qt
 from qtpy.QtWidgets import QComboBox, QLabel, QMessageBox, QPushButton, QTextEdit, QVBoxLayout, QWidget
 
 from ._stylesheet import GLOBAL_STYLESHEET
+
+DIR = os.path.dirname(__file__)
 
 """
 The class name here gets converted to title case and gets displayed as both the title 
@@ -20,7 +21,7 @@ class AllenCellStructureSegmenter(QWidget):
         self.viewer = napari_viewer
         self.setStyleSheet(GLOBAL_STYLESHEET)
         self.set_page_layout()
-    
+
     def set_page_layout(self):
         self.setLayout(QVBoxLayout())
 
@@ -44,12 +45,17 @@ class AllenCellStructureSegmenter(QWidget):
         column_labels = QLabel("Input image            Segmentation")
         column_labels.setStyleSheet("QLabel { font-size: 12px; font-weight: bold }")
         column_labels.setAlignment(Qt.AlignCenter)
+        workflow_buttons = self.create_workflow_buttons()
 
-        widgets = [title, step_1, dropdown, step_2, column_labels]
+        widgets = [title, step_1, dropdown, step_2, column_labels, workflow_buttons]
         for widget in widgets:
             self.layout().addWidget(widget)
 
         self.layout().addStretch()
+    
+    def create_workflow_buttons(self):
+        buttons = []
+        return buttons
 
     # def smooth_image(self):
     #     """Guassian Blur on an image, and add it as a new layer"""
