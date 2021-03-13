@@ -36,6 +36,7 @@ class AllenCellStructureSegmenter(QWidget):
         scroll.setWidget(self.page)
         self.layout().addWidget(scroll)
 
+    """ Add widgets to the page and set the layout """
     def set_page_layout(self):
         self.page.setLayout(QVBoxLayout())
 
@@ -56,59 +57,28 @@ class AllenCellStructureSegmenter(QWidget):
         )
         step_2.setWordWrap(True)
 
-        column_labels = QLabel("Input image            Segmentation")
+        # This is hacky but not sure if it's worth creating a grid just for this row
+        column_labels = QLabel("Input image                               Segmentation")
         column_labels.setStyleSheet("QLabel { font-size: 12px; font-weight: bold }")
         column_labels.setAlignment(Qt.AlignCenter)
 
         widgets = [title, step_1, dropdown, step_2, column_labels]
-
-        image_files = os.listdir(os.path.join(DIR, '_assets/_workflow_images'))
-        for image_file in image_files:
-            # pixmap = QPixmap(os.path.join(DIR, '_assets/_workflow_images', image_file))
-            button = QPushButton("")
-            # button.setStyleSheet("QPushButton { background-image: url(os.path.join(DIR, '_assets/_workflow_images', image_file)) }")
-            button.setIcon(QIcon(os.path.join(DIR, '_assets/_workflow_images', image_file)))
-            button.setIconSize(QSize(200, 200))
-            widgets.append(button)
-
         for widget in widgets:
             self.page.layout().addWidget(widget)
+
+        buttons = []
+        image_dir = os.path.join(DIR, '_assets/_workflow_images')
+        image_files = os.listdir(image_dir)
+        for image_file in image_files:
+            button = QPushButton("")
+            button.setIcon(QIcon(os.path.join(image_dir, image_file)))
+            button.setIconSize(QSize(360, 200))
+            button.setFixedSize(400, 200)
+            buttons.append(button)
+        for button in buttons:
+            self.page.layout().addWidget(button, alignment=Qt.AlignCenter)
         
         self.page.layout().addStretch()
-
-
-    # def smooth_image(self):
-    #     """Guassian Blur on an image, and add it as a new layer"""
-    #     if self.has_image():
-    #         # Name to add based off previous image's name
-    #         name = (
-    #             self.viewer.layers[len(self.viewer.layers) - 1].name + ": Guassian Blur"
-    #         )
-
-    #         # Adding the image to the viewer
-    #         self.viewer.add_image(
-    #             image_smoothing_gaussian_3d(self.viewer.layers[0].data, sigma=3.0),
-    #             name=name,
-    #         )
-    #     else:
-    #         self.show_message_box(
-    #             "Error: No Image", "Load an image before running guassian blur"
-    #         )
-
-    # def has_image(self):
-    #     """Determines if there is already an image loaded onto napari"""
-    #     if len(self.viewer.layers) == 0:
-    #         return False
-    #     else:
-    #         return True
-
-    # def show_message_box(self, title, message):
-    #     """Show a message box with the specified title and message"""
-    #     msg = QMessageBox()
-    #     msg.setWindowTitle(title)
-    #     msg.setText(message)
-    #     return msg.exec()
-
 
 @napari_hook_implementation
 def napari_experimental_provide_dock_widget():  # pragma: no-cover
