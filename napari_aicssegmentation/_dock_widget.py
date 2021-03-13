@@ -1,11 +1,9 @@
 import os
 
-from napari_aicssegmentation.core.application import Application
-from napari_aicssegmentation.util.debug_utils import debug_class
 from napari_plugin_engine import napari_hook_implementation
 from qtpy.QtCore import Qt, QSize
-from qtpy.QtGui import QIcon, QPixmap
-from qtpy.QtWidgets import QComboBox, QLabel, QMessageBox, QPushButton, QScrollArea, QTextEdit, QVBoxLayout, QWidget
+from qtpy.QtGui import QIcon
+from qtpy.QtWidgets import QComboBox, QLabel, QPushButton, QScrollArea, QVBoxLayout, QWidget
 
 from ._stylesheet import GLOBAL_STYLESHEET
 
