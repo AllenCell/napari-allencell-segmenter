@@ -64,7 +64,6 @@ class AllenCellStructureSegmenter(QWidget):
         for widget in widgets:
             self.page.layout().addWidget(widget)
 
-        buttons = []
         image_dir = os.path.join(DIR, '_assets/_workflow_images')
         image_files = os.listdir(image_dir)
         for image_file in image_files:
@@ -72,8 +71,6 @@ class AllenCellStructureSegmenter(QWidget):
             button.setIcon(QIcon(os.path.join(image_dir, image_file)))
             button.setIconSize(QSize(360, 200))
             button.setFixedSize(400, 200)
-            buttons.append(button)
-        for button in buttons:
             self.page.layout().addWidget(button, alignment=Qt.AlignCenter)
         
         self.page.layout().addStretch()
