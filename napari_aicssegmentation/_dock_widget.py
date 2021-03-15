@@ -3,7 +3,14 @@ import os
 from napari_plugin_engine import napari_hook_implementation
 from qtpy.QtCore import Qt, QSize
 from qtpy.QtGui import QIcon
-from qtpy.QtWidgets import QComboBox, QLabel, QPushButton, QScrollArea, QVBoxLayout, QWidget
+from qtpy.QtWidgets import (
+    QComboBox, 
+    QLabel, 
+    QPushButton, 
+    QScrollArea, 
+    QVBoxLayout, 
+    QWidget
+)
 
 from ._stylesheet import GLOBAL_STYLESHEET
 
@@ -13,6 +20,7 @@ DIR = os.path.dirname(__file__)
 The class name here gets converted to title case and gets displayed as both the title 
 of the plugin window and the title displayed in the app menu dropdown.
 """
+
 
 class AllenCellStructureSegmenter(QWidget):
     def __init__(self, napari_viewer):
@@ -26,7 +34,7 @@ class AllenCellStructureSegmenter(QWidget):
         self.page.setStyleSheet("QWidget { margin-right: 20px }")
         self.set_page_layout()
         self.layout().addWidget(self.page)
-        
+
         # Add scroll widget that holds the page widget
         scroll = QScrollArea()
         scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
@@ -42,7 +50,8 @@ class AllenCellStructureSegmenter(QWidget):
         title.setStyleSheet(
             "QLabel { font-weight: bold; font-size: 20px; margin-top: 0px }")
 
-        # Need to supply HTML because of this bug: https://bugreports.qt.io/browse/QTBUG-90853
+        # Need to supply HTML because of this bug: 
+        # https://bugreports.qt.io/browse/QTBUG-90853
         step_1 = QLabel("<span>1.&nbsp;Select a channel to segment:</span>")
         dropdown = QComboBox()
         dropdown.addItem("Channel 1")
@@ -51,7 +60,8 @@ class AllenCellStructureSegmenter(QWidget):
 
         step_2 = QLabel(
             "<span>2.&nbsp;Select segmentation workflow.&nbsp;"
-            "The image I want to segment most closely resembles <b>(click an image)</b>:</span>"
+            "The image I want to segment most closely resembles "
+            "<b>(click an image)</b>:</span>"
         )
         step_2.setWordWrap(True)
 
@@ -72,8 +82,9 @@ class AllenCellStructureSegmenter(QWidget):
             button.setIconSize(QSize(360, 200))
             button.setFixedSize(400, 200)
             self.page.layout().addWidget(button, alignment=Qt.AlignCenter)
-        
+
         self.page.layout().addStretch()
+
 
 @napari_hook_implementation
 def napari_experimental_provide_dock_widget():  # pragma: no-cover
