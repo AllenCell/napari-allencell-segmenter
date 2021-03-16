@@ -8,6 +8,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+venv/
 env/
 build/
 develop-eggs/
@@ -45,6 +46,7 @@ coverage.xml
 *,cover
 .hypothesis/
 .napari_cache
+.pytest_cache
 
 # Translations
 *.mo
@@ -80,3 +82,4 @@ target/
 
 # IDE files
 .idea/
+.vscode
