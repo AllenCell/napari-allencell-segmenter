@@ -1,8 +1,13 @@
 import pytest
 
 from unittest.mock import MagicMock, create_autospec
-from napari_aicssegmentation.view.workflow_select_view import WorkflowSelectView, IWorkflowSelectController, SegmenterModel
+from napari_aicssegmentation.view.workflow_select_view import (
+    WorkflowSelectView,
+    IWorkflowSelectController,
+    SegmenterModel,
+)
 from PyQt5.QtWidgets import QLayout
+
 
 class TestWorkflowSelectView:
     def setup_method(self):
@@ -58,7 +63,7 @@ class TestWorkflowSelectView:
 
     def test_btn_next_clicked(self):
         # Arrange
-        self._view.setup_ui()  
+        self._view.setup_ui()
 
         # Act
         self._view.btn_next.click()

@@ -24,7 +24,7 @@ class WorkflowSelectView(View):
     def get_layout(self):
         return self._layout
 
-    def setup_ui(self):        
+    def setup_ui(self):
         self.lbl_title = QLabel("Segmentation workflow selection")
         self.lbl_select = QLabel("Select a channel")
 
