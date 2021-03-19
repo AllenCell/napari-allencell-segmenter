@@ -5,6 +5,7 @@ from qtpy.QtCore import Qt, QSize
 from qtpy.QtGui import QIcon
 from qtpy.QtWidgets import (
     QComboBox, 
+    QFrame,
     QLabel, 
     QPushButton, 
     QScrollArea, 
@@ -12,7 +13,7 @@ from qtpy.QtWidgets import (
     QWidget
 )
 
-from ._stylesheet import GLOBAL_STYLESHEET
+from ._stylesheet import STYLESHEET
 
 DIR = os.path.dirname(__file__)
 
@@ -26,21 +27,23 @@ class AllenCellStructureSegmenter(QWidget):
     def __init__(self, napari_viewer):
         super().__init__()
         self.viewer = napari_viewer
-        self.setStyleSheet(GLOBAL_STYLESHEET)
         self.setLayout(QVBoxLayout())
 
         # Add page widget that holds all other widgets except for the scroll bar
-        self.page = QWidget()
-        self.page.setStyleSheet("QWidget { margin-right: 20px }")
+        self.page = QFrame()
+        self.page.setObjectName("page")
         self.set_page_layout()
         self.layout().addWidget(self.page)
 
         # Add scroll widget that holds the page widget
         scroll = QScrollArea()
         scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         scroll.setWidgetResizable(True)
         scroll.setWidget(self.page)
         self.layout().addWidget(scroll)
+
+        self.setStyleSheet(STYLESHEET)
 
     """ Add widgets to the page and set the layout """
     def set_page_layout(self):
