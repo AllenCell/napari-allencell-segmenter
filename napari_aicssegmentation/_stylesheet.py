@@ -15,5 +15,16 @@ STYLESHEET = (
         font-size: 16px;
         margin-top: 1em;
     }
+
+    QLabel#title {
+        font-weight: bold;
+        font-size: 20px;
+        margin-top: 0px;
+    }
+
+    QLabel#columnLabels {
+        font-size: 12px;
+        font-weight: bold;
+    }
     """
 )

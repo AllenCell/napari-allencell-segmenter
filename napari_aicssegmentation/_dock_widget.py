@@ -50,8 +50,7 @@ class AllenCellStructureSegmenter(QWidget):
         self.page.setLayout(QVBoxLayout())
 
         title = QLabel("Segmentation workflow selection")
-        title.setStyleSheet(
-            "QLabel { font-weight: bold; font-size: 20px; margin-top: 0px }")
+        title.setObjectName("title")
 
         # Need to supply HTML because of this bug: 
         # https://bugreports.qt.io/browse/QTBUG-90853
@@ -70,7 +69,7 @@ class AllenCellStructureSegmenter(QWidget):
 
         # This is hacky but not sure if it's worth creating a grid just for this row
         column_labels = QLabel("Input image                               Segmentation")
-        column_labels.setStyleSheet("QLabel { font-size: 12px; font-weight: bold }")
+        column_labels.setObjectName("columnLabels")
         column_labels.setAlignment(Qt.AlignCenter)
 
         widgets = [title, step_1, dropdown, step_2, column_labels]
