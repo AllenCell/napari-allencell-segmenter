@@ -30,7 +30,7 @@ test_requirements = [
     "pytest>=4.3.0",
     "pytest-cov==2.6.1",
     "pytest-raises>=0.10",
-    "pytest-qt>=3.3.0"
+    "pytest-qt>=3.3.0",
     "quilt3>=3.1.12",    
 ]
 
