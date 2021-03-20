@@ -1,7 +1,7 @@
 """
 Global stylesheet
 
-Qt stylesheet reference: https://doc.qt.io/qtforpython-5/overviews/stylesheet.html
+Qt stylesheet reference: https://doc.qt.io/qtforpython-5/overviews/stylesheet-syntax.html
 Examples: https://doc.qt.io/qt-5/stylesheet-examples.html#customizing-specific-widgets
 """
 
@@ -12,14 +12,16 @@ STYLESHEET = (
     }
 
     QLabel {
-        font-size: 16px;
-        margin-top: 1em;
+        font-size: 14px;
     }
 
-    QLabel#title {
+    QLabel#header {
+        font-size: 12px;
+        margin-bottom: 0.5em;
+    }
+
+    QLabel#workflowSelectionTitle {
         font-weight: bold;
-        font-size: 20px;
-        margin-top: 0px;
     }
 
     QLabel#columnLabels {

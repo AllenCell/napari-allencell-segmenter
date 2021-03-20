@@ -49,8 +49,17 @@ class AllenCellStructureSegmenter(QWidget):
     def set_page_layout(self):
         self.page.setLayout(QVBoxLayout())
 
-        title = QLabel("Segmentation workflow selection")
-        title.setObjectName("title")
+        header = QLabel("""
+        <span>
+            <b>ALLEN CELL & STRUCTURE SEGMENTER</b><br/>
+            v1.0 supports 3D images only
+        </span>
+        """)
+        header.setObjectName("header")
+        header.setAlignment(Qt.AlignCenter)
+
+        workflow_selection_title = QLabel("Workflow selection steps:")
+        workflow_selection_title.setObjectName("workflowSelectionTitle")
 
         # Need to supply HTML because of this bug: 
         # https://bugreports.qt.io/browse/QTBUG-90853
@@ -60,19 +69,26 @@ class AllenCellStructureSegmenter(QWidget):
         dropdown.addItem("Channel 2")
         dropdown.addItem("Channel 3")
 
-        step_2 = QLabel(
-            "<span>2.&nbsp;Select segmentation workflow.&nbsp;"
-            "The image I want to segment most closely resembles "
-            "<b>(click an image)</b>:</span>"
+        step_3 = QLabel("<span>3.&nbsp;Choose segmentation workflow</span>")
+        button_instructions = QLabel(
+            "Click a button that most closely resembles your image channel to start a workflow."
         )
-        step_2.setWordWrap(True)
+        button_instructions.setWordWrap(True)
 
         # This is hacky but not sure if it's worth creating a grid just for this row
         column_labels = QLabel("Input image                               Segmentation")
         column_labels.setObjectName("columnLabels")
         column_labels.setAlignment(Qt.AlignCenter)
 
-        widgets = [title, step_1, dropdown, step_2, column_labels]
+        widgets = [
+            header,
+            workflow_selection_title,
+            step_1,
+            dropdown,
+            step_3,
+            button_instructions,
+            column_labels,
+        ]
         for widget in widgets:
             self.page.layout().addWidget(widget)
 
@@ -86,7 +102,6 @@ class AllenCellStructureSegmenter(QWidget):
             self.page.layout().addWidget(button, alignment=Qt.AlignCenter)
 
         self.page.layout().addStretch()
-
 
 @napari_hook_implementation
 def napari_experimental_provide_dock_widget():  # pragma: no-cover
