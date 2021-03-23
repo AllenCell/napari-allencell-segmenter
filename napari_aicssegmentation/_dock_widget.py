@@ -68,9 +68,9 @@ class AllenCellStructureSegmenter(QWidget):
         load_image_warning = self.warning_message("Open a 3D image in Napari first!", True)
 
         layers = ["Layer 1", "Layer 2", "Layer 3"]
-        layers_dropdown = self.dropdown_row(1, "Select a Napari layer", layers)
+        layers_dropdown = self.dropdown_row(1, "Select a 3D Napari image layer", layers)
         channels = ["Channel 1", "Channel 2", "Channel 3"]
-        channels_dropdown = self.dropdown_row(2, "Select an image data channel", channels)
+        channels_dropdown = self.dropdown_row(2, "Select a 3D image data channel", channels)
         layer_channel_selections = self.create_form([layers_dropdown, channels_dropdown])
 
         # Need to supply HTML because of this bug: 
