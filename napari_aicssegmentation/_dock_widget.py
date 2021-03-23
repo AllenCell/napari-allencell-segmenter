@@ -62,7 +62,7 @@ class AllenCellStructureSegmenter(QWidget):
         workflow_selection_title = QLabel("Workflow selection steps:")
         workflow_selection_title.setObjectName("workflowSelectionTitle")
 
-        load_image_warning = self.warning_message("Open a 3D image in Napari first!", False)
+        load_image_warning = self.warning_message("Open a 3D image in Napari first!", True)
 
         # Need to supply HTML because of this bug: 
         # https://bugreports.qt.io/browse/QTBUG-90853
@@ -108,6 +108,7 @@ class AllenCellStructureSegmenter(QWidget):
 
         self.page.layout().addStretch()
 
+    """ Return a QFrame containing a warning icon and a message """
     def warning_message(self, message, should_display):
         if should_display == False:
             return None
