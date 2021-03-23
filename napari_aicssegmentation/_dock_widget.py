@@ -5,6 +5,7 @@ from qtpy.QtCore import Qt, QSize
 from qtpy.QtGui import QIcon, QPixmap
 from qtpy.QtWidgets import (
     QComboBox, 
+    QFormLayout,
     QFrame,
     QHBoxLayout,
     QLabel, 
@@ -48,7 +49,9 @@ class AllenCellStructureSegmenter(QWidget):
 
     """ Add widgets to the page and set the layout """
     def set_page_layout(self):
-        self.page.setLayout(QVBoxLayout())
+        layout = QVBoxLayout()
+        layout.setContentsMargins(11, 0, 11, 11)
+        self.page.setLayout(layout)
 
         header = QLabel("""
         <span>
@@ -64,20 +67,20 @@ class AllenCellStructureSegmenter(QWidget):
 
         load_image_warning = self.warning_message("Open a 3D image in Napari first!", True)
 
+        layers = ["Layer 1", "Layer 2", "Layer 3"]
+        layers_dropdown = self.dropdown_row(1, "Select a Napari layer", layers)
+        channels = ["Channel 1", "Channel 2", "Channel 3"]
+        channels_dropdown = self.dropdown_row(2, "Select an image data channel", channels)
+        layer_channel_selections = self.create_form([layers_dropdown, channels_dropdown])
+
         # Need to supply HTML because of this bug: 
         # https://bugreports.qt.io/browse/QTBUG-90853
-        step_1 = QLabel("<span>1.&nbsp;Select a channel to segment:</span>")
-        dropdown = QComboBox()
-        dropdown.addItem("Channel 1")
-        dropdown.addItem("Channel 2")
-        dropdown.addItem("Channel 3")
-
-        step_3 = QLabel("<span>3.&nbsp;Choose segmentation workflow</span>")
+        step_3 = QLabel("<span>3.&nbsp;&nbsp;&nbsp;Choose a segmentation workflow</span>")
         button_instructions = QLabel(
             "Click a button that most closely resembles your image channel to start a workflow."
         )
         button_instructions.setWordWrap(True)
-        button_instructions.setIndent(20)
+        button_instructions.setIndent(30)
 
         # This is hacky but not sure if it's worth creating a grid just for this row
         column_labels = QLabel("Input image                               Segmentation")
@@ -88,8 +91,7 @@ class AllenCellStructureSegmenter(QWidget):
             header,
             workflow_selection_title,
             load_image_warning,
-            step_1,
-            dropdown,
+            layer_channel_selections,
             step_3,
             button_instructions,
             column_labels,
@@ -108,12 +110,12 @@ class AllenCellStructureSegmenter(QWidget):
 
         self.page.layout().addStretch()
 
-    """ Return a QFrame containing a warning icon and a message """
+    """ Return a QWidget containing a warning icon and a message """
     def warning_message(self, message, should_display):
         if should_display == False:
             return None
 
-        widget = QFrame()
+        widget = QWidget()
         widget.setLayout(QHBoxLayout())
 
         icon = QLabel()
@@ -126,6 +128,32 @@ class AllenCellStructureSegmenter(QWidget):
         widget.layout().addWidget(text)
         widget.layout().addStretch()
         return widget
+    
+    def create_form(self, rows):
+        widget = QFrame()
+        layout = QFormLayout()
+        layout.setFormAlignment(Qt.AlignLeft)
+        layout.setContentsMargins(0, 5, 11, 0)
+        for row in rows:
+            layout.addRow(row["label"], row["dropdown"])
+        widget.setLayout(layout)
+        return widget
+
+    def dropdown_row(self, number, placeholder, options):
+        label = f"{number}."
+
+        dropdown = QComboBox()
+        dropdown.addItem(placeholder)
+        for option in options:
+            dropdown.addItem(option)
+        dropdown.setMinimumWidth(360)
+
+        return {
+            "label": label,
+            "dropdown": dropdown
+        }
+
+
 
 @napari_hook_implementation
 def napari_experimental_provide_dock_widget():  # pragma: no-cover
