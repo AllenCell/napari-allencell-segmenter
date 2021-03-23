@@ -2,10 +2,11 @@ import os
 
 from napari_plugin_engine import napari_hook_implementation
 from qtpy.QtCore import Qt, QSize
-from qtpy.QtGui import QIcon
+from qtpy.QtGui import QIcon, QPixmap
 from qtpy.QtWidgets import (
     QComboBox, 
     QFrame,
+    QHBoxLayout,
     QLabel, 
     QPushButton, 
     QScrollArea, 
@@ -61,6 +62,8 @@ class AllenCellStructureSegmenter(QWidget):
         workflow_selection_title = QLabel("Workflow selection steps:")
         workflow_selection_title.setObjectName("workflowSelectionTitle")
 
+        load_image_warning = self.warning_message("Open a 3D image in Napari first!", False)
+
         # Need to supply HTML because of this bug: 
         # https://bugreports.qt.io/browse/QTBUG-90853
         step_1 = QLabel("<span>1.&nbsp;Select a channel to segment:</span>")
@@ -74,6 +77,7 @@ class AllenCellStructureSegmenter(QWidget):
             "Click a button that most closely resembles your image channel to start a workflow."
         )
         button_instructions.setWordWrap(True)
+        button_instructions.setIndent(20)
 
         # This is hacky but not sure if it's worth creating a grid just for this row
         column_labels = QLabel("Input image                               Segmentation")
@@ -83,6 +87,7 @@ class AllenCellStructureSegmenter(QWidget):
         widgets = [
             header,
             workflow_selection_title,
+            load_image_warning,
             step_1,
             dropdown,
             step_3,
@@ -92,16 +97,34 @@ class AllenCellStructureSegmenter(QWidget):
         for widget in widgets:
             self.page.layout().addWidget(widget)
 
-        image_dir = os.path.join(DIR, '_assets/_workflow_images')
-        image_files = os.listdir(image_dir)
+        workflow_image_dir = os.path.join(DIR, "assets/workflow_images")
+        image_files = os.listdir(workflow_image_dir)
         for image_file in image_files:
             button = QPushButton("")
-            button.setIcon(QIcon(os.path.join(image_dir, image_file)))
+            button.setIcon(QIcon(os.path.join(workflow_image_dir, image_file)))
             button.setIconSize(QSize(360, 200))
             button.setFixedSize(400, 200)
             self.page.layout().addWidget(button, alignment=Qt.AlignCenter)
 
         self.page.layout().addStretch()
+
+    def warning_message(self, message, should_display):
+        if should_display == False:
+            return None
+
+        widget = QFrame()
+        widget.setLayout(QHBoxLayout())
+
+        icon = QLabel()
+        icon.setPixmap(QPixmap(os.path.join(DIR, "assets/icons/warning.png")))
+
+        text = QLabel(message)
+
+        widget.layout().addStretch()
+        widget.layout().addWidget(icon)
+        widget.layout().addWidget(text)
+        widget.layout().addStretch()
+        return widget
 
 @napari_hook_implementation
 def napari_experimental_provide_dock_widget():  # pragma: no-cover
