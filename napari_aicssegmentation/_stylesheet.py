@@ -9,7 +9,7 @@ STYLESHEET = (
     """
     QComboBox:disabled { 
         background-color: #333941;
-        color: #535b68;
+        color: #4b5965;
     }
 
     QFrame#page {

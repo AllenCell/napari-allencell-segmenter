@@ -103,11 +103,14 @@ class AllenCellStructureSegmenter(QWidget):
 
         workflow_image_dir = os.path.join(DIR, "assets/workflow_images")
         image_files = os.listdir(workflow_image_dir)
+        buttons_disabled = True
         for image_file in image_files:
             button = QPushButton("")
             button.setIcon(QIcon(os.path.join(workflow_image_dir, image_file)))
             button.setIconSize(QSize(360, 200))
             button.setFixedSize(400, 200)
+            if buttons_disabled:
+                button.setDisabled(True)
             self.page.layout().addWidget(button, alignment=Qt.AlignCenter)
 
         self.page.layout().addStretch()
