@@ -6,6 +6,7 @@ from qtpy.QtGui import QIcon
 from qtpy.QtWidgets import (
     QComboBox, 
     QFrame,
+    QHBoxLayout,
     QLabel, 
     QPushButton, 
     QScrollArea, 
@@ -122,10 +123,22 @@ class AllenCellStructureSegmenter(QWidget):
         self.page.layout().addWidget(step_3)
         self.page.layout().addWidget(button_instructions)
 
-        # This is hacky but not sure if it's worth creating a grid just for this row
-        column_labels = QLabel("Input image                               Segmentation")
+        column_labels = QWidget()
+        column_layout = QHBoxLayout()
+        column_layout.setContentsMargins(11, 11, 11, 0)
+        column_labels.setLayout(column_layout)
+        # column_labels.setContentsMargins(0, 0, 0, 0)
+
+        image_input_label = QLabel("Image input")
+        image_input_label.setAlignment(Qt.AlignCenter)
+        # image_input_label.setContentsMargins(0, 0, 0, 0)
+        segmentation_output_label = QLabel("Segmentation output")
+        segmentation_output_label.setAlignment(Qt.AlignCenter)
+        # segmentation_output_label.setContentsMargins(0, 0, 0, 0)
+        column_labels.layout().addWidget(image_input_label)
+        column_labels.layout().addWidget(segmentation_output_label)
+
         column_labels.setObjectName("columnLabels")
-        column_labels.setAlignment(Qt.AlignCenter)
         if enabled == False:
             column_labels.setObjectName("columnLabelsDisabled")
         self.page.layout().addWidget(column_labels)
@@ -137,6 +150,7 @@ class AllenCellStructureSegmenter(QWidget):
             button.setIcon(QIcon(os.path.join(workflow_image_dir, image_file)))
             button.setIconSize(QSize(360, 200))
             button.setFixedSize(400, 200)
+            # button.setContentsMargins(11, 0, 11, 11)
             if enabled == False:
                 button.setDisabled(True)
             self.page.layout().addWidget(button, alignment=Qt.AlignCenter)

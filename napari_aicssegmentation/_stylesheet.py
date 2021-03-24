@@ -29,12 +29,12 @@ STYLESHEET = (
         font-weight: bold;
     }
 
-    QLabel#columnLabels {
+    #columnLabels QLabel {
         font-size: 12px;
         font-weight: bold;
     }
 
-    QLabel#columnLabelsDisabled {
+    #columnLabelsDisabled QLabel {
         font-size: 12px;
         font-weight: bold;
         color: #7c848a;
