@@ -9,7 +9,7 @@ STYLESHEET = (
     """
     QComboBox:disabled { 
         background-color: #333941;
-        color: #4b5965;
+        color: #868e93;
     }
 
     QFrame#page {
@@ -32,6 +32,16 @@ STYLESHEET = (
     QLabel#columnLabels {
         font-size: 12px;
         font-weight: bold;
+    }
+
+    QLabel#columnLabelsDisabled {
+        font-size: 12px;
+        font-weight: bold;
+        color: #868e93;
+    }
+
+    QLabel#btnInstructionsDisabled, QLabel#step3InstructionsDisabled {
+        color: #868e93;
     }
 
     QPushButton:disabled { 

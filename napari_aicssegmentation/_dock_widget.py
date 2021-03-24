@@ -57,7 +57,7 @@ class AllenCellStructureSegmenter(QWidget):
             """
             <span>
                 <b>ALLEN CELL & STRUCTURE SEGMENTER</b><br/>
-                v1.0 supports 3D images only
+                v1.0 supports static 3D images only
             </span>
             """
         )
@@ -67,7 +67,7 @@ class AllenCellStructureSegmenter(QWidget):
         workflow_selection_title = QLabel("Workflow selection steps:")
         workflow_selection_title.setObjectName("workflowSelectionTitle")
 
-        load_image_warning = self.warning_message("Open a 3D image in Napari first!", True)
+        load_image_warning = self.warning_message("Open a 3D image in Napari first!")
 
         layers = ["Layer 1", "Layer 2", "Layer 3"]
         layers_dropdown = self.dropdown_row(1, "Select a 3D Napari image layer", layers)
@@ -84,35 +84,16 @@ class AllenCellStructureSegmenter(QWidget):
         button_instructions.setWordWrap(True)
         button_instructions.setIndent(30)
 
-        # This is hacky but not sure if it's worth creating a grid just for this row
-        column_labels = QLabel("Input image                               Segmentation")
-        column_labels.setObjectName("columnLabels")
-        column_labels.setAlignment(Qt.AlignCenter)
-
         widgets = [
             header,
             workflow_selection_title,
             load_image_warning,
             layer_channel_selections,
-            step_3,
-            button_instructions,
-            column_labels,
         ]
         for widget in widgets:
             self.page.layout().addWidget(widget)
 
-        workflow_image_dir = os.path.join(DIR, "assets/workflow_images")
-        image_files = os.listdir(workflow_image_dir)
-        buttons_disabled = True
-        for image_file in image_files:
-            button = QPushButton("")
-            button.setIcon(QIcon(os.path.join(workflow_image_dir, image_file)))
-            button.setIconSize(QSize(360, 200))
-            button.setFixedSize(400, 200)
-            if buttons_disabled:
-                button.setDisabled(True)
-            self.page.layout().addWidget(button, alignment=Qt.AlignCenter)
-
+        self.add_workflow_buttons()
         self.page.layout().addStretch()
 
     """ Return a QWidget containing a warning icon and a message """
@@ -134,13 +115,14 @@ class AllenCellStructureSegmenter(QWidget):
         widget.layout().addStretch()
         return widget
     
-    def create_form(self, rows):
+    def create_form(self, rows, margins=(0, 5, 11, 0)):
         widget = QFrame()
         layout = QFormLayout()
         layout.setFormAlignment(Qt.AlignLeft)
-        layout.setContentsMargins(0, 5, 11, 0)
+        left, top, right, bottom = margins
+        layout.setContentsMargins(left, top, right, bottom)
         for row in rows:
-            layout.addRow(row["label"], row["dropdown"])
+            layout.addRow(row["label"], row["input"])
         widget.setLayout(layout)
         return widget
 
@@ -157,8 +139,47 @@ class AllenCellStructureSegmenter(QWidget):
 
         return {
             "label": label,
-            "dropdown": dropdown
+            "input": dropdown
         }
+    
+    def add_workflow_buttons(self, enabled=False):
+        step_3_instructions = QLabel("Choose a segmentation workflow")
+        step_3_args = {
+            "label": "3.",
+            "input": step_3_instructions
+        }
+        step_3 = self.create_form([step_3_args], (0, 0, 11, 0))
+        
+        button_instructions = QLabel(
+            "Click a button that most closely resembles your image channel to start a workflow."
+        )
+        button_instructions.setWordWrap(True)
+        button_instructions.setIndent(37)
+        if enabled == False:
+            step_3_instructions.setObjectName("step3InstructionsDisabled")
+            button_instructions.setObjectName("btnInstructionsDisabled")
+
+        self.page.layout().addWidget(step_3)
+        self.page.layout().addWidget(button_instructions)
+
+        # This is hacky but not sure if it's worth creating a grid just for this row
+        column_labels = QLabel("Input image                               Segmentation")
+        column_labels.setObjectName("columnLabels")
+        column_labels.setAlignment(Qt.AlignCenter)
+        if enabled == False:
+            column_labels.setObjectName("columnLabelsDisabled")
+        self.page.layout().addWidget(column_labels)
+
+        workflow_image_dir = os.path.join(DIR, "assets/workflow_images")
+        image_files = os.listdir(workflow_image_dir)
+        for image_file in image_files:
+            button = QPushButton("")
+            button.setIcon(QIcon(os.path.join(workflow_image_dir, image_file)))
+            button.setIconSize(QSize(360, 200))
+            button.setFixedSize(400, 200)
+            if enabled == False:
+                button.setDisabled(True)
+            self.page.layout().addWidget(button, alignment=Qt.AlignCenter)
 
 
 
