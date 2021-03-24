@@ -74,15 +74,6 @@ class AllenCellStructureSegmenter(QWidget):
         channels_dropdown = self.dropdown_row(2, "Select a 3D image data channel", channels, False)
         layer_channel_selections = form_layout([layers_dropdown, channels_dropdown])
 
-        # Need to supply HTML because of this bug: 
-        # https://bugreports.qt.io/browse/QTBUG-90853
-        step_3 = QLabel("<span>3.&nbsp;&nbsp;&nbsp;Choose a segmentation workflow</span>")
-        button_instructions = QLabel(
-            "Click a button that most closely resembles your image channel to start a workflow."
-        )
-        button_instructions.setWordWrap(True)
-        button_instructions.setIndent(30)
-
         widgets = [
             header,
             workflow_selection_title,
@@ -92,7 +83,7 @@ class AllenCellStructureSegmenter(QWidget):
         for widget in widgets:
             self.page.layout().addWidget(widget)
 
-        self.add_workflow_buttons()
+        self.set_step_3_layout()
         self.page.layout().addStretch()
 
     def dropdown_row(self, number, placeholder, options, enabled=True):
@@ -111,7 +102,7 @@ class AllenCellStructureSegmenter(QWidget):
             "input": dropdown
         }
     
-    def add_workflow_buttons(self, enabled=False):
+    def set_step_3_layout(self, enabled=False):
         step_3_instructions = QLabel("Choose a segmentation workflow")
         step_3_args = {
             "label": "3.",
