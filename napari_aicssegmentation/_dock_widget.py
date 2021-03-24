@@ -53,12 +53,14 @@ class AllenCellStructureSegmenter(QWidget):
         layout.setContentsMargins(11, 0, 11, 11)
         self.page.setLayout(layout)
 
-        header = QLabel("""
-        <span>
-            <b>ALLEN CELL & STRUCTURE SEGMENTER</b><br/>
-            v1.0 supports 3D images only
-        </span>
-        """)
+        header = QLabel(
+            """
+            <span>
+                <b>ALLEN CELL & STRUCTURE SEGMENTER</b><br/>
+                v1.0 supports 3D images only
+            </span>
+            """
+        )
         header.setObjectName("header")
         header.setAlignment(Qt.AlignCenter)
 
@@ -70,7 +72,7 @@ class AllenCellStructureSegmenter(QWidget):
         layers = ["Layer 1", "Layer 2", "Layer 3"]
         layers_dropdown = self.dropdown_row(1, "Select a 3D Napari image layer", layers)
         channels = ["Channel 1", "Channel 2", "Channel 3"]
-        channels_dropdown = self.dropdown_row(2, "Select a 3D image data channel", channels)
+        channels_dropdown = self.dropdown_row(2, "Select a 3D image data channel", channels, False)
         layer_channel_selections = self.create_form([layers_dropdown, channels_dropdown])
 
         # Need to supply HTML because of this bug: 
@@ -111,7 +113,7 @@ class AllenCellStructureSegmenter(QWidget):
         self.page.layout().addStretch()
 
     """ Return a QWidget containing a warning icon and a message """
-    def warning_message(self, message, should_display):
+    def warning_message(self, message, should_display=False):
         if should_display == False:
             return None
 
@@ -139,7 +141,7 @@ class AllenCellStructureSegmenter(QWidget):
         widget.setLayout(layout)
         return widget
 
-    def dropdown_row(self, number, placeholder, options):
+    def dropdown_row(self, number, placeholder, options, enabled=True):
         label = f"{number}."
 
         dropdown = QComboBox()
@@ -147,6 +149,8 @@ class AllenCellStructureSegmenter(QWidget):
         for option in options:
             dropdown.addItem(option)
         dropdown.setMinimumWidth(360)
+        if enabled == False:
+            dropdown.setDisabled(True)
 
         return {
             "label": label,

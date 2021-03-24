@@ -7,6 +7,11 @@ Examples: https://doc.qt.io/qt-5/stylesheet-examples.html#customizing-specific-w
 
 STYLESHEET = (
     """
+    QComboBox:disabled { 
+        background-color: #333941;
+        color: #535b68;
+    }
+
     QFrame#page {
         margin-right: 20px;
     }
@@ -27,6 +32,10 @@ STYLESHEET = (
     QLabel#columnLabels {
         font-size: 12px;
         font-weight: bold;
+    }
+
+    QPushButton:disabled { 
+        background-color: #333941;
     }
     """
 )
