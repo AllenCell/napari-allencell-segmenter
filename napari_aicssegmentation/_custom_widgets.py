@@ -1,3 +1,5 @@
+import os
+
 from qtpy.QtCore import Qt
 from qtpy.QtGui import QPixmap
 from qtpy.QtWidgets import (
@@ -7,6 +9,8 @@ from qtpy.QtWidgets import (
     QLabel, 
     QWidget
 )
+
+DIR = os.path.dirname(__file__)
 
 """ 
 Create a QWidget containing a warning icon and a message.
