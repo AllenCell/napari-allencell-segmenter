@@ -13,7 +13,7 @@ from qtpy.QtWidgets import (
 DIR = os.path.dirname(__file__)
 
 """ 
-Create a QWidget containing a warning icon and a message.
+Create a warning message with a yellow warning sign icon on the left.
 
 Inputs:
     message:    String

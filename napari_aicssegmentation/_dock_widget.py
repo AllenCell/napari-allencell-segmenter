@@ -56,7 +56,7 @@ class AllenCellStructureSegmenter(QWidget):
     """ Add widgets to the page and set the layout """
     def set_page_layout(self):
         layout = QVBoxLayout()
-        layout.setContentsMargins(11, 0, 11, 11)
+        layout.setContentsMargins(11, 0, 11, 11)    # 11 is Qt default
         self.page.setLayout(layout)
 
         header = QLabel(
@@ -78,6 +78,7 @@ class AllenCellStructureSegmenter(QWidget):
         if show_warning == False:
             load_image_warning.hide()
 
+        # Dropdowns
         layers = ["Layer 1", "Layer 2", "Layer 3"]
         layers_dropdown = self.dropdown_row(1, "Select a 3D Napari image layer", layers)
         channels = ["Channel 1", "Channel 2", "Channel 3"]
@@ -130,12 +131,14 @@ class AllenCellStructureSegmenter(QWidget):
         )
         button_instructions.setWordWrap(True)
         button_instructions.setIndent(37)
+
         if enabled == False:
             step_3_instructions.setObjectName("step3InstructionsDisabled")
             button_instructions.setObjectName("btnInstructionsDisabled")
-
         self.page.layout().addWidget(step_3)
         self.page.layout().addWidget(button_instructions)
+
+        # Row of text labeling the columns of workflow images
 
         column_labels = QWidget()
         column_layout = QHBoxLayout()
@@ -154,6 +157,8 @@ class AllenCellStructureSegmenter(QWidget):
         if enabled == False:
             column_labels.setObjectName("columnLabelsDisabled")
         self.page.layout().addWidget(column_labels, alignment=Qt.AlignCenter)
+
+        # Workflow buttons
 
         workflow_image_dir = os.path.join(DIR, "assets/workflow_images")
         image_files = os.listdir(workflow_image_dir)
