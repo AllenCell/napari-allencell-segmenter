@@ -1,15 +1,20 @@
+""" Dimensions """
+PAGE_WIDTH = 440
+PAGE_CONTENT_WIDTH = PAGE_WIDTH - 40
+WORKFLOW_BUTTON_HEIGHT = 200
+
+
 """
 Global stylesheet
 
 Qt stylesheet reference: https://doc.qt.io/qtforpython-5/overviews/stylesheet-syntax.html
 Examples: https://doc.qt.io/qt-5/stylesheet-examples.html#customizing-specific-widgets
 """
-
 STYLESHEET = (
     """
     QComboBox:disabled { 
         background-color: #333941;
-        color: #44494c;
+        color: #7C848A;
     }
 
     QFrame#page {

@@ -15,7 +15,12 @@ from qtpy.QtWidgets import (
 )
 
 from napari_aicssegmentation._custom_widgets import warning_message, form_layout
-from napari_aicssegmentation._stylesheet import STYLESHEET
+from napari_aicssegmentation._style_constants import (
+    PAGE_WIDTH, 
+    PAGE_CONTENT_WIDTH, 
+    WORKFLOW_BUTTON_HEIGHT, 
+    STYLESHEET
+)
 
 DIR = os.path.dirname(__file__)
 
@@ -34,6 +39,7 @@ class AllenCellStructureSegmenter(QWidget):
         # Add page widget that holds all other widgets except for the scroll bar
         self.page = QFrame()
         self.page.setObjectName("page")
+        self.page.setFixedWidth(PAGE_WIDTH)
         self.set_page_layout()
         self.layout().addWidget(self.page)
 
@@ -101,7 +107,7 @@ class AllenCellStructureSegmenter(QWidget):
         dropdown.addItem(placeholder)
         for option in options:
             dropdown.addItem(option)
-        dropdown.setMinimumWidth(360)
+        dropdown.setMinimumWidth(PAGE_CONTENT_WIDTH - 40)
         if enabled == False:
             dropdown.setDisabled(True)
 
@@ -135,7 +141,7 @@ class AllenCellStructureSegmenter(QWidget):
         column_layout = QHBoxLayout()
         column_layout.setContentsMargins(11, 11, 11, 0)
         column_labels.setLayout(column_layout)
-        column_labels.setFixedWidth(400)
+        column_labels.setFixedWidth(PAGE_CONTENT_WIDTH)
 
         image_input_label = QLabel("Image input")
         image_input_label.setAlignment(Qt.AlignCenter)
@@ -154,8 +160,8 @@ class AllenCellStructureSegmenter(QWidget):
         for image_file in image_files:
             button = QPushButton("")
             button.setIcon(QIcon(os.path.join(workflow_image_dir, image_file)))
-            button.setIconSize(QSize(360, 200))
-            button.setFixedSize(400, 200)
+            button.setIconSize(QSize(PAGE_CONTENT_WIDTH - 40, WORKFLOW_BUTTON_HEIGHT))
+            button.setFixedSize(PAGE_CONTENT_WIDTH, WORKFLOW_BUTTON_HEIGHT)
             if enabled == False:
                 button.setDisabled(True)
             self.page.layout().addWidget(button, alignment=Qt.AlignCenter)
