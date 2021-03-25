@@ -12,6 +12,7 @@ from qtpy.QtWidgets import (
 
 DIR = os.path.dirname(__file__)
 
+
 """ 
 Create a warning message with a yellow warning sign icon on the left.
 
@@ -20,6 +21,8 @@ Inputs:
 Output:
     A QWidget displaying a warning symbol and a message next to it
 """
+
+
 def warning_message(message):
     widget = QWidget()
     widget.setLayout(QHBoxLayout())
@@ -50,6 +53,8 @@ Inputs:
 Output:
     A QFrame widget with a QFormLayout
 """
+
+
 def form_layout(rows, margins=(0, 5, 11, 0)):
     widget = QFrame()
     layout = QFormLayout()
