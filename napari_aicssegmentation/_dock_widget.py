@@ -68,6 +68,9 @@ class AllenCellStructureSegmenter(QWidget):
         workflow_selection_title.setObjectName("workflowSelectionTitle")
 
         load_image_warning = warning_message("Open a 3D image in Napari first!")
+        show_warning = False    # To be replaced with a real event listener
+        if show_warning == False:
+            load_image_warning.hide()
 
         layers = ["Layer 1", "Layer 2", "Layer 3"]
         layers_dropdown = self.dropdown_row(1, "Select a 3D Napari image layer", layers)
@@ -87,6 +90,10 @@ class AllenCellStructureSegmenter(QWidget):
         self.set_step_3_layout()
         self.page.layout().addStretch()
 
+    """
+    Given the contents of a dropdown and a number for the label, return a label and a QComboBox
+    widget that can be used to create a row in a QFormLayout
+    """
     def dropdown_row(self, number, placeholder, options, enabled=True):
         label = f"{number}."
 
@@ -103,6 +110,7 @@ class AllenCellStructureSegmenter(QWidget):
             "input": dropdown
         }
     
+    """ Add widgets and set the layout for the Step 3 instructions and the workflow buttons """
     def set_step_3_layout(self, enabled=False):
         step_3_instructions = QLabel("Choose a segmentation workflow")
         step_3_args = {
@@ -128,14 +136,11 @@ class AllenCellStructureSegmenter(QWidget):
         column_layout.setContentsMargins(11, 11, 11, 0)
         column_labels.setLayout(column_layout)
         column_labels.setFixedWidth(400)
-        # column_labels.setContentsMargins(0, 0, 0, 0)
 
         image_input_label = QLabel("Image input")
         image_input_label.setAlignment(Qt.AlignCenter)
-        # image_input_label.setContentsMargins(0, 0, 0, 0)
         segmentation_output_label = QLabel("Segmentation output")
         segmentation_output_label.setAlignment(Qt.AlignCenter)
-        # segmentation_output_label.setContentsMargins(0, 0, 0, 0)
         column_labels.layout().addWidget(image_input_label)
         column_labels.layout().addWidget(segmentation_output_label)
 
@@ -151,7 +156,6 @@ class AllenCellStructureSegmenter(QWidget):
             button.setIcon(QIcon(os.path.join(workflow_image_dir, image_file)))
             button.setIconSize(QSize(360, 200))
             button.setFixedSize(400, 200)
-            # button.setContentsMargins(11, 0, 11, 11)
             if enabled == False:
                 button.setDisabled(True)
             self.page.layout().addWidget(button, alignment=Qt.AlignCenter)

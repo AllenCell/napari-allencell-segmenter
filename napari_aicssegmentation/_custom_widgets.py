@@ -20,10 +20,7 @@ Inputs:
 Output:
     A QWidget displaying a warning symbol and a message next to it
 """
-def warning_message(message, should_display=False):
-    if should_display == False:
-        return None
-
+def warning_message(message):
     widget = QWidget()
     widget.setLayout(QHBoxLayout())
 
@@ -49,7 +46,7 @@ Inputs:
                         "input": QWidget (e.g., QLabel, QComboBox)
                     }
     margins:    Tuple of 4 numbers representing left, top, right, and bottom margins for
-                the form's contents
+                the form's contents. Qt defaults to (11, 11, 11, 11).
 Output:
     A QFrame widget with a QFormLayout
 """
