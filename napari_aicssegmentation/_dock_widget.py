@@ -127,6 +127,7 @@ class AllenCellStructureSegmenter(QWidget):
         column_layout = QHBoxLayout()
         column_layout.setContentsMargins(11, 11, 11, 0)
         column_labels.setLayout(column_layout)
+        column_labels.setFixedWidth(400)
         # column_labels.setContentsMargins(0, 0, 0, 0)
 
         image_input_label = QLabel("Image input")
@@ -141,7 +142,7 @@ class AllenCellStructureSegmenter(QWidget):
         column_labels.setObjectName("columnLabels")
         if enabled == False:
             column_labels.setObjectName("columnLabelsDisabled")
-        self.page.layout().addWidget(column_labels)
+        self.page.layout().addWidget(column_labels, alignment=Qt.AlignCenter)
 
         workflow_image_dir = os.path.join(DIR, "assets/workflow_images")
         image_files = os.listdir(workflow_image_dir)
