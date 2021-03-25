@@ -119,24 +119,21 @@ class AllenCellStructureSegmenter(QWidget):
     
     """ Add widgets and set the layout for the Step 3 instructions and the workflow buttons """
     def set_step_3_layout(self, enabled=False):
-        step_3_instructions = QLabel("Choose a segmentation workflow")
+        step_3_label = QLabel("3.")
+        step_3_label.setAlignment(Qt.AlignTop)
+        step_3_instructions = QLabel(
+            "Click a button below that most closely resembles your image channel to select & start a workflow"
+        )
+        step_3_instructions.setWordWrap(True)
         step_3_args = {
-            "label": "3.",
+            "label": step_3_label,
             "input": step_3_instructions
         }
         step_3 = form_layout([step_3_args], (0, 0, 11, 0))
-        
-        button_instructions = QLabel(
-            "Click a button that most closely resembles your image channel to start a workflow."
-        )
-        button_instructions.setWordWrap(True)
-        button_instructions.setIndent(37)
 
         if enabled is False:
             step_3_instructions.setObjectName("step3InstructionsDisabled")
-            button_instructions.setObjectName("btnInstructionsDisabled")
         self.page.layout().addWidget(step_3)
-        self.page.layout().addWidget(button_instructions)
 
         # Row of text labeling the columns of workflow images
 

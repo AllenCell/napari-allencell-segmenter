@@ -45,7 +45,7 @@ Create a nicely formatted form layout given contents to add as rows.
 Inputs:
     rows:       List of dictionaries with this shape:
                     {
-                        "label": string,
+                        "label": string | QLabel,
                         "input": QWidget (e.g., QLabel, QComboBox)
                     }
     margins:    Tuple of 4 numbers representing left, top, right, and bottom margins for
