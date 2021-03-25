@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 from napari_plugin_engine import napari_hook_implementation
 from qtpy.QtCore import Qt, QSize
@@ -22,7 +22,7 @@ from napari_aicssegmentation._style_constants import (
     STYLESHEET
 )
 
-DIR = os.path.dirname(__file__)
+DIR = Path.cwd() / "napari_aicssegmentation"
 
 """
 The class name here gets converted to title case and gets displayed as both the title 
@@ -157,11 +157,10 @@ class AllenCellStructureSegmenter(QWidget):
 
         # Workflow buttons
 
-        workflow_image_dir = os.path.join(DIR, "assets/workflow_images")
-        image_files = os.listdir(workflow_image_dir)
+        image_files = Path(DIR / "assets/workflow_images").glob("*.png")
         for image_file in image_files:
             button = QPushButton("")
-            button.setIcon(QIcon(os.path.join(workflow_image_dir, image_file)))
+            button.setIcon(QIcon(str(image_file)))
             button.setIconSize(QSize(PAGE_CONTENT_WIDTH - 40, WORKFLOW_BUTTON_HEIGHT))
             button.setFixedSize(PAGE_CONTENT_WIDTH, WORKFLOW_BUTTON_HEIGHT)
             if enabled is False:
