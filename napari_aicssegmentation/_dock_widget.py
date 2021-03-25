@@ -75,7 +75,7 @@ class AllenCellStructureSegmenter(QWidget):
 
         load_image_warning = warning_message("Open a 3D image in Napari first!")
         show_warning = False    # To be replaced with a real event listener
-        if show_warning == False:
+        if show_warning is False:
             load_image_warning.hide()
 
         # Dropdowns
@@ -109,7 +109,7 @@ class AllenCellStructureSegmenter(QWidget):
         for option in options:
             dropdown.addItem(option)
         dropdown.setMinimumWidth(PAGE_CONTENT_WIDTH - 40)
-        if enabled == False:
+        if enabled is False:
             dropdown.setDisabled(True)
 
         return {
@@ -132,7 +132,7 @@ class AllenCellStructureSegmenter(QWidget):
         button_instructions.setWordWrap(True)
         button_instructions.setIndent(37)
 
-        if enabled == False:
+        if enabled is False:
             step_3_instructions.setObjectName("step3InstructionsDisabled")
             button_instructions.setObjectName("btnInstructionsDisabled")
         self.page.layout().addWidget(step_3)
@@ -154,7 +154,7 @@ class AllenCellStructureSegmenter(QWidget):
         column_labels.layout().addWidget(segmentation_output_label)
 
         column_labels.setObjectName("columnLabels")
-        if enabled == False:
+        if enabled is False:
             column_labels.setObjectName("columnLabelsDisabled")
         self.page.layout().addWidget(column_labels, alignment=Qt.AlignCenter)
 
@@ -167,10 +167,9 @@ class AllenCellStructureSegmenter(QWidget):
             button.setIcon(QIcon(os.path.join(workflow_image_dir, image_file)))
             button.setIconSize(QSize(PAGE_CONTENT_WIDTH - 40, WORKFLOW_BUTTON_HEIGHT))
             button.setFixedSize(PAGE_CONTENT_WIDTH, WORKFLOW_BUTTON_HEIGHT)
-            if enabled == False:
+            if enabled is False:
                 button.setDisabled(True)
             self.page.layout().addWidget(button, alignment=Qt.AlignCenter)
-
 
 
 @napari_hook_implementation
