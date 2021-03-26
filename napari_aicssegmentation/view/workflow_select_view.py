@@ -16,6 +16,8 @@ class WorkflowSelectView(View):
     btn_next: QPushButton
 
     def __init__(self, controller: IWorkflowSelectController):
+        super().__init__()
+        
         if controller is None:
             raise ValueError("controller")
         self._controller = controller

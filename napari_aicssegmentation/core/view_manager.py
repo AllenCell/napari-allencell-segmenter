@@ -1,7 +1,7 @@
 from napari_aicssegmentation.util.debug_utils import debug_class
 from napari_aicssegmentation.core.view import View
 from qtpy.QtWidgets import QLayout
-
+from PyQt5 import sip
 
 @debug_class
 class ViewManager:
@@ -35,14 +35,6 @@ class ViewManager:
         if view is None:
             raise ValueError("View can't be None")
 
-        # view_layout = view.get_layout()
-
-        # if view_layout is None or not isinstance(view_layout, QLayout):
-        #     raise ValueError(
-        #         "Cannot load view: invalid or empty layout. \
-        #                       Views must provide a valid QLayout through the View.get_layout method."
-        #     )
-
         if self._current_view is not None:
             self._unload_view()
 
@@ -51,8 +43,7 @@ class ViewManager:
         self._current_view = view
 
     def _unload_view(self):
-        if self._current_view is not None:
-            # view_layout = self._current_view.get_layout()
-            # self._delete_items_from_layout(view_layout)
-            self._base_layout.removeWidget(self._current_view)
+        if self._current_view is not None:            
+            self._current_view.setParent(None)
+            self._current_view.deleteLater()                      
             self._currentView = None

@@ -6,11 +6,12 @@ from qtpy.QtWidgets import QLayout, QPushButton, QLabel, QVBoxLayout
 
 @debug_class
 class MppView(View):  # pragma: no-cover
-    def __init__(self, controller: IMppController):
+    def __init__(self, controller: IMppController):    
+        super().__init__()
         if controller is None:
             raise ValueError("controller")
         
-        self._controller = controller
+        self._controller = controller        
 
     def setup_ui(self):
         layout = QVBoxLayout()

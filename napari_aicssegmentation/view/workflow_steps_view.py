@@ -10,6 +10,8 @@ class WorkflowStepsView(View):  # pragma: no-cover
     _lbl_selected_workflow: QLabel
 
     def __init__(self, controller: IWorkflowStepsController):
+        super().__init__()
+        
         if controller is None:
             raise ValueError("controller")
         self._controller = controller
