@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 from qtpy.QtCore import Qt
 from qtpy.QtGui import QPixmap
@@ -10,7 +10,7 @@ from qtpy.QtWidgets import (
     QWidget
 )
 
-DIR = os.path.dirname(__file__)
+DIR = Path.cwd() / "napari_aicssegmentation"
 
 
 """ 
@@ -28,7 +28,7 @@ def warning_message(message):
     widget.setLayout(QHBoxLayout())
 
     icon = QLabel()
-    icon.setPixmap(QPixmap(os.path.join(DIR, "assets/icons/warning.png")))
+    icon.setPixmap(QPixmap(str(DIR / "assets/icons/warning.png")))
 
     text = QLabel(message)
 
