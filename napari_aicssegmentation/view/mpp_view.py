@@ -9,14 +9,13 @@ class MppView(View):  # pragma: no-cover
     def __init__(self, controller: IMppController):
         if controller is None:
             raise ValueError("controller")
-
-        self._layout = QVBoxLayout()
+        
         self._controller = controller
 
-    def get_layout(self) -> QLayout:
-        return self._layout
-
     def setup_ui(self):
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+
         btn_gaussian_blur = QPushButton("Gaussian kernel size = 3.0")
         btn_gaussian_blur.clicked.connect(self._btn_gaussian_blur_clicked)
 
@@ -29,9 +28,9 @@ class MppView(View):  # pragma: no-cover
         btn_next = QPushButton("Next")
         btn_next.clicked.connect(self._btn_next_clicked)
 
-        self._layout.addWidget(lbl_description)
-        self._layout.addWidget(btn_gaussian_blur)
-        self._layout.addWidget(btn_next)
+        layout.addWidget(lbl_description)
+        layout.addWidget(btn_gaussian_blur)
+        layout.addWidget(btn_next)        
 
     # Event handlers
     def _btn_gaussian_blur_clicked(self, checked: bool):

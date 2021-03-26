@@ -18,13 +18,13 @@ class WorkflowSelectView(View):
     def __init__(self, controller: IWorkflowSelectController):
         if controller is None:
             raise ValueError("controller")
-        self._layout = QVBoxLayout()
         self._controller = controller
 
-    def get_layout(self):
-        return self._layout
 
     def setup_ui(self):
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+                
         self.lbl_title = QLabel("Segmentation workflow selection")
         self.lbl_select = QLabel("Select a channel")
 
@@ -39,12 +39,12 @@ class WorkflowSelectView(View):
         self.btn_next = QPushButton("Next")
         self.btn_next.clicked.connect(self._btn_next_clicked)
 
-        self._layout.addWidget(self.lbl_title)
-        self._layout.addWidget(self.lbl_select)
-        self._layout.addWidget(self.combo_channels)
-        self._layout.addWidget(self.combo_workflows)
-        self._layout.addWidget(self.btn_back)
-        self._layout.addWidget(self.btn_next)
+        layout.addWidget(self.lbl_title)
+        layout.addWidget(self.lbl_select)
+        layout.addWidget(self.combo_channels)
+        layout.addWidget(self.combo_workflows)
+        layout.addWidget(self.btn_back)
+        layout.addWidget(self.btn_next)
 
     def load_model(self, model: SegmenterModel):
         self.combo_channels.addItems(model.channel_list)
