@@ -52,5 +52,10 @@ STYLESHEET = (
     QPushButton:disabled { 
         background-color: #333941;
     }
+
+    CollapsiblePanel .QFrame {
+        background-color: #414852;
+        border-radius: 3px;
+    }
     """
 )

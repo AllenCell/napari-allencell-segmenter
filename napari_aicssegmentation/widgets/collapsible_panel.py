@@ -9,6 +9,8 @@ from qtpy.QtWidgets import (
     QWidget
 )
 
+from napari_aicssegmentation._style_constants import PAGE_CONTENT_WIDTH
+
 DIR = Path.cwd() / "napari_aicssegmentation"
 
 
@@ -23,7 +25,9 @@ class CollapsiblePanel(QWidget):
         self.title = title
 
         self.layout = QVBoxLayout()
+        self.layout.setContentsMargins(0, 11, 0, 11)
         self.setLayout(self.layout)
+        self.setFixedWidth(PAGE_CONTENT_WIDTH)
         self.setObjectName(f"collapsiblePanel{step}")
 
         self.set_title_box_layout()
