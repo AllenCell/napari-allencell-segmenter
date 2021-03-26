@@ -14,6 +14,7 @@ from qtpy.QtWidgets import (
     QWidget
 )
 
+from napari_aicssegmentation.widgets.collapsible_panel import CollapsiblePanel
 from napari_aicssegmentation._custom_widgets import warning_message, form_layout
 from napari_aicssegmentation._style_constants import (
     PAGE_WIDTH, 
@@ -95,6 +96,8 @@ class AllenCellStructureSegmenter(QWidget):
             self.page.layout().addWidget(widget)
 
         self.set_step_3_layout()
+        self.add_demo_widgets()
+
         self.page.layout().addStretch()
 
     """
@@ -166,6 +169,9 @@ class AllenCellStructureSegmenter(QWidget):
             if enabled is False:
                 button.setDisabled(True)
             self.page.layout().addWidget(button, alignment=Qt.AlignCenter)
+    
+    def add_demo_widgets(self):
+        self.page.layout().addWidget(CollapsiblePanel(1, "Intensity normalization"))
 
 
 @napari_hook_implementation
