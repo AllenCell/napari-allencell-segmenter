@@ -1,7 +1,6 @@
 from napari_aicssegmentation.util.debug_utils import debug_class
 from napari_aicssegmentation.core.view import View
 from qtpy.QtWidgets import QLayout
-from PyQt5 import sip
 
 @debug_class
 class ViewManager:
@@ -10,16 +9,6 @@ class ViewManager:
             raise ValueError("base_layout")
         self._base_layout = base_layout
         self._current_view: View = None
-
-    # def _delete_items_from_layout(self, layout: QLayout):
-    #     if layout is not None:
-    #         while layout.count():
-    #             item = layout.takeAt(0)
-    #             widget = item.widget()
-    #             if widget is not None:
-    #                 widget.setParent(None)
-    #             else:
-    #                 self._delete_items_from_layout(item.layout())
 
     @property
     def current_view(self) -> View:
@@ -38,12 +27,21 @@ class ViewManager:
         if self._current_view is not None:
             self._unload_view()
 
-        self._base_layout.addWidget(view)
-        view.setup_ui()
-        self._current_view = view
+        # TODO refactor (loop)
+        if view.has_template():
+            tpl = view.template                        
+            tpl.setup_ui()
+            tpl.get_container().layout().addWidget(view)
+            view.setup_ui()
+            self._base_layout.addWidget(tpl)
+            self._current_view = tpl
+        else:
+            self._base_layout.addWidget(view)
+            view.setup_ui()
+            self._current_view = view
 
     def _unload_view(self):
         if self._current_view is not None:            
             self._current_view.setParent(None)
             self._current_view.deleteLater()                      
-            self._currentView = None
+            self._current_view = None

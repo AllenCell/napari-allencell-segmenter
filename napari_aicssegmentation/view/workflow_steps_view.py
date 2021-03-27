@@ -1,17 +1,17 @@
+from qtpy.QtWidgets import QLabel, QPushButton, QVBoxLayout
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
 from napari_aicssegmentation.util.debug_utils import debug_class
-from qtpy.QtWidgets import QLabel, QPushButton, QVBoxLayout
 from napari_aicssegmentation.controller._interfaces import IWorkflowStepsController
 from napari_aicssegmentation.core.view import View
-
+from ._main_template import MainTemplate
 
 @debug_class
 class WorkflowStepsView(View):  # pragma: no-cover
     _lbl_selected_workflow: QLabel
 
     def __init__(self, controller: IWorkflowStepsController):
-        super().__init__()
-        
+        super().__init__(template_class=MainTemplate)
+                
         if controller is None:
             raise ValueError("controller")
         self._controller = controller

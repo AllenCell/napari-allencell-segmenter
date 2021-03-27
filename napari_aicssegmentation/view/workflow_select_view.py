@@ -1,9 +1,9 @@
+from qtpy.QtWidgets import QComboBox, QLabel, QPushButton, QVBoxLayout
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
 from napari_aicssegmentation.util.debug_utils import debug_class
-from qtpy.QtWidgets import QComboBox, QLabel, QPushButton, QVBoxLayout
 from napari_aicssegmentation.controller._interfaces import IWorkflowSelectController
 from napari_aicssegmentation.core.view import View
-
+from ._main_template import MainTemplate
 
 @debug_class
 class WorkflowSelectView(View):
@@ -16,8 +16,8 @@ class WorkflowSelectView(View):
     btn_next: QPushButton
 
     def __init__(self, controller: IWorkflowSelectController):
-        super().__init__()
-        
+        super().__init__(template_class=MainTemplate)
+                
         if controller is None:
             raise ValueError("controller")
         self._controller = controller

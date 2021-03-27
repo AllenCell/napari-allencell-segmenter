@@ -1,16 +1,17 @@
+from qtpy.QtWidgets import QPushButton, QLabel, QVBoxLayout
 from napari_aicssegmentation.core.view import View
 from napari_aicssegmentation.controller._interfaces import IMppController
 from napari_aicssegmentation.util.debug_utils import debug_class
-from qtpy.QtWidgets import QLayout, QPushButton, QLabel, QVBoxLayout
+from ._main_template import MainTemplate
 
 
 @debug_class
 class MppView(View):  # pragma: no-cover
     def __init__(self, controller: IMppController):    
-        super().__init__()
+        super().__init__(template_class=MainTemplate)
+
         if controller is None:
-            raise ValueError("controller")
-        
+            raise ValueError("controller")        
         self._controller = controller        
 
     def setup_ui(self):
@@ -21,8 +22,7 @@ class MppView(View):  # pragma: no-cover
         btn_gaussian_blur.clicked.connect(self._btn_gaussian_blur_clicked)
 
         lbl_description = QLabel(
-            "Click button to smooth the current viewport image, higher numbers blur more. \
-             Result is displayed as a new channel."
+            "Click button to smooth the current viewport image, higher numbers blur more. Result is displayed as a new channel."
         )
         lbl_description.setWordWrap(True)
 
