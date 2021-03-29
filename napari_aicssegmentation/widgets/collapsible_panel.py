@@ -36,8 +36,9 @@ class CollapsiblePanel(QWidget):
 
         self.layout = QVBoxLayout()
         self.layout.setContentsMargins(0, 11, 0, 11)
-        self.layout.setSpacing(0)
+        self.layout.setSpacing(0)   # No space between title_box and content_box
         self.setLayout(self.layout)
+        # This will probably come in handy when we're trying to manage multiple CollapsiblePanel objects
         self.setObjectName(f"collapsiblePanel{step}")
 
         self.title_box = self.create_title_box()
