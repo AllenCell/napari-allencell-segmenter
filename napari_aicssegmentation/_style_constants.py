@@ -63,6 +63,11 @@ STYLESHEET = (
 
     CollapsiblePanel QFrame#titleBoxClosed {
         background-color: #414852;
+        border-width: 0px;
+    }
+
+    CollapsiblePanel QFrame#titleBoxClosed:hover {
+        background-color: #5a626e;
     }
 
     CollapsiblePanel QFrame:disabled {
