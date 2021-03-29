@@ -45,7 +45,7 @@ STYLESHEET = (
         color: #44494c;
     }
 
-    QLabel#btnInstructionsDisabled, QLabel#step3InstructionsDisabled {
+    QLabel#step3InstructionsDisabled {
         color: #44494c;
     }
 
