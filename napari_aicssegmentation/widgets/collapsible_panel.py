@@ -19,11 +19,13 @@ DIR = Path.cwd() / "napari_aicssegmentation"
 
 
 class CollapsiblePanel(QWidget):
-    def __init__(self, step, title, children, open=True, enabled=True):
+    def __init__(self, step, title, children, isOpen=True, isEnabled=True):
         super().__init__()
         self.step = step
         self.title = title
         self.children = children
+        self.isOpen = isOpen
+        self.isEnabled = isEnabled
 
         self.layout = QVBoxLayout()
         self.layout.setContentsMargins(0, 11, 0, 11)
@@ -41,6 +43,10 @@ class CollapsiblePanel(QWidget):
         title_box_layout.setContentsMargins(9, 9, 9, 9)
         title_box.setLayout(title_box_layout)
         title_box.setFixedHeight(40)
+        if self.isEnabled is False:
+            self.isOpen = False
+            title_box.setDisabled(True)
+            title_box.setObjectName("collapsiblePanelDisabled")
 
         # Need HTML due to this bug: https://bugreports.qt.io/browse/QTBUG-90853
         title = QLabel(f'<span>{self.step}.&nbsp;{self.title}</span>')
@@ -63,3 +69,6 @@ class CollapsiblePanel(QWidget):
             content_box_layout.addWidget(child_widget)
         
         self.layout.addWidget(content_box)
+
+        if self.isOpen is False:
+            content_box.hide()
