@@ -1,3 +1,5 @@
+# TODO: Most if not all of these functions should be converted to classes and moved to "widgets/"
+
 from pathlib import Path
 
 from qtpy.QtCore import Qt

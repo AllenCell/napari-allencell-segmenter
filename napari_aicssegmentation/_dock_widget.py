@@ -15,7 +15,7 @@ from qtpy.QtWidgets import (
 )
 
 from napari_aicssegmentation.widgets.collapsible_panel import CollapsiblePanel
-from napari_aicssegmentation._custom_widgets import warning_message, form_layout
+from napari_aicssegmentation._helper_functions import warning_message, form_layout
 from napari_aicssegmentation._style_constants import (
     PAGE_WIDTH, 
     PAGE_CONTENT_WIDTH, 
