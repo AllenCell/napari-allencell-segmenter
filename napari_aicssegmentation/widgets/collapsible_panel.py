@@ -13,6 +13,15 @@ DIR = Path.cwd() / "napari_aicssegmentation"
 
 
 """
+A collapsible panel with a title box that can be clicked to toggle open/closed.
+
+Params:
+    step:       Number representing the workflow step. This will be displayed as part of the
+                    title and be used as a part of the object name for identification.
+    title:      String
+    children:   List of QWidget objects to be added as panel contents
+    isOpen:     Boolean, whether the panel is open or collapsed
+    isEnabled:  Boolean, overwrites the built-in property QWidget.enabled property
 """
 
 
@@ -23,7 +32,7 @@ class CollapsiblePanel(QWidget):
         self.title = title
         self.children = children
         self.isOpen = isOpen
-        self.isEnabled = isEnabled
+        self.setEnabled(isEnabled)
 
         self.layout = QVBoxLayout()
         self.layout.setContentsMargins(0, 11, 0, 11)
@@ -75,7 +84,7 @@ class CollapsiblePanel(QWidget):
         return content_box
     
     def mousePressEvent(self, event):
-        if self.isEnabled and self.title_box.underMouse():
+        if self.title_box.underMouse():
             if self.isOpen:
                 self.isOpen = False
                 self.content_box.hide()
