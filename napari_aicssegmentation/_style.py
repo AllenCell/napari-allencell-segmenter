@@ -1,59 +1,29 @@
-""" Dimensions """
+import napari_aicssegmentation
+from pathlib import Path
+
 PAGE_WIDTH = 440
 PAGE_CONTENT_WIDTH = PAGE_WIDTH - 40
 WORKFLOW_BUTTON_HEIGHT = 200
 
+class Style:
+    STYLES_DIR = Path(napari_aicssegmentation.__file__).parent / "style"
+    cache = dict()
 
-"""
-Global stylesheet
+    @classmethod
+    def get_stylesheet(cls, name: str) -> str:
+        if name is None:
+            raise ValueError("Stylesheet name can't be None")
+        if not name.endswith(".qss"):
+            raise ValueError("Stylesheet must be a qss file (.qss)")
 
-Qt stylesheet reference: https://doc.qt.io/qtforpython-5/overviews/stylesheet-syntax.html
-Examples: https://doc.qt.io/qt-5/stylesheet-examples.html#customizing-specific-widgets
-"""
-STYLESHEET = (
-    """
-    QComboBox:disabled { 
-        background-color: #333941;
-        color: #7C848A;
-    }
+        if name not in cls.cache:
+            cls.cache[name] = cls._load_from_file(name)
 
-    QFrame#page {
-        width: 400px;
-        max-width: 400px;
-        min-width: 400px;
-        margin-right: 20px;
-    }
+        return cls.cache[name]                
 
-    QLabel {
-        font-size: 14px;
-    }
-
-    QLabel#header {
-        font-size: 12px;
-        margin-bottom: 0.5em;
-    }
-
-    QLabel#workflowSelectionTitle {
-        font-weight: bold;
-    }
-
-    #columnLabels QLabel {
-        font-size: 12px;
-        font-weight: bold;
-    }
-
-    #columnLabelsDisabled QLabel {
-        font-size: 12px;
-        font-weight: bold;
-        color: #44494c;
-    }
-
-    QLabel#btnInstructionsDisabled, QLabel#step3InstructionsDisabled {
-        color: #44494c;
-    }
-
-    QPushButton:disabled { 
-        background-color: #333941;
-    }
-    """
-)
+    @classmethod
+    def _load_from_file(cls, name: str) -> str:
+        path = cls.STYLES_DIR / name
+        with open(path, "r") as handle:
+            return handle.read()
+    

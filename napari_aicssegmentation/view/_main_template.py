@@ -1,11 +1,7 @@
 from napari_aicssegmentation.core.view import ViewTemplate
 from PyQt5.QtWidgets import QFrame, QVBoxLayout, QScrollArea, QLabel
 from PyQt5 import QtCore
-
-from napari_aicssegmentation._style import (
-    PAGE_WIDTH,     
-    STYLESHEET
-)
+from napari_aicssegmentation._style import Style
 
 class MainTemplate(ViewTemplate):
     def __init__(self):
@@ -18,7 +14,7 @@ class MainTemplate(ViewTemplate):
     def setup_ui(self):
         layout = QVBoxLayout()
         self.setLayout(layout)
-        self.setStyleSheet(STYLESHEET)
+        self.setStyleSheet(Style.get_stylesheet("main.qss"))
         
         # Page        
         page = QFrame()
