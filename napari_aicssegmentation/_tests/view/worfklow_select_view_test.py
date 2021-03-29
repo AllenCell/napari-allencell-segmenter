@@ -1,24 +1,15 @@
-import pytest
-
 from unittest.mock import MagicMock, create_autospec
 from napari_aicssegmentation.view.workflow_select_view import (
     WorkflowSelectView,
     IWorkflowSelectController,
     SegmenterModel,
 )
-from PyQt5.QtWidgets import QLayout
 
 
 class TestWorkflowSelectView:
     def setup_method(self):
         self._mock_controller: MagicMock = create_autospec(IWorkflowSelectController)
         self._view = WorkflowSelectView(self._mock_controller)
-
-    @pytest.fixture(autouse=True)
-    def setup_qt(self, qapp):
-        # the pytestqt.qapp fixture sets up the QApplication required to run QT code
-        # see https://pytest-qt.readthedocs.io/en/latest/reference.html
-        yield
 
     def test_setup_ui(self):
         # Act
@@ -31,11 +22,6 @@ class TestWorkflowSelectView:
         assert self._view.lbl_title is not None
         assert self._view.btn_back is not None
         assert self._view.btn_next is not None
-
-    def test_get_layout(self):
-        layout = self._view.get_layout()
-        assert layout is not None
-        assert isinstance(layout, QLayout)
 
     def test_load_model(self):
         # Arrange

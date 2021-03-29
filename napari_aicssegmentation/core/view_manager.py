@@ -27,18 +27,20 @@ class ViewManager:
         if self._current_view is not None:
             self._unload_view()
 
-        # TODO refactor (loop)
-        if view.has_template():
-            tpl = view.template                        
+        _view = view
+        _view.setup_ui()
+        i = 0
+        while _view.has_template():
+            if i > 10: # protect against infinite loops just in case
+                raise OverflowError("Detected more than 10 nested templates")
+            tpl = _view.template                        
             tpl.setup_ui()
-            tpl.get_container().layout().addWidget(view)
-            view.setup_ui()
-            self._base_layout.addWidget(tpl)
-            self._current_view = tpl
-        else:
-            self._base_layout.addWidget(view)
-            view.setup_ui()
-            self._current_view = view
+            tpl.get_container().layout().addWidget(_view)            
+            _view = tpl
+            i+=1
+            
+        self._base_layout.addWidget(_view)
+        self._current_view = _view
 
     def _unload_view(self):
         if self._current_view is not None:            

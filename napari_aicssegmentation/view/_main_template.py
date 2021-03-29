@@ -18,8 +18,7 @@ class MainTemplate(ViewTemplate):
         
         # Page        
         page = QFrame()
-        page.setObjectName("page")
-        #page.setFixedWidth(PAGE_WIDTH)        
+        page.setObjectName("page")             
         page.setLayout(QVBoxLayout())
         layout.addWidget(page)
 
