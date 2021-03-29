@@ -34,10 +34,11 @@ class CollapsiblePanel(QWidget):
         self.setFixedWidth(PAGE_CONTENT_WIDTH)
         self.setObjectName(f"collapsiblePanel{step}")
 
-        self.set_title_box_layout()
+        self.title_box = self.create_title_box()
+        self.layout.addWidget(self.title_box)
         self.set_content_box_layout()
 
-    def set_title_box_layout(self):
+    def create_title_box(self):
         title_box = QFrame()
         title_box_layout = QHBoxLayout()
         title_box_layout.setContentsMargins(9, 9, 9, 9)
@@ -57,7 +58,7 @@ class CollapsiblePanel(QWidget):
         title_box_layout.addStretch()
         title_box_layout.addWidget(icon)
 
-        self.layout.addWidget(title_box)
+        return title_box
 
     def set_content_box_layout(self):
         content_box = QFrame()
@@ -73,3 +74,8 @@ class CollapsiblePanel(QWidget):
 
         if self.isOpen is False:
             content_box.hide()
+    
+
+    def mousePressEvent(self, event):
+        if self.title_box.underMouse() is True and self.isEnabled is True:
+            print("mouse clicked")
