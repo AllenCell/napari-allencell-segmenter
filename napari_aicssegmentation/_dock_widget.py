@@ -171,7 +171,9 @@ class AllenCellStructureSegmenter(QWidget):
             self.page.layout().addWidget(button, alignment=Qt.AlignCenter)
     
     def add_demo_widgets(self):
-        self.page.layout().addWidget(CollapsiblePanel(1, "Intensity normalization"))
+        self.page.layout().addWidget(
+            CollapsiblePanel(1, "Intensity normalization", [QLabel("Test")])
+        )
 
 
 @napari_hook_implementation

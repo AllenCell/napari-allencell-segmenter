@@ -54,8 +54,16 @@ STYLESHEET = (
     }
 
     CollapsiblePanel .QFrame {
+        background-color: #5a626d;
+        border-radius: 2px;
+        border-color: #7c8086;
+        border-width: 0.5px;
+        border-style: solid;
+    }
+
+    CollapsiblePanel .QFrame#contentBox {
         background-color: #414852;
-        border-radius: 3px;
+        border-top: 0px;
     }
     """
 )

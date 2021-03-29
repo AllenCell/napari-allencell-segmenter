@@ -19,23 +19,28 @@ DIR = Path.cwd() / "napari_aicssegmentation"
 
 
 class CollapsiblePanel(QWidget):
-    def __init__(self, step, title, open=True, enabled=True):
+    def __init__(self, step, title, children, open=True, enabled=True):
         super().__init__()
         self.step = step
         self.title = title
+        self.children = children
 
         self.layout = QVBoxLayout()
         self.layout.setContentsMargins(0, 11, 0, 11)
+        self.layout.setSpacing(0)
         self.setLayout(self.layout)
         self.setFixedWidth(PAGE_CONTENT_WIDTH)
         self.setObjectName(f"collapsiblePanel{step}")
 
         self.set_title_box_layout()
+        self.set_content_box_layout()
 
     def set_title_box_layout(self):
         title_box = QFrame()
         title_box_layout = QHBoxLayout()
+        title_box_layout.setContentsMargins(9, 9, 9, 9)
         title_box.setLayout(title_box_layout)
+        title_box.setFixedHeight(40)
 
         # Need HTML due to this bug: https://bugreports.qt.io/browse/QTBUG-90853
         title = QLabel(f'<span>{self.step}.&nbsp;{self.title}</span>')
@@ -46,3 +51,15 @@ class CollapsiblePanel(QWidget):
         title_box_layout.addWidget(icon)
 
         self.layout.addWidget(title_box)
+
+    def set_content_box_layout(self):
+        content_box = QFrame()
+        content_box_layout = QVBoxLayout()
+        content_box_layout.setContentsMargins(9, 9, 9, 9)
+        content_box.setLayout(content_box_layout)
+        content_box.setObjectName("contentBox")
+
+        for child_widget in self.children:
+            content_box_layout.addWidget(child_widget)
+        
+        self.layout.addWidget(content_box)
