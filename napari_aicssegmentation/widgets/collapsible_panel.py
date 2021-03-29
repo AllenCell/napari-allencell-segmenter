@@ -36,7 +36,9 @@ class CollapsiblePanel(QWidget):
 
         self.title_box = self.create_title_box()
         self.layout.addWidget(self.title_box)
-        self.set_content_box_layout()
+        
+        self.content_box = self.create_content_box()
+        self.layout.addWidget(self.content_box)
 
     def create_title_box(self):
         title_box = QFrame()
@@ -44,6 +46,7 @@ class CollapsiblePanel(QWidget):
         title_box_layout.setContentsMargins(9, 9, 9, 9)
         title_box.setLayout(title_box_layout)
         title_box.setFixedHeight(40)
+
         if self.isEnabled is False:
             self.isOpen = False
             title_box.setDisabled(True)
@@ -60,7 +63,7 @@ class CollapsiblePanel(QWidget):
 
         return title_box
 
-    def set_content_box_layout(self):
+    def create_content_box(self):
         content_box = QFrame()
         content_box_layout = QVBoxLayout()
         content_box_layout.setContentsMargins(9, 9, 9, 9)
@@ -70,12 +73,18 @@ class CollapsiblePanel(QWidget):
         for child_widget in self.children:
             content_box_layout.addWidget(child_widget)
         
-        self.layout.addWidget(content_box)
-
         if self.isOpen is False:
             content_box.hide()
+        return content_box
     
-
     def mousePressEvent(self, event):
-        if self.title_box.underMouse() is True and self.isEnabled is True:
-            print("mouse clicked")
+        if self.isEnabled and self.title_box.underMouse():
+            if self.isOpen:
+                self.isOpen = False
+                self.content_box.hide()
+                self.title_box.setObjectName("titleBoxClosed")
+            else:
+                self.isOpen = True
+                self.content_box.show()
+                self.title_box.setObjectName("")
+            self.title_box.setStyle(self.title_box.style())
