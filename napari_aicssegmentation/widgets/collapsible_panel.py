@@ -31,13 +31,12 @@ class CollapsiblePanel(QWidget):
         self.layout.setContentsMargins(0, 11, 0, 11)
         self.layout.setSpacing(0)
         self.setLayout(self.layout)
-        self.setFixedWidth(PAGE_CONTENT_WIDTH)
         self.setObjectName(f"collapsiblePanel{step}")
 
         self.title_box = self.create_title_box()
-        self.layout.addWidget(self.title_box)
-        
         self.content_box = self.create_content_box()
+
+        self.layout.addWidget(self.title_box)
         self.layout.addWidget(self.content_box)
 
     def create_title_box(self):
