@@ -46,7 +46,8 @@ class CollapsiblePanel(QWidget):
         if self.isEnabled is False:
             self.isOpen = False
             title_box.setDisabled(True)
-            title_box.setObjectName("collapsiblePanelDisabled")
+        elif self.isOpen is False:
+            title_box.setObjectName("titleBoxClosed")
 
         # Need HTML due to this bug: https://bugreports.qt.io/browse/QTBUG-90853
         title = QLabel(f'<span>{self.step}.&nbsp;{self.title}</span>')

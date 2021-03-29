@@ -61,6 +61,10 @@ STYLESHEET = (
         border-style: solid;
     }
 
+    CollapsiblePanel QFrame#titleBoxClosed {
+        background-color: #414852;
+    }
+
     CollapsiblePanel QFrame:disabled {
         background-color: #333942;
         border-radius: 2px;
@@ -69,7 +73,7 @@ STYLESHEET = (
     }
 
     CollapsiblePanel .QFrame#contentBox {
-        background-color: #414852;
+        background-color: #30353d;
         border-top: 0px;
     }
     """
