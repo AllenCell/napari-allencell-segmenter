@@ -55,7 +55,7 @@ class CollapsiblePanel(QWidget):
 
         if self.isEnabled is False:
             self.isOpen = False
-            title_box.setDisabled(True)
+            title_box.setEnabled(False)
         elif self.isOpen is False:
             title_box.setObjectName("titleBoxClosed")
 
