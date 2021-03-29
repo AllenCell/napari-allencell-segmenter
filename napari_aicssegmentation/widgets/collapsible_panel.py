@@ -9,8 +9,6 @@ from qtpy.QtWidgets import (
     QWidget
 )
 
-from napari_aicssegmentation._style_constants import PAGE_CONTENT_WIDTH
-
 DIR = Path.cwd() / "napari_aicssegmentation"
 
 
