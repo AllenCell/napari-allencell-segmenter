@@ -13,20 +13,20 @@ DIR = Path.cwd() / "napari_aicssegmentation"
 
 
 """
-A collapsible panel with a title box that can be clicked to toggle the visibility of the
-content box.
+A collapsible box widget containing a title box and a content box. The title box can be clicked
+to toggle the visibility of the content box.
 
 Params:
     step:       Number representing the workflow step. This will be displayed as part of the
                     title and be used as a part of the object name for identification.
     title:      String
-    content:    QLayout to be nested inside the content panel
-    isOpen:     Boolean, whether the panel is open or collapsed
+    content:    QLayout to be nested inside the content box
+    isOpen:     Boolean, whether the widget is open or collapsed
     isEnabled:  Boolean, overwrites the built-in property QWidget.enabled property
 """
 
 
-class CollapsiblePanel(QWidget):
+class CollapsibleBox(QWidget):
     def __init__(self, step, title, content, isOpen=True, isEnabled=True):
         super().__init__()
         self.step = step
@@ -39,8 +39,8 @@ class CollapsiblePanel(QWidget):
         self.layout.setContentsMargins(0, 11, 0, 11)
         self.layout.setSpacing(0)   # No space between title_box and content_box
         self.setLayout(self.layout)
-        # This will probably come in handy when we're trying to manage multiple CollapsiblePanel objects
-        self.setObjectName(f"collapsiblePanel{step}")
+        # This will probably come in handy when we're trying to manage multiple CollapsibleBox objects
+        self.setObjectName(f"collapsibleBox{step}")
 
         self.title_box = self.create_title_box()
         self.content_box = self.create_content_box()

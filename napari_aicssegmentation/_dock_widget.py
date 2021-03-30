@@ -14,7 +14,7 @@ from qtpy.QtWidgets import (
     QWidget
 )
 
-from napari_aicssegmentation.widgets.collapsible_panel import CollapsiblePanel
+from napari_aicssegmentation.widgets.collapsible_box import CollapsibleBox
 from napari_aicssegmentation._helper_functions import warning_message, form_layout
 from napari_aicssegmentation._style_constants import (
     PAGE_WIDTH, 
@@ -175,19 +175,19 @@ class AllenCellStructureSegmenter(QWidget):
         layout_1.addWidget(QLabel("This is a label"))
         layout_1.addWidget(QPushButton("This is a button"))
         self.page.layout().addWidget(
-            CollapsiblePanel(1, "Intensity normalization", layout_1, isOpen=False)
+            CollapsibleBox(1, "Intensity normalization", layout_1, isOpen=False)
         )
 
         layout_2 = QVBoxLayout()
         layout_2.addWidget(QLabel("This is a label"))
         layout_2.addWidget(QPushButton("This is a button"))
-        self.page.layout().addWidget(CollapsiblePanel(2, "Smoothing", layout_2))
+        self.page.layout().addWidget(CollapsibleBox(2, "Smoothing", layout_2))
 
         layout_3 = QVBoxLayout()
         layout_3.addWidget(QLabel("This is a label"))
         layout_3.addWidget(QPushButton("This is a button"))
         self.page.layout().addWidget(
-            CollapsiblePanel(
+            CollapsibleBox(
                 3, "2D filament filter", layout_3, isOpen=False, isEnabled=False
             )
         )

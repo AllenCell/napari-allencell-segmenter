@@ -53,7 +53,7 @@ STYLESHEET = (
         background-color: #333941;
     }
 
-    CollapsiblePanel .QFrame {
+    CollapsibleBox .QFrame {
         background-color: #5a626d;
         border-radius: 2px;
         border-color: #6d7075;
@@ -61,24 +61,24 @@ STYLESHEET = (
         border-style: solid;
     }
 
-    CollapsiblePanel QFrame:enabled#titleBoxClosed {
+    CollapsibleBox QFrame:enabled#titleBoxClosed {
         background-color: #414852;
         border-color: #414852;
     }
 
-    CollapsiblePanel QFrame#titleBoxClosed:hover {
+    CollapsibleBox QFrame#titleBoxClosed:hover {
         background-color: #5a626e;
         border-color: #5a626e;
     }
 
-    CollapsiblePanel QFrame:disabled {
+    CollapsibleBox QFrame:disabled {
         background-color: #333942;
         border-radius: 2px;
         border-color: #333942;
         color: #7C848A;
     }
 
-    CollapsiblePanel .QFrame#contentBox {
+    CollapsibleBox .QFrame#contentBox {
         background-color: #30353d;
         border-top: 0px;
     }
