@@ -42,13 +42,13 @@ class CollapsibleBox(QWidget):
         # This will probably come in handy when we're trying to manage multiple CollapsibleBox objects
         self.setObjectName(f"collapsibleBox{step}")
 
-        self.title_box = self.create_title_box()
-        self.content_box = self.create_content_box()
+        self.title_box = self._create_title_box()
+        self.content_box = self._create_content_box()
 
         self.layout.addWidget(self.title_box)
         self.layout.addWidget(self.content_box)
 
-    def create_title_box(self):
+    def _create_title_box(self):
         title_box = QFrame()
         title_box_layout = QHBoxLayout()
         title_box_layout.setContentsMargins(9, 9, 9, 9)
@@ -71,7 +71,7 @@ class CollapsibleBox(QWidget):
 
         return title_box
 
-    def create_content_box(self):
+    def _create_content_box(self):
         content_box = QFrame()
         content_box_layout = QVBoxLayout()
         content_box_layout.setContentsMargins(9, 9, 9, 9)
@@ -83,16 +83,27 @@ class CollapsibleBox(QWidget):
             content_box.hide()
         return content_box
     
+    def open(self):
+        if self.isOpen is False:
+            self.isOpen = True
+            self.content_box.show()
+            self.title_box.setObjectName("")
+            self.title_box.setStyle(self.title_box.style())
+
+    def close(self):
+        if self.isOpen:
+            self.isOpen = False
+            self.content_box.hide()
+            self.title_box.setObjectName("titleBoxClosed")
+            self.title_box.setStyle(self.title_box.style())
+
+    def toggle(self):
+        if self.isOpen:
+            self.close()
+        else:
+            self.open()
+    
     # Overwrite default QWidget.mousePressEvent() method
     def mousePressEvent(self, event):
         if self.title_box.underMouse():
-            if self.isOpen:
-                self.isOpen = False
-                self.content_box.hide()
-                self.title_box.setObjectName("titleBoxClosed")
-            else:
-                self.isOpen = True
-                self.content_box.show()
-                self.title_box.setObjectName("")
-            # Need to reload stylesheet to update the styling
-            self.title_box.setStyle(self.title_box.style())
+            self.toggle()
