@@ -83,6 +83,7 @@ class CollapsibleBox(QWidget):
             content_box.hide()
         return content_box
     
+    # Overwrite default QWidget.mousePressEvent() method
     def mousePressEvent(self, event):
         if self.title_box.underMouse():
             if self.isOpen:
