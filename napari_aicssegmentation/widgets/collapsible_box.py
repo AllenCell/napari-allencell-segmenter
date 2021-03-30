@@ -17,8 +17,6 @@ A collapsible box widget containing a title box and a content box. The title box
 to toggle the visibility of the content box.
 
 Params:
-    step:       Number representing the workflow step. This will be displayed as part of the
-                    title and be used as a part of the object name for identification.
     title:      String
     content:    QLayout to be nested inside the content box
     isOpen:     Boolean, whether the widget is open or collapsed
@@ -26,9 +24,8 @@ Params:
 
 
 class CollapsibleBox(QWidget):
-    def __init__(self, step, title, content, isOpen=True):
+    def __init__(self, title, content, isOpen=True):
         super().__init__()
-        self.step = step
         self.title = title
         self.content = content
         self.isOpen = isOpen
@@ -37,8 +34,6 @@ class CollapsibleBox(QWidget):
         self.layout.setContentsMargins(0, 11, 0, 11)
         self.layout.setSpacing(0)   # No space between title_box and content_box
         self.setLayout(self.layout)
-        # This will probably come in handy when we're trying to manage multiple CollapsibleBox objects
-        self.setObjectName(f"collapsibleBox{step}")
 
         self.title_box = self._create_title_box()
         self.content_box = self._create_content_box()
@@ -55,8 +50,7 @@ class CollapsibleBox(QWidget):
         if self.isOpen is False:
             title_box.setObjectName("titleBoxClosed")
 
-        # Need HTML due to this bug: https://bugreports.qt.io/browse/QTBUG-90853
-        title = QLabel(f'<span>{self.step}.&nbsp;{self.title}</span>')
+        title = QLabel(self.title)
         icon = QLabel()
         icon.setPixmap(QPixmap(str(DIR / "assets/icons/gear.svg")))
         title_box_layout.addWidget(title)
