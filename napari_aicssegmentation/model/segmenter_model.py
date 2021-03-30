@@ -8,6 +8,8 @@ class SegmenterModel:
     Main Segmenter plugin model
     """
 
+    layer_list: List[str] = None
+    active_layer: int = None
     channel_list: List[str] = None
     active_channel: int = None
     workflows: List[str] = None

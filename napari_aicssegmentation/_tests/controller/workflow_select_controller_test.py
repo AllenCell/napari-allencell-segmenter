@@ -57,13 +57,6 @@ class TestWorkflowSelectController:
         # Assert
         assert self._controller.model.active_workflow == workflow
 
-    def test_navigate_back(self):
-        # Act
-        self._controller.navigate_back()
-
-        # Assert
-        self._mock_router.mpp.assert_called_once()
-
     def test_navigate_next(self):
         # Act
         self._controller.navigate_next()

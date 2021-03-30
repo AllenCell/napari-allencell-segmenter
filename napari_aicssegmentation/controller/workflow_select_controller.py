@@ -22,6 +22,7 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
 
     def index(self):
         self.load_view(self._view)
+        self.model.layer_list = [layer.name for layer in self.get_layers()]
         self.model.channel_list = ["brightfield", "405nm", "488nm"]  # TODO read channels from image
         self.model.workflows = ["SEC61B", "LMNB1", "ACTN1"]  # TODO load workflow objects from Segmenter workflow engine
         self._view.load_model(self.model)
@@ -31,9 +32,6 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
 
     def select_workflow(self, workflow: str):
         self.model.active_workflow = workflow
-
-    def navigate_back(self):
-        self.router.mpp()
 
     def navigate_next(self):
         self.router.workflow_steps()

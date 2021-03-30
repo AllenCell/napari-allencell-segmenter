@@ -7,6 +7,7 @@ class MainTemplate(ViewTemplate):
     def __init__(self):
         super().__init__()
         self._container = QFrame()
+        self._container.setObjectName("mainContainer")
 
     def get_container(self) -> QFrame:
         return self._container
@@ -20,11 +21,12 @@ class MainTemplate(ViewTemplate):
         page = QFrame()
         page.setObjectName("page")             
         page.setLayout(QVBoxLayout())
+        page.layout().setContentsMargins(0, 0, 0, 0)
         layout.addWidget(page)
 
         # Scroll
         scroll = QScrollArea()
-        scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn) #ScrollBarAsNeeded
         scroll.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         scroll.setWidgetResizable(True)
         scroll.setWidget(page)
@@ -45,5 +47,6 @@ class MainTemplate(ViewTemplate):
          
         # Container
         self._container.setLayout(QVBoxLayout())
+        self._container.layout().setContentsMargins(0, 0, 0, 0)
         page.layout().addWidget(self._container)
         page.layout().addStretch()

@@ -5,17 +5,31 @@ Qt stylesheet reference: https://doc.qt.io/qtforpython-5/overviews/stylesheet-sy
 Examples: https://doc.qt.io/qt-5/stylesheet-examples.html#customizing-specific-widgets
 */
 
+#mainContainer {    
+    margin: 0px;
+    padding: 0px;    
+}
+
+#page {
+    width: 400px;
+    max-width: 400px;
+    min-width: 400px;
+    /*margin-right: 20px;*/     
+    padding: 10px;
+}
+
+
+QFrame {
+    margin: 0px;
+    padding: 0px;
+}
+
 QComboBox:disabled { 
     background-color: #333941;
     color: #7C848A;
 }
 
-QFrame#page {
-    width: 400px;
-    max-width: 400px;
-    min-width: 400px;
-    margin-right: 20px;
-}
+
 
 QLabel {
     font-size: 14px;

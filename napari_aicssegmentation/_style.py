@@ -1,12 +1,7 @@
-import napari_aicssegmentation
 from pathlib import Path
+from napari_aicssegmentation.util.directories import Directories
 
-PAGE_WIDTH = 440
-PAGE_CONTENT_WIDTH = PAGE_WIDTH - 40
-WORKFLOW_BUTTON_HEIGHT = 200
-
-class Style:
-    STYLES_DIR = Path(napari_aicssegmentation.__file__).parent / "style"
+class Style:    
     cache = dict()
 
     @classmethod
@@ -19,11 +14,11 @@ class Style:
         if name not in cls.cache:
             cls.cache[name] = cls._load_from_file(name)
 
-        return cls.cache[name]                
-
+        return cls.cache[name]
+        
     @classmethod
     def _load_from_file(cls, name: str) -> str:
-        path = cls.STYLES_DIR / name
+        path = Directories.get_style_dir() / name
         with open(path, "r") as handle:
             return handle.read()
     
