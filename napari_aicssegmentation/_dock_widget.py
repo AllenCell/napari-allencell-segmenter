@@ -170,6 +170,10 @@ class AllenCellStructureSegmenter(QWidget):
                 button.setDisabled(True)
             self.page.layout().addWidget(button, alignment=Qt.AlignCenter)
     
+    """ 
+    Add CollapsibleBox widgets in 3 different initial states (enabled and closed, enabled
+    and open, and disabled) to the bottom of the window as examples
+    """
     def add_collapsible_boxes(self):
         layout_1 = QVBoxLayout()
         layout_1.addWidget(QLabel("This is a label"))
