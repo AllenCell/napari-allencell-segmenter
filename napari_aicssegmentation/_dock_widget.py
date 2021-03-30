@@ -190,11 +190,9 @@ class AllenCellStructureSegmenter(QWidget):
         layout_3 = QVBoxLayout()
         layout_3.addWidget(QLabel("This is a label"))
         layout_3.addWidget(QPushButton("This is a button"))
-        self.page.layout().addWidget(
-            CollapsibleBox(
-                3, "2D filament filter", layout_3, isOpen=False, isEnabled=False
-            )
-        )
+        box_3 = CollapsibleBox(3, "2D filament filter", layout_3, isOpen=False)
+        box_3.setDisabled(True)
+        self.page.layout().addWidget(box_3)
 
 
 @napari_hook_implementation

@@ -22,18 +22,16 @@ Params:
     title:      String
     content:    QLayout to be nested inside the content box
     isOpen:     Boolean, whether the widget is open or collapsed
-    isEnabled:  Boolean, overwrites the built-in property QWidget.enabled property
 """
 
 
 class CollapsibleBox(QWidget):
-    def __init__(self, step, title, content, isOpen=True, isEnabled=True):
+    def __init__(self, step, title, content, isOpen=True):
         super().__init__()
         self.step = step
         self.title = title
         self.content = content
         self.isOpen = isOpen
-        self.setEnabled(isEnabled)
 
         self.layout = QVBoxLayout()
         self.layout.setContentsMargins(0, 11, 0, 11)
@@ -54,11 +52,7 @@ class CollapsibleBox(QWidget):
         title_box_layout.setContentsMargins(9, 9, 9, 9)
         title_box.setLayout(title_box_layout)
         title_box.setFixedHeight(40)
-
-        if self.isEnabled is False:
-            self.isOpen = False
-            title_box.setEnabled(False)
-        elif self.isOpen is False:
+        if self.isOpen is False:
             title_box.setObjectName("titleBoxClosed")
 
         # Need HTML due to this bug: https://bugreports.qt.io/browse/QTBUG-90853
