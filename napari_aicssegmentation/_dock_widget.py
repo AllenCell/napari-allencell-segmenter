@@ -96,7 +96,7 @@ class AllenCellStructureSegmenter(QWidget):
             self.page.layout().addWidget(widget)
 
         self.set_step_3_layout()
-        self.add_demo_widgets()
+        self.add_collapsible_boxes()
 
         self.page.layout().addStretch()
 
@@ -170,7 +170,7 @@ class AllenCellStructureSegmenter(QWidget):
                 button.setDisabled(True)
             self.page.layout().addWidget(button, alignment=Qt.AlignCenter)
     
-    def add_demo_widgets(self):
+    def add_collapsible_boxes(self):
         layout_1 = QVBoxLayout()
         layout_1.addWidget(QLabel("This is a label"))
         layout_1.addWidget(QPushButton("This is a button"))
