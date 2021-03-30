@@ -171,17 +171,24 @@ class AllenCellStructureSegmenter(QWidget):
             self.page.layout().addWidget(button, alignment=Qt.AlignCenter)
     
     def add_demo_widgets(self):
+        layout_1 = QVBoxLayout()
+        layout_1.addWidget(QLabel("This is a label"))
+        layout_1.addWidget(QPushButton("This is a button"))
+        self.page.layout().addWidget(
+            CollapsiblePanel(1, "Intensity normalization", layout_1, isOpen=False)
+        )
+
+        layout_2 = QVBoxLayout()
+        layout_2.addWidget(QLabel("This is a label"))
+        layout_2.addWidget(QPushButton("This is a button"))
+        self.page.layout().addWidget(CollapsiblePanel(2, "Smoothing", layout_2))
+
+        layout_3 = QVBoxLayout()
+        layout_3.addWidget(QLabel("This is a label"))
+        layout_3.addWidget(QPushButton("This is a button"))
         self.page.layout().addWidget(
             CollapsiblePanel(
-                1, "Intensity normalization", [QLabel("This is a QLabel")], isOpen=False
-            )
-        )
-        self.page.layout().addWidget(
-            CollapsiblePanel(2, "Smoothing", [QLabel("This is a QLabel")])
-        )
-        self.page.layout().addWidget(
-            CollapsiblePanel(
-                3, "2D filament filter", [QLabel("This is a QLabel")], isOpen=False, isEnabled=False
+                3, "2D filament filter", layout_3, isOpen=False, isEnabled=False
             )
         )
 

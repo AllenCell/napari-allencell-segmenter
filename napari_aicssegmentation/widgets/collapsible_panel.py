@@ -13,24 +13,25 @@ DIR = Path.cwd() / "napari_aicssegmentation"
 
 
 """
-A collapsible panel with a title box that can be clicked to toggle open/closed.
+A collapsible panel with a title box that can be clicked to toggle the visibility of the
+content box.
 
 Params:
     step:       Number representing the workflow step. This will be displayed as part of the
                     title and be used as a part of the object name for identification.
     title:      String
-    children:   List of QWidget objects to be added as panel contents
+    content:    QLayout to be nested inside the content panel
     isOpen:     Boolean, whether the panel is open or collapsed
     isEnabled:  Boolean, overwrites the built-in property QWidget.enabled property
 """
 
 
 class CollapsiblePanel(QWidget):
-    def __init__(self, step, title, children, isOpen=True, isEnabled=True):
+    def __init__(self, step, title, content, isOpen=True, isEnabled=True):
         super().__init__()
         self.step = step
         self.title = title
-        self.children = children
+        self.content = content
         self.isOpen = isOpen
         self.setEnabled(isEnabled)
 
@@ -74,12 +75,10 @@ class CollapsiblePanel(QWidget):
         content_box = QFrame()
         content_box_layout = QVBoxLayout()
         content_box_layout.setContentsMargins(9, 9, 9, 9)
+        content_box_layout.addLayout(self.content)
         content_box.setLayout(content_box_layout)
         content_box.setObjectName("contentBox")
 
-        for child_widget in self.children:
-            content_box_layout.addWidget(child_widget)
-        
         if self.isOpen is False:
             content_box.hide()
         return content_box
@@ -94,4 +93,5 @@ class CollapsiblePanel(QWidget):
                 self.isOpen = True
                 self.content_box.show()
                 self.title_box.setObjectName("")
+            # Need to reload stylesheet to update the styling
             self.title_box.setStyle(self.title_box.style())
