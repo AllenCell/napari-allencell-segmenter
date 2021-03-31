@@ -1,3 +1,5 @@
+import napari
+
 from abc import ABC
 from napari_aicssegmentation.core.state import State
 from napari_aicssegmentation.core.view import View
@@ -28,6 +30,13 @@ class Controller(ABC):
         Get the application Router
         """
         return self._application.router
+
+    @property
+    def viewer(self) -> napari.Viewer:
+        """
+        Get the Napari viewer
+        """
+        return self._application.viewer
 
     def load_view(self, view: View):
         """

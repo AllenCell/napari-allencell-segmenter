@@ -17,9 +17,10 @@ class FormRow(NamedTuple):
     
 @debug_class
 class WorkflowSelectView(View):
-    # UI elements
+
     combo_layers: QComboBox
-    combo_channels: QComboBox        
+    combo_channels: QComboBox   
+    load_image_warning: WarningMessage     
 
     def __init__(self, controller: IWorkflowSelectController):
         super().__init__(template_class=MainTemplate)
@@ -39,29 +40,44 @@ class WorkflowSelectView(View):
         workflow_selection_title.setObjectName("workflowSelectionTitle")
 
         # Warning
-        load_image_warning = WarningMessage("Open a 3D image in Napari first!")        
+        self.load_image_warning = WarningMessage("Open a 3D image in Napari first!") 
+        self.load_image_warning.setVisible(False)       
 
         # Dropdowns                
         layers_dropdown = self._dropdown_row(1, "Select a 3D Napari image layer")
         self.combo_layers = layers_dropdown.widget    
+        self.combo_layers.setEnabled(False)        
+        self.combo_layers.currentIndexChanged.connect(self._combo_layers_index_changed)
+
         channels_dropdown = self._dropdown_row(2, "Select a 3D image data channel", True)
         self.combo_channels = channels_dropdown.widget
+        self.combo_channels.setEnabled(False)
         layer_channel_selections = self._form_layout([layers_dropdown, channels_dropdown])
 
         # Add all widgets
         widgets = [
             workflow_selection_title,
-            load_image_warning,
+            self.load_image_warning,
             layer_channel_selections,
         ]
         for widget in widgets:
             layout.addWidget(widget)
         self._add_step_3_layout(layout, enabled=False)
 
-    def load_model(self, model: SegmenterModel):
-        self.combo_layers.addItems(model.layer_list)
-        self.combo_channels.addItems(model.channel_list)
-
+    def load_model(self, model: SegmenterModel):        
+        if len(model.layer_list) == 0:
+            self.load_image_warning.setVisible(True)
+            self.combo_layers.setEnabled(False)
+        else:
+            self.combo_layers.addItems(model.layer_list)        
+            self.combo_layers.setEnabled(True)      
+            self.load_image_warning.setVisible(False)      
+            #self.combo_channels.addItems(model.channel_list)
+    
+    def _combo_layers_index_changed(self, index: int):
+        self._controller.select_layer(index) # TODO does index work here?
+        # TODO repopulate channel list (in next story)
+    
     def _dropdown_row(self, number: int, placeholder: str, enabled=True):
         """
         Given the contents of a dropdown and a number for the label, return a label and a QComboBox
@@ -70,9 +86,8 @@ class WorkflowSelectView(View):
         label = f"{number}."
 
         dropdown = QComboBox()
-        dropdown.addItem(placeholder)
-        #dropdown.setMinimumWidth(400) # TODO move to stylesheet
-        dropdown.setDisabled(not enabled)
+        dropdown.addItem(placeholder)        
+        dropdown.setDisabled(not enabled)        
 
         return FormRow(label, dropdown)        
 
@@ -118,7 +133,6 @@ class WorkflowSelectView(View):
         layout.addWidget(step_3)
 
         # Row of text labeling the columns of workflow images
-
         column_labels = QWidget()
         column_layout = QHBoxLayout()
         column_layout.setContentsMargins(11, 11, 11, 0)
@@ -138,13 +152,12 @@ class WorkflowSelectView(View):
         layout.addWidget(column_labels, alignment=QtCore.Qt.AlignCenter)
 
         # Workflow buttons
-
         image_files = (Directories.get_assets_dir() / "workflow_images").glob("*.png")
         for image_file in image_files:
             button = QPushButton("")
             button.setIcon(QIcon(str(image_file)))
-            button.setIconSize(QSize(360, 200)) # TODO move to stylesheet?
-            button.setFixedSize(400, 200) # TODO move to stylesheet?
+            button.setIconSize(QSize(360, 200)) # TODO possible to move sizes to stylesheet?
+            button.setFixedSize(400, 200) # TODO possible to move sizes stylesheet?
             if enabled is False:
                 button.setDisabled(True)
             layout.addWidget(button, alignment=QtCore.Qt.AlignCenter)    

@@ -1,3 +1,6 @@
+from typing import List
+from napari.layers.base.base import Layer
+from napari.utils.events.event import Event
 from napari_aicssegmentation.util.debug_utils import debug_class
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
 from napari_aicssegmentation.view.workflow_select_view import WorkflowSelectView
@@ -11,6 +14,7 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
     def __init__(self, application: IApplication):
         super().__init__(application)
         self._view = WorkflowSelectView(self)
+        self.viewer.events.layers_change.connect(self._handle_layers_change)
 
     @property
     def view(self) -> WorkflowSelectView:
@@ -22,7 +26,7 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
 
     def index(self):
         self.load_view(self._view)
-        self.model.layer_list = [layer.name for layer in self.get_layers()]
+        self.model.layer_list = self._get_3D_layers()
         self.model.channel_list = ["brightfield", "405nm", "488nm"]  # TODO read channels from image
         self.model.workflows = ["SEC61B", "LMNB1", "ACTN1"]  # TODO load workflow objects from Segmenter workflow engine
         self._view.load_model(self.model)
@@ -35,3 +39,18 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
 
     def navigate_next(self):
         self.router.workflow_steps()
+
+    def _get_3D_layers(self) -> List[str]:
+        """
+        Return all 3D image layers currently loaded in the Napari viewer
+        """
+        layers = self.get_layers()        
+        return [layer.name for layer in layers if layer.ndim >= 3]
+
+    def _handle_layers_change(self, e: Event):
+        """
+        Event handler for Napari viewer <layers_change> event
+        This is triggered whenever changes are made to the layer list (such as adding or deleting a layer)
+        """        
+        self.model.layer_list = self._get_3D_layers()
+        self._view.load_model(self.model)

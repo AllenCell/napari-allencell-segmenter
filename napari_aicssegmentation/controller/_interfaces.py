@@ -7,6 +7,10 @@ class IWorkflowSelectController(ABC):
         pass
 
     @abstractmethod
+    def select_layer(self, layer_index: int):
+        pass
+
+    @abstractmethod
     def select_channel(self, channel_index: int):
         pass
 
