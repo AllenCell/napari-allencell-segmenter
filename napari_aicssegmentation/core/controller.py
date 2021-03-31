@@ -63,8 +63,7 @@ class Controller(ABC):
         """
         Get the layer currently active (selected) in the Napari viewer
         """
-        index = self._application.viewer.active_layer
-        return self.get_layers()[index]
+        return self._application.viewer.active_layer        
 
     def is_image_loaded(self) -> bool:
         """

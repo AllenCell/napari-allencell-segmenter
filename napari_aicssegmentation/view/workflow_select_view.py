@@ -1,4 +1,4 @@
-from typing import List, NamedTuple
+from typing import List, NamedTuple, Union
 from PyQt5.QtWidgets import QComboBox, QLabel, QPushButton, QVBoxLayout, QFrame, QFormLayout, QWidget, QHBoxLayout, QLayout
 from PyQt5.QtGui import QIcon
 from PyQt5 import QtCore
@@ -12,7 +12,7 @@ from napari_aicssegmentation.util.directories import Directories
 from ._main_template import MainTemplate
 
 class FormRow(NamedTuple):
-    label: str
+    label: Union[str, QLabel]
     widget: QWidget
     
 @debug_class
@@ -44,14 +44,12 @@ class WorkflowSelectView(View):
         self.load_image_warning.setVisible(False)       
 
         # Dropdowns                
-        layers_dropdown = self._dropdown_row(1, "Select a 3D Napari image layer")
-        self.combo_layers = layers_dropdown.widget    
-        self.combo_layers.setEnabled(False)        
+        layers_dropdown = self._dropdown_row(1, "Select a 3D Napari image layer", enabled=False)
+        self.combo_layers = layers_dropdown.widget        
         self.combo_layers.currentIndexChanged.connect(self._combo_layers_index_changed)
-
-        channels_dropdown = self._dropdown_row(2, "Select a 3D image data channel", True)
-        self.combo_channels = channels_dropdown.widget
-        self.combo_channels.setEnabled(False)
+        
+        channels_dropdown = self._dropdown_row(2, "Select a 3D image data channel", enabled=False)
+        self.combo_channels = channels_dropdown.widget        
         layer_channel_selections = self._form_layout([layers_dropdown, channels_dropdown])
 
         # Add all widgets
@@ -65,20 +63,56 @@ class WorkflowSelectView(View):
         self._add_step_3_layout(layout, enabled=False)
 
     def load_model(self, model: SegmenterModel):        
-        if len(model.layer_list) == 0:
+        """
+        Load and display data from model
+        Inputs:
+            model: the model to load            
+        """        
+        self.update_layers(model.layers, model.selected_layer_name)
+        self.update_channels(model)
+        self._load_workflows(model)           
+
+    def update_layers(self, layers: List[str], selected_layer_name: str = None):
+        """
+        Update / repopulate the list of selectable layers
+        Inputs:
+            layers: List of layer names
+            selected_layer_name: (optional) name of the layer to pre-select
+        """
+        if len(layers) == 0:
             self.load_image_warning.setVisible(True)
             self.combo_layers.setEnabled(False)
-        else:
-            self.combo_layers.addItems(model.layer_list)        
+        else:            
+            self._reset_combo_box(self.combo_layers)
+            self.combo_layers.addItems(layers)
+            if selected_layer_name is not None:
+                self.combo_layers.setCurrentText(selected_layer_name)        
             self.combo_layers.setEnabled(True)      
-            self.load_image_warning.setVisible(False)      
-            #self.combo_channels.addItems(model.channel_list)
+            self.load_image_warning.setVisible(False)
+                        
+    def update_channels(self, channels: List[str]):
+        """
+        Update / repopulate the list of selectable channels
+        Inputs:
+            channels: List of channel names            
+        """        
+        # TODO load channels and update UI state -> https://github.com/AllenCell/napari-aicssegmentation/issues/24
+        pass
+
+    def _load_workflows(self, workflows): #workflows: List[aicssegmentation.WorkflowStep]         
+        # TODO generate workflow grid from list of workflows -> https://github.com/AllenCell/napari-aicssegmentation/issues/26
+        pass  
     
-    def _combo_layers_index_changed(self, index: int):
-        self._controller.select_layer(index) # TODO does index work here?
-        # TODO repopulate channel list (in next story)
-    
-    def _dropdown_row(self, number: int, placeholder: str, enabled=True):
+    def _reset_combo_box(self, combo: QComboBox):
+        """
+        Reset a combo box to its original state, keeping the header but removing all other items
+        """
+        if combo.count() > 0:
+            header = combo.itemText(0)
+            combo.clear()
+            combo.addItem(header)                    
+
+    def _dropdown_row(self, number: int, placeholder: str, enabled=False) -> FormRow:
         """
         Given the contents of a dropdown and a number for the label, return a label and a QComboBox
         widget that can be used to create a row in a QFormLayout
@@ -97,11 +131,7 @@ class WorkflowSelectView(View):
         Create a nicely formatted form layout given contents to add as rows.
 
         Inputs:
-            rows:       List of dictionaries with this shape:
-                            {
-                                "label": string | QLabel,
-                                "input": QWidget (e.g., QLabel, QComboBox)
-                            }
+            rows:       List of FormRow 
             margins:    Tuple of 4 numbers representing left, top, right, and bottom margins for
                         the form's contents. Qt defaults to (11, 11, 11, 11).
         Output:
@@ -117,9 +147,11 @@ class WorkflowSelectView(View):
             layout.addRow(row.label, row.widget)
         widget.setLayout(layout)        
         return widget
-    
-    """ Add widgets and set the layout for the Step 3 instructions and the workflow buttons """
+        
     def _add_step_3_layout(self, layout: QLayout, enabled=False):
+        """ 
+        Add widgets and set the layout for the Step 3 instructions and the workflow buttons 
+        """
         step_3_label = QLabel("3.")
         step_3_label.setAlignment(QtCore.Qt.AlignTop)
         step_3_instructions = QLabel(
@@ -161,3 +193,13 @@ class WorkflowSelectView(View):
             if enabled is False:
                 button.setDisabled(True)
             layout.addWidget(button, alignment=QtCore.Qt.AlignCenter)    
+
+    #####################################################################
+    # Event handlers
+    #####################################################################
+
+    def _combo_layers_index_changed(self, index: int):
+        if index == 0: # index 0 is the dropdown header
+            self._controller.unselect_layer()
+        else:
+            self._controller.select_layer(self.combo_layers.currentText())                  

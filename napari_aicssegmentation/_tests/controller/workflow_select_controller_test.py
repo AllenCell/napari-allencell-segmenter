@@ -31,7 +31,7 @@ class TestWorkflowSelectController:
         # Assert
         self._mock_view_manager.load_view.assert_called_once_with(self._controller.view)
         self._controller.view.load_model.assert_called_once_with(self._controller.model)
-        self._controller.model.channel_list == [
+        self._controller.model.channels == [
             "brightfield",
             "405nm",
             "488nm",
@@ -47,7 +47,7 @@ class TestWorkflowSelectController:
         self._controller.select_channel(3)
 
         # Assert
-        assert self._controller.model.active_channel == 3
+        assert self._controller.model.selected_channel == 3
 
     def test_select_workflow(self):
         # Act

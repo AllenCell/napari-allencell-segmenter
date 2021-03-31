@@ -26,20 +26,34 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
 
     def index(self):
         self.load_view(self._view)
-        self.model.layer_list = self._get_3D_layers()
-        self.model.channel_list = ["brightfield", "405nm", "488nm"]  # TODO read channels from image
-        self.model.workflows = ["SEC61B", "LMNB1", "ACTN1"]  # TODO load workflow objects from Segmenter workflow engine
+        self.model.layers = self._get_3D_layers()
+
+        # pre-selection
+        if self.get_active_layer().name in self.model.layers:
+            self.model.selected_layer = self.get_active_layer()
+
+        # TODO load workflow objects from Segmenter workflow engine -> https://github.com/AllenCell/napari-aicssegmentation/issues/26
+        self.model.workflows = ["SEC61B", "LMNB1", "ACTN1"]
         self._view.load_model(self.model)
 
+    def select_layer(self, layer_name: str):
+        self.model.selected_layer = next(filter(lambda layer: layer.name == layer_name, self.get_layers()), None)
+        # TODO read channels from active layer -> https://github.com/AllenCell/napari-aicssegmentation/issues/24
+        # TODO update channels on the view
+        self.model.channels = ["brightfield", "405nm", "488nm"]
+        
+    def unselect_layer(self):
+        self.model.selected_layer = None
+        self.model.channels = None
+
     def select_channel(self, channel_index: int):
-        self.model.active_channel = channel_index
+        self.model.selected_channel = channel_index
 
     def select_workflow(self, workflow: str):
         self.model.active_workflow = workflow
-
-    def navigate_next(self):
+        # TODO create Layer 0 -> https://github.com/AllenCell/napari-aicssegmentation/issues/27
         self.router.workflow_steps()
-
+        
     def _get_3D_layers(self) -> List[str]:
         """
         Return all 3D image layers currently loaded in the Napari viewer
@@ -52,5 +66,5 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
         Event handler for Napari viewer <layers_change> event
         This is triggered whenever changes are made to the layer list (such as adding or deleting a layer)
         """        
-        self.model.layer_list = self._get_3D_layers()
-        self._view.load_model(self.model)
+        self.model.layers = self._get_3D_layers()
+        self._view.update_layers(self.model.layers, self.model.selected_layer_name)

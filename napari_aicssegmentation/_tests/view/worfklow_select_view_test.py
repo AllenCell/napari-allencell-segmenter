@@ -27,7 +27,7 @@ class TestWorkflowSelectView:
         # Arrange
         self._view.setup_ui()
         model = SegmenterModel()
-        model.channel_list = ["a", "b", "c"]
+        model.channels = ["a", "b", "c"]
         model.workflows = ["d", "e", "f", "g"]
 
         # Act
