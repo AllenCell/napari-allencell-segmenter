@@ -19,6 +19,7 @@ from napari_aicssegmentation.controller._interfaces import IWorkflowSelectContro
 from napari_aicssegmentation.core.view import View
 from napari_aicssegmentation.widgets.warning_message import WarningMessage
 from napari_aicssegmentation.util.directories import Directories
+from napari_aicssegmentation._style import PAGE_WIDTH, PAGE_CONTENT_WIDTH
 from ._main_template import MainTemplate
 
 
@@ -92,6 +93,7 @@ class WorkflowSelectView(View):
             selected_layer_name: (optional) name of the layer to pre-select
         """
         if layers is None or len(layers) == 0:
+            self._reset_combo_box(self.combo_layers)
             self.load_image_warning.setVisible(True)
             self.combo_layers.setEnabled(False)
         else:
@@ -191,6 +193,8 @@ class WorkflowSelectView(View):
         column_labels.layout().addWidget(segmentation_output_label)
 
         column_labels.setObjectName("columnLabels")
+        column_labels.setFixedWidth(PAGE_CONTENT_WIDTH)
+
         if enabled is False:
             column_labels.setObjectName("columnLabelsDisabled")
         layout.addWidget(column_labels, alignment=QtCore.Qt.AlignCenter)
@@ -200,8 +204,8 @@ class WorkflowSelectView(View):
         for image_file in image_files:
             button = QPushButton("")
             button.setIcon(QIcon(str(image_file)))
-            button.setIconSize(QSize(360, 200))  # TODO possible to move sizes to stylesheet?
-            button.setFixedSize(400, 200)  # TODO possible to move sizes stylesheet?
+            button.setIconSize(QSize(PAGE_CONTENT_WIDTH-40, 200))
+            button.setFixedSize(PAGE_CONTENT_WIDTH, 200)
             if enabled is False:
                 button.setDisabled(True)
             layout.addWidget(button, alignment=QtCore.Qt.AlignCenter)
