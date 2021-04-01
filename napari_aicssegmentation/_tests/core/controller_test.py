@@ -63,9 +63,9 @@ class TestController:
         # Arrange
         viewer: MagicMock = create_autospec(napari.Viewer)
         type(self._mock_application).viewer = PropertyMock(return_value=viewer)
-        type(viewer).active_layer = PropertyMock(return_value=1)
         layer2 = create_autospec(Layer)
-        layers = [create_autospec(Layer), layer2, create_autospec(Layer)]
+        layers = [create_autospec(Layer), layer2, create_autospec(Layer)]        
+        type(viewer).active_layer = PropertyMock(return_value=layer2)
         viewer.layers = layers
 
         # Act
