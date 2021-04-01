@@ -12,13 +12,6 @@ class IRouter(ABC):
     """
 
     @abstractmethod
-    def mpp(self):
-        """
-        Navigate to MPP screen
-        """
-        pass
-
-    @abstractmethod
     def workflow_selection(self):
         """
         Navigate to workflow selection screen

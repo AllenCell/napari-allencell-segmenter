@@ -18,8 +18,9 @@ class AllenCellStructureSegmenter(QWidget):  # pragma: no-cover
         super().__init__()
 
         self.setLayout(QVBoxLayout())
+        self.layout().setContentsMargins(0, 0, 0, 0)
         self._application = Application(napari_viewer, self.layout())
-        self._application.router.mpp()  # Initialize first screen
+        self._application.router.workflow_selection()  # Initialize first screen
 
 
 @napari_hook_implementation
