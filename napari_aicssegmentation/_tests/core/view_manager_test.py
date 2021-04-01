@@ -8,36 +8,40 @@ from PyQt5.QtWidgets import QFrame, QVBoxLayout
 # Custom Mock view implementations because QT doesn't like MagicMock widgets
 class MockViewTemplate1(ViewTemplate):
     setup_ui_called = False
-    
+
     def __init__(self):
         super().__init__()
         self._frame = QFrame()
         self._frame.setLayout(QVBoxLayout())
-    
+
     def setup_ui(self):
         self.setup_ui_called = True
 
     def get_container(self) -> QFrame:
         return self._frame
 
+
 class MockViewTemplate2(ViewTemplate):
     setup_ui_called = False
-    
+
     def __init__(self):
         super().__init__(template_class=MockViewTemplate1)
         self._frame = QFrame()
         self._frame.setLayout(QVBoxLayout())
-    
+
     def setup_ui(self):
         self.setup_ui_called = True
 
     def get_container(self) -> QFrame:
         return self._frame
 
+
 class MockView(View):
     setup_ui_called = False
+
     def setup_ui(self):
         self.setup_ui_called = True
+
 
 class TestViewManager:
     def setup_method(self):
@@ -46,8 +50,8 @@ class TestViewManager:
 
     def test_current_view(self):
         # Arrange
-        view1: MagicMock = MockView()             
-        view2: MagicMock = MockView()                
+        view1: MagicMock = MockView()
+        view2: MagicMock = MockView()
 
         # Act / Assert
         self._view_manager.load_view(view1)
@@ -56,8 +60,8 @@ class TestViewManager:
         assert self._view_manager.current_view == view2
 
     def test_load_view_no_template(self):
-        # Arrange        
-        view = MockView()      
+        # Arrange
+        view = MockView()
 
         # Act
         self._view_manager.load_view(view)
@@ -67,9 +71,9 @@ class TestViewManager:
         assert view.setup_ui_called == True
 
     def test_load_view_with_template(self):
-        # Arrange                
+        # Arrange
         view = MockView(template_class=MockViewTemplate1)
-        
+
         # Act
         self._view_manager.load_view(view)
 
@@ -81,9 +85,9 @@ class TestViewManager:
         assert view.setup_ui_called == True
 
     def test_load_view_with_nested_templates(self):
-        # Arrange                
+        # Arrange
         view = MockView(template_class=MockViewTemplate2)
-        
+
         # Act
         self._view_manager.load_view(view)
 

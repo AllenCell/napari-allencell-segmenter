@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+
 class IWorkflowSelectController(ABC):
     @abstractmethod
     def index(self):
@@ -26,7 +27,7 @@ class IWorkflowSelectController(ABC):
         """
         Handle user selection of channel
         Inputs
-            channel_name: name of the channel to select            
+            channel_name: name of the channel to select
         """
         pass
 

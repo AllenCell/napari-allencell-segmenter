@@ -1,7 +1,7 @@
-from pathlib import Path
 from napari_aicssegmentation.util.directories import Directories
 
-class Style:    
+
+class Style:
     cache = dict()
 
     @classmethod
@@ -15,10 +15,9 @@ class Style:
             cls.cache[name] = cls._load_from_file(name)
 
         return cls.cache[name]
-        
+
     @classmethod
     def _load_from_file(cls, name: str) -> str:
         path = Directories.get_style_dir() / name
         with open(path, "r") as handle:
             return handle.read()
-    

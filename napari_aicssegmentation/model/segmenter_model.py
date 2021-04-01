@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import List
 from napari.layers import Layer
 
+
 @dataclass
 class SegmenterModel:
     """

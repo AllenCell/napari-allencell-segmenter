@@ -4,7 +4,7 @@ from napari_aicssegmentation.util.directories import Directories
 
 
 class WarningMessage(QWidget):
-    """ 
+    """
     Warning message Widget with a yellow warning sign icon on the left.
     """
 
@@ -26,4 +26,3 @@ class WarningMessage(QWidget):
     @property
     def message(self):
         return self._text.text
-    

@@ -2,6 +2,7 @@ import pytest
 
 from napari_aicssegmentation._style import Style
 
+
 class TestStyle:
     @pytest.mark.parametrize("name", [None, "not_a_qt_stylesheet.txt"])
     def test_load_stylesheet_bad_name(self, name):

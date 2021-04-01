@@ -5,13 +5,14 @@ from napari_aicssegmentation.controller._interfaces import IWorkflowStepsControl
 from napari_aicssegmentation.core.view import View
 from ._main_template import MainTemplate
 
+
 @debug_class
 class WorkflowStepsView(View):  # pragma: no-cover
     _lbl_selected_workflow: QLabel
 
     def __init__(self, controller: IWorkflowStepsController):
         super().__init__(template_class=MainTemplate)
-                
+
         if controller is None:
             raise ValueError("controller")
         self._controller = controller

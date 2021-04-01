@@ -15,15 +15,15 @@ class TestWorkflowSelectView:
         self._view.setup_ui()
 
     def test_load_model(self):
-        # Arrange        
+        # Arrange
         model = SegmenterModel()
-        model.layers = ["Layer 1", "Layer 2", "Layer 3"]                
+        model.layers = ["Layer 1", "Layer 2", "Layer 3"]
 
         # Act
         self._view.load_model(model)
 
         # Assert
-        assert self._view.combo_layers.count() == 4 # 4 because of header        
+        assert self._view.combo_layers.count() == 4  # 4 because of header
 
     @pytest.mark.parametrize("layers", [None, list()])
     def test_update_layers_without_layers(self, layers):
@@ -41,16 +41,16 @@ class TestWorkflowSelectView:
         self._view.update_layers(layers, "Layer 2")
 
         # Assert
-        assert self._view.combo_layers.count() == 4 # 4 because of header 
+        assert self._view.combo_layers.count() == 4  # 4 because of header
         assert self._view.combo_layers.currentText() == "Layer 2"
         assert self._view.combo_layers.itemText(1) == "Layer 1"
         assert self._view.combo_layers.itemText(2) == "Layer 2"
         assert self._view.combo_layers.itemText(3) == "Layer 3"
         assert not self._view.load_image_warning.isVisibleTo(self._view)
-        assert self._view.combo_layers.isEnabled()        
+        assert self._view.combo_layers.isEnabled()
 
     def test_combo_layers_index_changed_select(self):
-        # Arrange        
+        # Arrange
         self._view.combo_layers.addItems(["Layer 1", "Layer 2", "Layer 3"])
 
         # Act
@@ -60,7 +60,7 @@ class TestWorkflowSelectView:
         self._mock_controller.select_layer.assert_called_with("Layer 1")
 
     def test_combo_layers_index_changed_unselect(self):
-        # Arrange        
+        # Arrange
         self._view.combo_layers.addItems(["Layer 1", "Layer 2", "Layer 3"])
 
         # Act
@@ -69,4 +69,3 @@ class TestWorkflowSelectView:
 
         # Assert
         self._mock_controller.unselect_layer.assert_called()
-    

@@ -1,5 +1,4 @@
 from typing import List
-from napari.layers.base.base import Layer
 from napari.utils.events.event import Event
 from napari_aicssegmentation.util.debug_utils import debug_class
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
@@ -32,7 +31,8 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
         if self.get_active_layer().name in self.model.layers:
             self.model.selected_layer = self.get_active_layer()
 
-        # TODO load workflow objects from Segmenter workflow engine -> https://github.com/AllenCell/napari-aicssegmentation/issues/26
+        # TODO load workflow objects from Segmenter workflow engine
+        # -> https://github.com/AllenCell/napari-aicssegmentation/issues/26
         self.model.workflows = ["SEC61B", "LMNB1", "ACTN1"]
         self._view.load_model(self.model)
 
@@ -41,30 +41,30 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
         # TODO read channels from active layer -> https://github.com/AllenCell/napari-aicssegmentation/issues/24
         # TODO update channels on the view
         self.model.channels = ["brightfield", "405nm", "488nm"]
-        
+
     def unselect_layer(self):
         self.model.selected_layer = None
         self.model.channels = None
 
     def select_channel(self, channel_name: str):
-        self.model.selected_channel = channel_name        
+        self.model.selected_channel = channel_name
 
     def select_workflow(self, workflow: str):
         self.model.active_workflow = workflow
         # TODO create Layer 0 -> https://github.com/AllenCell/napari-aicssegmentation/issues/27
         self.router.workflow_steps()
-        
+
     def _get_3D_layers(self) -> List[str]:
         """
         Return all 3D image layers currently loaded in the Napari viewer
         """
-        layers = self.get_layers()        
+        layers = self.get_layers()
         return [layer.name for layer in layers if layer.ndim >= 3]
 
     def _handle_layers_change(self, e: Event):
         """
         Event handler for Napari viewer <layers_change> event
         This is triggered whenever changes are made to the layer list (such as adding or deleting a layer)
-        """        
+        """
         self.model.layers = self._get_3D_layers()
         self._view.update_layers(self.model.layers, self.model.selected_layer_name)

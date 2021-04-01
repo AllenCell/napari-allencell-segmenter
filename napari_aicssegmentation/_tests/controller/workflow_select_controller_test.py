@@ -12,9 +12,11 @@ from napari_aicssegmentation.core.state import State
 from napari_aicssegmentation.core.view_manager import ViewManager
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
 
+
 class MockLayer(NamedTuple):
     name: str
     ndim: int = 0
+
 
 class TestWorkflowSelectController:
     def setup_method(self):
@@ -40,11 +42,11 @@ class TestWorkflowSelectController:
             active_layer,
             MockLayer(name="Layer 2", ndim=3),
             MockLayer(name="Layer 3", ndim=3),
-            MockLayer(name="2D Layer", ndim=2)
+            MockLayer(name="2D Layer", ndim=2),
         ]
         type(self._mock_viewer).layers = PropertyMock(return_value=layers)
         type(self._mock_viewer).active_layer = PropertyMock(return_value=active_layer)
-        
+
         # Act
         self._controller.index()
 
@@ -52,7 +54,7 @@ class TestWorkflowSelectController:
         self._mock_view_manager.load_view.assert_called_once_with(self._controller.view)
         self._controller.view.load_model.assert_called_once_with(self._controller.model)
         assert self._controller.model.layers == ["Layer 1", "Layer 2", "Layer 3"]
-        
+
         assert self._controller.model.workflows == [
             "SEC61B",
             "LMNB1",
@@ -62,11 +64,7 @@ class TestWorkflowSelectController:
     def test_select_layer(self):
         # Arrange
         expected_layer = MockLayer(name="Layer 2")
-        layers = [
-            MockLayer(name="Layer 1", ndim=3),
-            expected_layer,
-            MockLayer(name="Layer 3", ndim=3)
-        ]
+        layers = [MockLayer(name="Layer 1", ndim=3), expected_layer, MockLayer(name="Layer 3", ndim=3)]
         type(self._mock_viewer).layers = PropertyMock(return_value=layers)
 
         # Act
@@ -78,7 +76,7 @@ class TestWorkflowSelectController:
     def test_unselect_layer(self):
         # Act
         self._controller.unselect_layer()
-        
+
         # Assert
         assert self._controller.model.selected_layer == None
         assert self._controller.model.channels == None
@@ -98,17 +96,17 @@ class TestWorkflowSelectController:
 
         # Assert
         assert self._controller.model.active_workflow == workflow
-        self._mock_router.workflow_steps.assert_called_once()        
+        self._mock_router.workflow_steps.assert_called_once()
 
     def test_handle_layers_change(self):
         # Arrange
         layers = [
             MockLayer(name="Layer 1", ndim=3),
             MockLayer(name="Layer 2", ndim=3),
-            MockLayer(name="Layer 3", ndim=3)
+            MockLayer(name="Layer 3", ndim=3),
         ]
-        type(self._mock_viewer).layers = PropertyMock(return_value=layers)        
-        
+        type(self._mock_viewer).layers = PropertyMock(return_value=layers)
+
         # Act
         self._controller._handle_layers_change(Event("test"))
 

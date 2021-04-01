@@ -1,8 +1,10 @@
 from abc import ABC, abstractmethod
 from PyQt5.QtWidgets import QWidget, QFrame
 
+
 class ViewMeta(type(QWidget), type(ABC)):
     pass
+
 
 class View(ABC, QWidget, metaclass=ViewMeta):
     """
@@ -16,7 +18,7 @@ class View(ABC, QWidget, metaclass=ViewMeta):
         if template_class is not None:
             if not issubclass(template_class, ViewTemplate):
                 raise TypeError(f"Template type must be a subclass of {ViewTemplate}")
-            
+
             self._template = template_class()
 
     @property
@@ -46,5 +48,5 @@ class ViewTemplate(View):
         """
         Get the template's container Frame
         This should be container QFrame in which the child View or ViewTemplate be displayed
-        """        
+        """
         pass
