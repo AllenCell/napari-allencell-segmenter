@@ -46,8 +46,8 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
         self.model.selected_layer = None
         self.model.channels = None
 
-    def select_channel(self, channel_index: int):
-        self.model.selected_channel = channel_index
+    def select_channel(self, channel_name: str):
+        self.model.selected_channel = channel_name        
 
     def select_workflow(self, workflow: str):
         self.model.active_workflow = workflow

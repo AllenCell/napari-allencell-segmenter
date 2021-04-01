@@ -79,8 +79,8 @@ class WorkflowSelectView(View):
             layers: List of layer names
             selected_layer_name: (optional) name of the layer to pre-select
         """
-        if len(layers) == 0:
-            self.load_image_warning.setVisible(True)
+        if layers is None or len(layers) == 0:
+            self.load_image_warning.setVisible(True)            
             self.combo_layers.setEnabled(False)
         else:            
             self._reset_combo_box(self.combo_layers)
@@ -88,7 +88,7 @@ class WorkflowSelectView(View):
             if selected_layer_name is not None:
                 self.combo_layers.setCurrentText(selected_layer_name)        
             self.combo_layers.setEnabled(True)      
-            self.load_image_warning.setVisible(False)
+            self.load_image_warning.setVisible(False)            
                         
     def update_channels(self, channels: List[str]):
         """
@@ -169,7 +169,6 @@ class WorkflowSelectView(View):
         column_layout = QHBoxLayout()
         column_layout.setContentsMargins(11, 11, 11, 0)
         column_labels.setLayout(column_layout)
-        #column_labels.setFixedWidth(PAGE_CONTENT_WIDTH)
 
         image_input_label = QLabel("Image input")
         image_input_label.setAlignment(QtCore.Qt.AlignCenter)

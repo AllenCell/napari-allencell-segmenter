@@ -1,3 +1,5 @@
+import pytest
+
 from unittest.mock import MagicMock, create_autospec
 from napari_aicssegmentation.view.workflow_select_view import (
     WorkflowSelectView,
@@ -10,71 +12,61 @@ class TestWorkflowSelectView:
     def setup_method(self):
         self._mock_controller: MagicMock = create_autospec(IWorkflowSelectController)
         self._view = WorkflowSelectView(self._mock_controller)
-
-    def test_setup_ui(self):
-        # Act
         self._view.setup_ui()
-
-        # Assert
-        assert self._view.combo_channels is not None
-        assert self._view.combo_workflows is not None
-        assert self._view.lbl_select is not None
-        assert self._view.lbl_title is not None
-        assert self._view.btn_back is not None
-        assert self._view.btn_next is not None
 
     def test_load_model(self):
-        # Arrange
-        self._view.setup_ui()
+        # Arrange        
         model = SegmenterModel()
-        model.channels = ["a", "b", "c"]
-        model.workflows = ["d", "e", "f", "g"]
+        model.layers = ["Layer 1", "Layer 2", "Layer 3"]                
 
         # Act
         self._view.load_model(model)
 
         # Assert
-        assert self._view.combo_channels.count() == 3
-        assert self._view.combo_workflows.count() == 4
+        assert self._view.combo_layers.count() == 4 # 4 because of header        
 
-    def test_btn_back_clicked(self):
-        # Arrange
-        self._view.setup_ui()
-
+    @pytest.mark.parametrize("layers", [None, list()])
+    def test_update_layers_without_layers(self, layers):
         # Act
-        self._view.btn_back.click()
+        self._view.update_layers(layers)
 
         # Assert
-        self._mock_controller.navigate_back.assert_called_once()
+        assert self._view.load_image_warning.isVisibleTo(self._view)
+        assert not self._view.combo_layers.isEnabled()
 
-    def test_btn_next_clicked(self):
-        # Arrange
-        self._view.setup_ui()
-
-        # Act
-        self._view.btn_next.click()
-
-        # Assert
-        self._mock_controller.navigate_next.assert_called_once()
-
-    def test_combo_channels_index_changed(self):
-        # Arrange
-        self._view.setup_ui()
-        self._view.combo_channels.addItems(["a", "b", "c"])
+    def test_update_layers_with_layers(self):
+        layers = ["Layer 1", "Layer 2", "Layer 3"]
 
         # Act
-        self._view.combo_channels.setCurrentIndex(1)
+        self._view.update_layers(layers, "Layer 2")
 
         # Assert
-        self._mock_controller.select_channel.assert_called()
+        assert self._view.combo_layers.count() == 4 # 4 because of header 
+        assert self._view.combo_layers.currentText() == "Layer 2"
+        assert self._view.combo_layers.itemText(1) == "Layer 1"
+        assert self._view.combo_layers.itemText(2) == "Layer 2"
+        assert self._view.combo_layers.itemText(3) == "Layer 3"
+        assert not self._view.load_image_warning.isVisibleTo(self._view)
+        assert self._view.combo_layers.isEnabled()        
 
-    def test_combo_workflows_index_changed(self):
-        # Arrange
-        self._view.setup_ui()
-        self._view.combo_workflows.addItems(["a", "b", "c"])
+    def test_combo_layers_index_changed_select(self):
+        # Arrange        
+        self._view.combo_layers.addItems(["Layer 1", "Layer 2", "Layer 3"])
 
         # Act
-        self._view.combo_workflows.setCurrentIndex(1)
+        self._view.combo_layers.setCurrentIndex(1)
 
         # Assert
-        self._mock_controller.select_workflow.assert_called()
+        self._mock_controller.select_layer.assert_called_with("Layer 1")
+
+    def test_combo_layers_index_changed_unselect(self):
+        # Arrange        
+        self._view.combo_layers.addItems(["Layer 1", "Layer 2", "Layer 3"])
+
+        # Act
+        self._view.combo_layers.setCurrentIndex(1)
+        self._view.combo_layers.setCurrentIndex(0)
+
+        # Assert
+        self._mock_controller.unselect_layer.assert_called()
+    

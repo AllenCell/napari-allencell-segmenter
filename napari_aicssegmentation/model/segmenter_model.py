@@ -11,7 +11,7 @@ class SegmenterModel:
     layers: List[str] = None
     selected_layer: Layer = None
     channels: List[str] = None
-    selected_channel: int = None
+    selected_channel: str = None
     workflows: List[str] = None
     active_workflow: str = None
 
