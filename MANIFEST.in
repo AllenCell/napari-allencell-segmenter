@@ -4,3 +4,6 @@ include requirements.txt
 
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
+
+recursive-include napari_aicssegmentation/style *.qss
+recursive-include napari_aicssegmentation/assets/icons *

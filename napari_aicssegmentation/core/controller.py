@@ -1,3 +1,5 @@
+import napari
+
 from abc import ABC
 from napari_aicssegmentation.core.state import State
 from napari_aicssegmentation.core.view import View
@@ -29,6 +31,13 @@ class Controller(ABC):
         """
         return self._application.router
 
+    @property
+    def viewer(self) -> napari.Viewer:
+        """
+        Get the Napari viewer
+        """
+        return self._application.viewer
+
     def load_view(self, view: View):
         """
         Loads the given view
@@ -54,8 +63,7 @@ class Controller(ABC):
         """
         Get the layer currently active (selected) in the Napari viewer
         """
-        index = self._application.viewer.active_layer
-        return self.get_layers()[index]
+        return self._application.viewer.active_layer
 
     def is_image_loaded(self) -> bool:
         """
