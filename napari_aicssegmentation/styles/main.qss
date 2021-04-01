@@ -61,3 +61,5 @@ QLabel#btnInstructionsDisabled, QLabel#step3InstructionsDisabled {
 QPushButton:disabled { 
     background-color: #333941;
 }
+
+#workflowSelectView QComboBox { min-width: 320px}

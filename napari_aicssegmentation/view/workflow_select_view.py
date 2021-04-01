@@ -19,7 +19,7 @@ from napari_aicssegmentation.controller._interfaces import IWorkflowSelectContro
 from napari_aicssegmentation.core.view import View
 from napari_aicssegmentation.widgets.warning_message import WarningMessage
 from napari_aicssegmentation.util.directories import Directories
-from napari_aicssegmentation._style import PAGE_WIDTH, PAGE_CONTENT_WIDTH
+from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH
 from ._main_template import MainTemplate
 
 
@@ -204,7 +204,7 @@ class WorkflowSelectView(View):
         for image_file in image_files:
             button = QPushButton("")
             button.setIcon(QIcon(str(image_file)))
-            button.setIconSize(QSize(PAGE_CONTENT_WIDTH-40, 200))
+            button.setIconSize(QSize(PAGE_CONTENT_WIDTH - 40, 200))
             button.setFixedSize(PAGE_CONTENT_WIDTH, 200)
             if enabled is False:
                 button.setDisabled(True)

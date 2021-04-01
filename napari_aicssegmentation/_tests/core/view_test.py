@@ -3,6 +3,7 @@ import pytest
 from PyQt5.QtWidgets import QFrame
 from napari_aicssegmentation.core.view import View, ViewTemplate
 
+
 class FakeTemplate(ViewTemplate):
     def setup_ui(self):
         pass
@@ -10,9 +11,11 @@ class FakeTemplate(ViewTemplate):
     def get_container(self) -> QFrame:
         return QFrame()
 
+
 class FakeView(View):
     def setup_ui(self):
         pass
+
 
 class TestView:
     def test_init_throws_with_bad_template(self):
@@ -29,4 +32,3 @@ class TestView:
         view = FakeView()
         assert view.template is None
         assert not view.has_template()
-
