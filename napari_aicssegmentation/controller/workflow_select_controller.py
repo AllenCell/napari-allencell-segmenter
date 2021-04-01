@@ -28,7 +28,7 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
         self.model.layers = self._get_3D_layers()
 
         # pre-selection
-        if self.get_active_layer().name in self.model.layers:
+        if self.get_active_layer() is not None and self.get_active_layer().name in self.model.layers:
             self.model.selected_layer = self.get_active_layer()
 
         # TODO load workflow objects from Segmenter workflow engine

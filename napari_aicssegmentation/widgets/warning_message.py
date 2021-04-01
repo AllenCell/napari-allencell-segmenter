@@ -25,4 +25,10 @@ class WarningMessage(QWidget):
 
     @property
     def message(self):
-        return self._text.text
+        return self.getMessage()
+
+    def setMessage(self, message: str):
+        self._text.setText(message)
+    
+    def getMessage(self):
+        return self._text.text()
