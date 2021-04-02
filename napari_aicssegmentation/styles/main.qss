@@ -54,7 +54,7 @@ QLabel#workflowSelectionTitle {
     color: #44494c;
 }
 
-QLabel#btnInstructionsDisabled, QLabel#step3InstructionsDisabled {
+QLabel#step3InstructionsDisabled {
     color: #44494c;
 }
 
@@ -62,4 +62,36 @@ QPushButton:disabled {
     background-color: #333941;
 }
 
-#workflowSelectView QComboBox { min-width: 320px}
+#workflowSelectView QComboBox { 
+    min-width: 320px;
+}
+
+CollapsibleBox .QFrame {
+    background-color: #5a626d;
+    border-radius: 2px;
+    border-color: #6d7075;
+    border-width: 0.5px;
+    border-style: solid;
+}
+
+CollapsibleBox QFrame:enabled#titleBoxClosed {
+    background-color: #414852;
+    border-color: #414852;
+}
+
+CollapsibleBox QFrame#titleBoxClosed:hover {
+    background-color: #5a626e;
+    border-color: #5a626e;
+}
+
+CollapsibleBox QFrame:disabled {
+    background-color: #333942;
+    border-radius: 2px;
+    border-color: #333942;
+    color: #7C848A;
+}
+
+CollapsibleBox .QFrame#contentBox {
+    background-color: #30353d;
+    border-top: 0px;
+}
