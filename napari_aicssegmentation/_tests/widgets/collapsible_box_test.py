@@ -11,12 +11,6 @@ class TestCollapsibleBox:
 
         self.collapsible_box = CollapsibleBox("1. Intensity Normalization", layout)
 
-    @pytest.fixture(autouse=True)
-    def setup_qt(self, qapp):
-        # the pytestqt.qapp fixture sets up the QApplication required to run QT code
-        # see https://pytest-qt.readthedocs.io/en/latest/reference.html
-        yield
-
     def test_close(self):
         # Arrange - box starts out open
         assert self.collapsible_box.isOpen is True
