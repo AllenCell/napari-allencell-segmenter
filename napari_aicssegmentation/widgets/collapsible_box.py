@@ -20,20 +20,20 @@ Params:
 class CollapsibleBox(QWidget):
     def __init__(self, title, content, isOpen=True):
         super().__init__()
-        self.title = title
-        self.content = content
+        self._title = title
+        self._content = content
         self.isOpen = isOpen
 
-        self.layout = QVBoxLayout()
-        self.layout.setContentsMargins(0, 11, 0, 11)
-        self.layout.setSpacing(0)  # No space between title_box and content_box
-        self.setLayout(self.layout)
+        layout = QVBoxLayout()
+        layout.setContentsMargins(0, 11, 0, 11)
+        layout.setSpacing(0)  # No space between title_box and content_box
+        self.setLayout(layout)
 
         self.title_box = self._create_title_box()
         self.content_box = self._create_content_box()
 
-        self.layout.addWidget(self.title_box)
-        self.layout.addWidget(self.content_box)
+        layout.addWidget(self.title_box)
+        layout.addWidget(self.content_box)
 
     def _create_title_box(self):
         title_box = QFrame()
@@ -44,7 +44,7 @@ class CollapsibleBox(QWidget):
         if self.isOpen is False:
             title_box.setObjectName("titleBoxClosed")
 
-        title = QLabel(self.title)
+        title = QLabel(self._title)
         icon = QLabel()
         icon.setPixmap(QPixmap(str(DIR / "assets/icons/gear.svg")))
         title_box_layout.addWidget(title)
@@ -57,7 +57,7 @@ class CollapsibleBox(QWidget):
         content_box = QFrame()
         content_box_layout = QVBoxLayout()
         content_box_layout.setContentsMargins(9, 9, 9, 9)
-        content_box_layout.addLayout(self.content)
+        content_box_layout.addLayout(self._content)
         content_box.setLayout(content_box_layout)
         content_box.setObjectName("contentBox")
 
