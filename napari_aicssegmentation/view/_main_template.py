@@ -3,8 +3,6 @@ from PyQt5.QtWidgets import QFrame, QVBoxLayout, QScrollArea, QLabel
 from PyQt5 import QtCore
 from napari_aicssegmentation._style import Style
 
-from napari_aicssegmentation.widgets.workflow_step_widget import generate_workflow_widget
-
 
 class MainTemplate(ViewTemplate):
     def __init__(self):
@@ -53,5 +51,3 @@ class MainTemplate(ViewTemplate):
         self._container.layout().setContentsMargins(0, 0, 0, 0)
         page.layout().addWidget(self._container)
         page.layout().addStretch()
-
-        page.layout().addWidget(generate_workflow_widget("test"))
