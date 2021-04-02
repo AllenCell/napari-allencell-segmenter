@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QLabel, QPushButton, QVBoxLayout, QWidget
 
 from napari_aicssegmentation.widgets.collapsible_box import CollapsibleBox
 
+
 class TestCollapsibleBox:
     def setup_class(self):
         layout = QVBoxLayout()
@@ -38,7 +39,7 @@ class TestCollapsibleBox:
         assert self.collapsible_box.isOpen is True
         assert self.collapsible_box.content_box.isHidden() is False
         assert self.collapsible_box.title_box.objectName() == ""
-    
+
     def test_toggle(self):
         # Arrange - Box starts out open
         assert self.collapsible_box.isOpen is True

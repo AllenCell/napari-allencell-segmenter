@@ -1,13 +1,7 @@
 from pathlib import Path
 
 from qtpy.QtGui import QPixmap
-from qtpy.QtWidgets import (
-    QFrame,
-    QHBoxLayout,
-    QLabel,
-    QVBoxLayout,
-    QWidget
-)
+from qtpy.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout, QWidget
 
 DIR = Path.cwd() / "napari_aicssegmentation"
 
@@ -32,7 +26,7 @@ class CollapsibleBox(QWidget):
 
         self.layout = QVBoxLayout()
         self.layout.setContentsMargins(0, 11, 0, 11)
-        self.layout.setSpacing(0)   # No space between title_box and content_box
+        self.layout.setSpacing(0)  # No space between title_box and content_box
         self.setLayout(self.layout)
 
         self.title_box = self._create_title_box()
@@ -70,7 +64,7 @@ class CollapsibleBox(QWidget):
         if self.isOpen is False:
             content_box.hide()
         return content_box
-    
+
     def open(self):
         if self.isOpen is False:
             self.isOpen = True
@@ -90,7 +84,7 @@ class CollapsibleBox(QWidget):
             self.close()
         else:
             self.open()
-    
+
     # Overwrite default QWidget.mousePressEvent() method
     def mousePressEvent(self, event):
         if self.title_box.underMouse():
