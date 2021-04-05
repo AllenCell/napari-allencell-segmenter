@@ -61,8 +61,8 @@ QProgressBar {
 }
 
 QProgressBar:chunk {
-    width: 4px;
-    margin: 1px;
+    margin-top: 2px;
+    margin-bottom: 2px;
 }
 
 #columnLabels QLabel {
