@@ -31,26 +31,24 @@ class WorkflowStepsView(View):  # pragma: no-cover
         layout.setSpacing(0)
         self.setLayout(layout)
 
-        # lbl_title = QLabel("Workflow steps")
         # self._lbl_selected_workflow = QLabel()
 
+        btn_run_all = QPushButton("Run all")
+        btn_run_all.clicked.connect(self._btn_back_clicked)
+
+        # Add all widgets
         self._add_workflow_title(layout)
         self._add_progress_bar(layout)
-
-        # btn_back = QPushButton("Back")
-        # btn_back.clicked.connect(self._btn_back_clicked)
-
-        # layout.addWidget(lbl_title)
-        # layout.addWidget(self._lbl_selected_workflow)
-        # layout.addWidget(btn_back)
+        layout.addStretch()
+        layout.addWidget(btn_run_all)
 
     def load_model(self, model: SegmenterModel):
         pass
         # self._lbl_selected_workflow.setText(f"Selected workflow: {model.active_workflow}")
         # self._lbl_selected_workflow.repaint()
 
-    # def _btn_back_clicked(self, checked: bool):
-    #     self._controller.navigate_back()
+    def _btn_back_clicked(self, checked: bool):
+        self._controller.navigate_back()
 
     def _add_workflow_title(self, layout: QLayout):
         widget = QWidget()
