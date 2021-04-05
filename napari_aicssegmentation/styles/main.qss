@@ -43,6 +43,28 @@ QLabel#workflowSelectionTitle {
     font-weight: bold;
 }
 
+#workflowTitle QLabel {
+    padding-left: 0px;
+    padding-right: 0px;
+    margin-bottom: 0.3em;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+QProgressBar {
+    border-radius: 8px;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    height: 12px;
+}
+
+QProgressBar:chunk {
+    width: 4px;
+    margin: 1px;
+}
+
 #columnLabels QLabel {
     font-size: 12px;
     font-weight: bold;
