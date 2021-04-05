@@ -7,11 +7,13 @@ from qtpy.QtWidgets import (
     QVBoxLayout, 
     QWidget
 )
+
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
 from napari_aicssegmentation.util.debug_utils import debug_class
 from napari_aicssegmentation.controller._interfaces import IWorkflowStepsController
 from napari_aicssegmentation.core.view import View
-from ._main_template import MainTemplate
+from napari_aicssegmentation.widgets.collapsible_box import CollapsibleBox
+from napari_aicssegmentation.view._main_template import MainTemplate
 
 
 @debug_class
@@ -39,6 +41,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
         # Add all widgets
         self._add_workflow_title(layout)
         self._add_progress_bar(layout)
+        self._add_workflow_steps(layout, "preprocessing")
         layout.addStretch()
         layout.addWidget(btn_run_all)
 
@@ -63,8 +66,8 @@ class WorkflowStepsView(View):  # pragma: no-cover
         title_layout.addWidget(workflow_name)
         title_layout.addWidget(info)
         title_layout.addStretch()
-
         title_layout.setSpacing(0)
+
         widget.setObjectName("workflowTitle")
         layout.addWidget(widget)
     
@@ -73,3 +76,28 @@ class WorkflowStepsView(View):  # pragma: no-cover
         widget.setValue(70)
         widget.setTextVisible(False)
         layout.addWidget(widget)
+
+    def _add_workflow_steps(self, layout: QLayout, category: str):
+        # Data will be passed in as a `steps` arg in the future
+        steps = [
+            {
+                "name": "Intensity Normalization",
+                "category": "preprocessing",
+                "module": "aicssegmentation.core.pre_processing_utils",
+                "function": "intensity_normalization",
+                "parameter": {
+                    "scaling_param": [2.5, 7.5]
+                },
+                "parent": 0
+            },
+            {
+                "name": "Edge Preserving Smoothing",
+                "category": "preprocessing",
+                "module": "aicssegmentation.core.pre_processing_utils",
+                "function": "edge_preserving_smoothing_3d",
+                "parent": 1
+            },
+        ]
+        category_label = QLabel(category.upper())
+        category_label.setObjectName("categoryLabel")
+        layout.addWidget(category_label)
