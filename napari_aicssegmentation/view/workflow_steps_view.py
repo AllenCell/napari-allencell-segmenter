@@ -2,6 +2,7 @@ from qtpy.QtWidgets import (
     QHBoxLayout,
     QLabel, 
     QLayout, 
+    QProgressBar,
     QPushButton, 
     QVBoxLayout, 
     QWidget
@@ -27,12 +28,14 @@ class WorkflowStepsView(View):  # pragma: no-cover
     def setup_ui(self):
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
         self.setLayout(layout)
 
         # lbl_title = QLabel("Workflow steps")
         # self._lbl_selected_workflow = QLabel()
 
         self._add_workflow_title(layout)
+        self._add_progress_bar(layout)
 
         # btn_back = QPushButton("Back")
         # btn_back.clicked.connect(self._btn_back_clicked)
@@ -65,4 +68,10 @@ class WorkflowStepsView(View):  # pragma: no-cover
 
         title_layout.setSpacing(0)
         widget.setObjectName("workflowTitle")
+        layout.addWidget(widget)
+    
+    def _add_progress_bar(self, layout: QLayout):
+        widget = QProgressBar()
+        widget.setValue(70)
+        widget.setTextVisible(False)
         layout.addWidget(widget)
