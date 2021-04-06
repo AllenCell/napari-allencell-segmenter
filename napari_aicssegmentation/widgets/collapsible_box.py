@@ -38,9 +38,9 @@ class CollapsibleBox(QWidget):
     def _create_title_box(self):
         title_box = QFrame()
         title_box_layout = QHBoxLayout()
-        title_box_layout.setContentsMargins(9, 9, 9, 9)
+        title_box_layout.setContentsMargins(11, 9, 9, 9)
         title_box.setLayout(title_box_layout)
-        title_box.setFixedHeight(40)
+        title_box.setFixedHeight(38)
         if self.isOpen is False:
             title_box.setObjectName("titleBoxClosed")
 
