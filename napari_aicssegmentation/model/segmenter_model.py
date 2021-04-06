@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import List
 from napari.layers import Layer
-
+from .channel import Channel
 
 @dataclass
 class SegmenterModel:
@@ -12,10 +12,6 @@ class SegmenterModel:
     layers: List[str] = None
     selected_layer: Layer = None
     channels: List[str] = None
-    selected_channel: str = None
+    selected_channel: Channel = None
     workflows: List[str] = None
     active_workflow: str = None
-
-    @property
-    def selected_layer_name(self):
-        return self.selected_layer.name if self.selected_layer else None
