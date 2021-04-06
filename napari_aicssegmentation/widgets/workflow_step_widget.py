@@ -19,7 +19,6 @@ def generate_workflow_widget(workflow_step: WorkflowStep) -> CollapsibleBox:
         widget (CollapsibleBox): A widget filled with information
             for that step, parameters, and default values.
     """
-
     # Test code
     if workflow_step == "test":
         test_dict = dict()
@@ -55,11 +54,17 @@ def create_step_widget(layout, param_name, param_vals):
         parse_param_and_add(layout, param_vals)
 
 
-def parse_param_and_add(layout, single_param):
+def parse_param_and_add(layout,  single_param):
     if single_param["widget_type"] == "slider":
-        add_slider(layout)
+        add_slider(layout, single_param)
 
-def add_slider(layout):
+def add_slider(layout, single_param):
     # TODO: basic version for now, need to implement min, max, and data types
     spinbox = QDoubleSpinBox()
+    spinbox.setMinimum(single_param["min"])
+    spinbox.setMaximum(single_param["max"])
+    #spinbox.setSingleStep(single_param["increment"])
     layout.addRow(spinbox)
+
+def get_default_param():
+
