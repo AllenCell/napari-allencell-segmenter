@@ -18,7 +18,7 @@ Params:
 
 
 class CollapsibleBox(QWidget):
-    def __init__(self, title, content, isOpen=True):
+    def __init__(self, title, content, isOpen=False):
         super().__init__()
         self._title = title
         self._content = content
