@@ -16,7 +16,7 @@ from napari_aicssegmentation.controller._interfaces import IWorkflowStepsControl
 from napari_aicssegmentation.core.view import View
 from napari_aicssegmentation.widgets.collapsible_box import CollapsibleBox
 from napari_aicssegmentation.view._main_template import MainTemplate
-from napari_aicssegmentation._style import PAGE_WIDTH
+from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH
 
 
 @debug_class
@@ -72,7 +72,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
         title_layout.addWidget(workflow_name)
         title_layout.addWidget(info)
         title_layout.addStretch()
-        title_layout.setSpacing(0)
+        title_layout.setSpacing(5)
 
         widget.setObjectName("workflowTitle")
         layout.addWidget(widget)
@@ -84,24 +84,23 @@ class WorkflowStepsView(View):  # pragma: no-cover
         # Progress bar
         progress_bar = QProgressBar()
         progress_bar.setRange(0, num_steps)
-        progress_bar.setValue(1) # TODO: Change arg to 0
+        progress_bar.setValue(3) # TODO: Change arg to 0
         progress_bar.setTextVisible(False)
         layout.addWidget(progress_bar)
 
         # Tick marks
-        progress_labels = QWidget()
-        progress_labels.setFixedWidth(PAGE_WIDTH)
+        progress_labels = QLabel()
+        progress_labels.setFixedWidth(PAGE_CONTENT_WIDTH)
         progress_labels.setObjectName("progressLabels")
 
         labels_layout = QHBoxLayout()
-        labels_layout.setContentsMargins(0, 0, 0, 11)
+        labels_layout.setContentsMargins(5, 0, 5, 11)
         progress_labels.setLayout(labels_layout)
 
         for step in range(0, num_steps + 1):
             tick = QLabel("|")
-            # tick.setFixedWidth(3)
             labels_layout.addWidget(tick)
-            if step <= num_steps:
+            if step < num_steps:
                 labels_layout.addStretch()
         layout.addWidget(progress_labels)
 

@@ -71,14 +71,13 @@ QProgressBar:chunk {
     margin-bottom: 2px;
 }
 
-/* #progressLabels {
-    margin-bottom: 1em;
-} */
+#progressLabels {
+    margin-bottom: 0.5em;
+}
 
 #progressLabels QLabel {
     color: #82868b;
     font-size: 8px;
-    background-color: red;
 }
 
 #columnLabels QLabel {
