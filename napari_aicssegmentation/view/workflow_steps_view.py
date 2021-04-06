@@ -1,3 +1,4 @@
+from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
     QHBoxLayout,
     QLabel, 
@@ -80,24 +81,22 @@ class WorkflowStepsView(View):  # pragma: no-cover
     def _add_workflow_steps(self, layout: QLayout, category: str):
         # Data will be passed in as a `steps` arg in the future
         steps = [
-            {
+            {   
+                "number": 1,
                 "name": "Intensity Normalization",
-                "category": "preprocessing",
-                "module": "aicssegmentation.core.pre_processing_utils",
-                "function": "intensity_normalization",
-                "parameter": {
-                    "scaling_param": [2.5, 7.5]
-                },
-                "parent": 0
             },
             {
+                "number": 2,
                 "name": "Edge Preserving Smoothing",
-                "category": "preprocessing",
-                "module": "aicssegmentation.core.pre_processing_utils",
-                "function": "edge_preserving_smoothing_3d",
-                "parent": 1
             },
         ]
+        
         category_label = QLabel(category.upper())
         category_label.setObjectName("categoryLabel")
         layout.addWidget(category_label)
+
+        for i, step in enumerate(steps):
+            content = QVBoxLayout()
+            content.addWidget(QLabel("This is a label"))
+            layout.addWidget(CollapsibleBox(f"<span>{i + 1}.&nbsp;{step['name']}", content))
+
