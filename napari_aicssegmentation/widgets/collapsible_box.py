@@ -25,7 +25,7 @@ class CollapsibleBox(QWidget):
         self.isOpen = isOpen
 
         layout = QVBoxLayout()
-        layout.setContentsMargins(0, 11, 0, 11)
+        layout.setContentsMargins(0, 5, 0, 3)
         layout.setSpacing(0)  # No space between title_box and content_box
         self.setLayout(layout)
 

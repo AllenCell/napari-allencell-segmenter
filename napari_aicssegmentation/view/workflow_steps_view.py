@@ -101,4 +101,6 @@ class WorkflowStepsView(View):  # pragma: no-cover
             content = QVBoxLayout()
             content.addWidget(QLabel("This is a label"))
             layout.addWidget(CollapsibleBox(f"<span>{i + 1}.&nbsp;{step['name']}", content))
+        
+        layout.addSpacing(10)
 

@@ -43,6 +43,13 @@ QLabel#workflowSelectionTitle {
     font-weight: bold;
 }
 
+QLabel#categoryLabel {
+    font-size: 12px;
+    color: #82868b;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
 #workflowTitle QLabel {
     padding-left: 0px;
     padding-right: 0px;
@@ -53,6 +60,7 @@ QLabel#workflowSelectionTitle {
 
 QProgressBar {
     border-radius: 8px;
+    margin-bottom: 1em;
     padding-left: 6px;
     padding-right: 6px;
     padding-top: 2px;
@@ -90,7 +98,7 @@ QPushButton:disabled {
 
 CollapsibleBox .QFrame {
     background-color: #5a626d;
-    border-radius: 2px;
+    border-radius: 3px;
     border-color: #6d7075;
     border-width: 0.5px;
     border-style: solid;
@@ -108,7 +116,7 @@ CollapsibleBox QFrame#titleBoxClosed:hover {
 
 CollapsibleBox QFrame:disabled {
     background-color: #333942;
-    border-radius: 2px;
+    border-radius: 3px;
     border-color: #333942;
     color: #7C848A;
 }
@@ -116,4 +124,6 @@ CollapsibleBox QFrame:disabled {
 CollapsibleBox .QFrame#contentBox {
     background-color: #30353d;
     border-top: 0px;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
 }
