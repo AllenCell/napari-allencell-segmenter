@@ -53,14 +53,12 @@ QLabel#categoryLabel {
 #workflowTitle QLabel {
     padding-left: 0px;
     padding-right: 0px;
-    margin-bottom: 0.3em;
     font-weight: bold;
     font-size: 16px;
 }
 
 QProgressBar {
     border-radius: 8px;
-    margin-bottom: 1em;
     padding-left: 6px;
     padding-right: 6px;
     padding-top: 2px;
@@ -71,6 +69,16 @@ QProgressBar {
 QProgressBar:chunk {
     margin-top: 2px;
     margin-bottom: 2px;
+}
+
+/* #progressLabels {
+    margin-bottom: 1em;
+} */
+
+#progressLabels QLabel {
+    color: #82868b;
+    font-size: 8px;
+    background-color: red;
 }
 
 #columnLabels QLabel {

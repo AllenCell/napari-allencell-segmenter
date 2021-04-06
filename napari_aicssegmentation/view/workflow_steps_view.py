@@ -1,5 +1,6 @@
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
+    QFrame,
     QHBoxLayout,
     QLabel, 
     QLayout, 
@@ -15,6 +16,7 @@ from napari_aicssegmentation.controller._interfaces import IWorkflowStepsControl
 from napari_aicssegmentation.core.view import View
 from napari_aicssegmentation.widgets.collapsible_box import CollapsibleBox
 from napari_aicssegmentation.view._main_template import MainTemplate
+from napari_aicssegmentation._style import PAGE_WIDTH
 
 
 @debug_class
@@ -61,6 +63,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
         title_layout = QHBoxLayout()
         widget.setLayout(title_layout)
 
+        # To be replaced by data
         config_workflow_name = "sec61b"
         workflow_name = QLabel(f"Workflow: {config_workflow_name}")
         info = QLabel("ⓘ")
@@ -75,13 +78,35 @@ class WorkflowStepsView(View):  # pragma: no-cover
         layout.addWidget(widget)
     
     def _add_progress_bar(self, layout: QLayout):
-        widget = QProgressBar()
-        widget.setValue(70)
-        widget.setTextVisible(False)
-        layout.addWidget(widget)
+        # To be replaced by data
+        num_steps = 4
+
+        # Progress bar
+        progress_bar = QProgressBar()
+        progress_bar.setRange(0, num_steps)
+        progress_bar.setValue(1) # TODO: Change arg to 0
+        progress_bar.setTextVisible(False)
+        layout.addWidget(progress_bar)
+
+        # Tick marks
+        progress_labels = QWidget()
+        progress_labels.setFixedWidth(PAGE_WIDTH)
+        progress_labels.setObjectName("progressLabels")
+
+        labels_layout = QHBoxLayout()
+        labels_layout.setContentsMargins(0, 0, 0, 11)
+        progress_labels.setLayout(labels_layout)
+
+        for step in range(0, num_steps + 1):
+            tick = QLabel("|")
+            # tick.setFixedWidth(3)
+            labels_layout.addWidget(tick)
+            if step <= num_steps:
+                labels_layout.addStretch()
+        layout.addWidget(progress_labels)
 
     def _add_workflow_steps(self, layout: QLayout, category: str):
-        # Data will be passed in as a `steps` arg in the future
+        # To be replaced by data
         steps = [
             {   
                 "number": 1,
