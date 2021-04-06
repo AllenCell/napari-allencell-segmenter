@@ -43,6 +43,8 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self._add_workflow_title(layout)
         self._add_progress_bar(layout)
         self._add_workflow_steps(layout, "preprocessing")
+        self._add_workflow_steps(layout, "core")
+        self._add_workflow_steps(layout, "postprocessing")
         layout.addStretch()
         layout.addWidget(btn_run_all)
 
