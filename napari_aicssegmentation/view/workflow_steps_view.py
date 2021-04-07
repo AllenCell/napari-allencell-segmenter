@@ -1,5 +1,7 @@
+from magicgui.widgets import FloatSlider
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import (
+    QFormLayout,
     QFrame,
     QHBoxLayout,
     QLabel, 
@@ -15,6 +17,7 @@ from napari_aicssegmentation.util.debug_utils import debug_class
 from napari_aicssegmentation.controller._interfaces import IWorkflowStepsController
 from napari_aicssegmentation.core.view import View
 from napari_aicssegmentation.widgets.collapsible_box import CollapsibleBox
+# from napari_aicssegmentation.widgets.form import Form
 from napari_aicssegmentation.view._main_template import MainTemplate
 from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH
 
@@ -122,8 +125,18 @@ class WorkflowStepsView(View):  # pragma: no-cover
         layout.addWidget(category_label)
 
         for i, step in enumerate(steps):
-            content = QVBoxLayout()
-            content.addWidget(QLabel("This is a label"))
+            # row_1 = FormRow("Param 1", FloatSlider(value=2.5, min=0.5, max=30, step=0.5).native)
+            # row_2 = FormRow("Param 2", FloatSlider(value=7.5, min=0.5, max=200, step=0.5).native)           
+            # content = Form([row_1, row_2])
+
+            content = QFormLayout()
+            label_1 = "Param 1"
+            slider_1 = FloatSlider(value=2.5, min=0.5, max=30, step=0.5)
+            label_2 = "Param 2"
+            slider_2 = FloatSlider(value=7.5, min=0.5, max=200, step=0.5)
+            content.addRow(label_1, slider_1.native)
+            content.addRow(label_2, slider_2.native)
+
             layout.addWidget(CollapsibleBox(f"<span>{i + 1}.&nbsp;{step['name']}", content))
         
         layout.addSpacing(10)

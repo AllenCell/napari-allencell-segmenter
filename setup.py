@@ -18,6 +18,7 @@ requirements = [
     "napari-plugin-engine>=0.1.4",
     "numpy",
     "aicssegmentation>=0.1.22",
+    "magicgui >= 0.2.9",
 ]
 
 test_requirements = [
