@@ -4,6 +4,7 @@ from qtpy.QtCore import Qt
 from napari_aicssegmentation.widgets.collapsible_box import CollapsibleBox
 from qtpy.QtWidgets import QFormLayout, QLabel, QSlider, QDoubleSpinBox
 from aicssegmentation.structure_wrapper.WorkflowStep import WorkflowStep
+from magicgui.widgets import FloatSlider, Slider
 import json
 
 def generate_workflow_widget(workflow_step: WorkflowStep) -> CollapsibleBox:
@@ -27,44 +28,67 @@ def generate_workflow_widget(workflow_step: WorkflowStep) -> CollapsibleBox:
         test_dict["function"] = "intensity_normalization"
         test_dict["parent"] = 0
         test_dict["parameter"] = {"scaling_param": [3, 15]}
-
-        with open(r'C:\Users\brian\code\work\aics-segmentation\aicssegmentation\structure_wrapper_config\all_functions.json') as file:
-            widget_info = json.load(file)
-        workflow_step = WorkflowStep(test_dict, widget_info)
+        workflow_step = WorkflowStep(test_dict)
     # Test code end
 
 
-    param_info = workflow_step.widget_data["parameter"]
+    widget_info = workflow_step.widget_data
     widget = QFormLayout()
 
-    for param_name, param_vals in param_info.items():
-        create_step_widget(widget, param_name, param_vals)
+    for param_key in widget_info.param_info.keys():
+        create_step_widget(widget, widget_info, param_key)
 
     return CollapsibleBox(workflow_step.name, widget)
 
 
 
-def create_step_widget(layout, param_name, param_vals):
-    param_label = QLabel(param_name)
+def create_step_widget(layout, widget_info, param_key):
+    param_label = QLabel(widget_info.function_name)
     layout.addRow(param_label)
+
+    param_vals = widget_info.param_info[param_key]
+
     if isinstance(param_vals, list):
-        for single_param in param_vals:
-            parse_param_and_add(layout, single_param)
+        for single_param_val in param_vals:
+            parse_param_and_add(layout, widget_info, param_key, single_param_val)
     else:
-        parse_param_and_add(layout, param_vals)
+        parse_param_and_add(layout, widget_info, param_key, param_vals)
 
 
-def parse_param_and_add(layout,  single_param):
-    if single_param["widget_type"] == "slider":
-        add_slider(layout, single_param)
+def parse_param_and_add(layout, widget_info, key, single_param):
+    widget_type = single_param["widget_type"]
+    if widget_type == "slider":
+        add_slider(layout, widget_info, key, single_param)
+    elif widget_type == "drop-down":
+        add_dropdown(layout, widget_info, key, single_param)
 
-def add_slider(layout, single_param):
+
+def add_slider(layout, widget_info, param_key, single_param):
     # TODO: basic version for now, need to implement min, max, and data types
     spinbox = QDoubleSpinBox()
-    spinbox.setMinimum(single_param["min"])
-    spinbox.setMaximum(single_param["max"])
-    #spinbox.setSingleStep(single_param["increment"])
-    layout.addRow(spinbox)
+    widget_values = dict()
 
-def get_default_param():
+    if widget_info.parameter_defaults is not None:
+        if isinstance(widget_info.parameter_defaults[param_key], list):
+            default_val = widget_info.parameter_defaults[param_key][0]
+        else:
+            default_val = widget_info.parameter_defaults[param_key]
+        widget_values["value"] = default_val
+    if "max" in single_param:
+        widget_values["max"] = single_param["max"]
+    if "min" in single_param:
+        widget_values["min"] = single_param["min"]
+    if "increment" in single_param:
+        widget_values["step"] = single_param["increment"]
+
+    widget = None
+    if single_param["data_type"] == "float":
+        widget = FloatSlider(**widget_values)
+    if single_param["data_type"] == "int":
+        widget = Slider(**widget_values)
+
+
+    layout.addRow(widget.native)
+
+
 
