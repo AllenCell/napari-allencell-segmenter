@@ -23,8 +23,6 @@ def generate_workflow_widget(workflow_step: WorkflowStep) -> CollapsibleBox:
     # Test code
     if workflow_step == "test":
         test_dict = dict()
-        test_dict["name"] = "intensity_normalization"
-        test_dict["module"] = "aicssegmentation.core.pre_processing_utils"
         test_dict["function"] = "intensity_normalization"
         test_dict["parent"] = 0
         test_dict["parameter"] = {"scaling_param": [3, 15]}
@@ -35,44 +33,52 @@ def generate_workflow_widget(workflow_step: WorkflowStep) -> CollapsibleBox:
     widget_info = workflow_step.widget_data
     widget = QFormLayout()
 
+    # Get all the separate parameters to put into this layout.
     for param_key in widget_info.param_info.keys():
-        create_step_widget(widget, widget_info, param_key)
+        create_step_widget(widget, workflow_step, param_key)
 
-    return CollapsibleBox(workflow_step.name, widget)
+    return CollapsibleBox(workflow_step.widget_data.display_name, widget)
 
 
 
-def create_step_widget(layout, widget_info, param_key):
-    param_label = QLabel(widget_info.function_name)
-    layout.addRow(param_label)
+def create_step_widget(layout, workflow_step, param_key):
+    # Get dictionary of information for this parameter
+    param_vals = workflow_step.widget_data.param_info[param_key]
 
-    param_vals = widget_info.param_info[param_key]
-
+    # Sometimes one parameter has multiple inputs
     if isinstance(param_vals, list):
+        # Split single param- multi inputs and treat as
+        # multiple single inputs
         for single_param_val in param_vals:
-            parse_param_and_add(layout, widget_info, param_key, single_param_val)
+            parse_param_and_add(layout, workflow_step, param_key, single_param_val)
     else:
-        parse_param_and_add(layout, widget_info, param_key, param_vals)
+        # One parameter with single input
+        parse_param_and_add(layout, workflow_step, param_key, param_vals)
 
 
-def parse_param_and_add(layout, widget_info, key, single_param):
+def parse_param_and_add(layout, workflow_step, key, single_param):
+    # Parse out type of widget to be added
     widget_type = single_param["widget_type"]
+    # Slider
     if widget_type == "slider":
-        add_slider(layout, widget_info, key, single_param)
-    elif widget_type == "drop-down":
-        add_dropdown(layout, widget_info, key, single_param)
+        add_slider(layout, workflow_step, key, single_param)
+    # # Drop Down
+    # elif widget_type == "drop-down":
+    #     add_dropdown(layout, widget_info, key, single_param)
 
 
-def add_slider(layout, widget_info, param_key, single_param):
-    # TODO: basic version for now, need to implement min, max, and data types
+def add_slider(layout, workflow_step, param_key, single_param):
+    # Add a slider
     spinbox = QDoubleSpinBox()
     widget_values = dict()
 
-    if widget_info.parameter_defaults is not None:
-        if isinstance(widget_info.parameter_defaults[param_key], list):
-            default_val = widget_info.parameter_defaults[param_key][0]
+    # Build dictionary of widget information (default value, min, max, increment)
+    if workflow_step.parameters is not None:
+        if isinstance(workflow_step.parameters[param_key], list):
+            # if given two numbers for default value default to first value given
+            default_val = workflow_step.parameters[param_key][0]
         else:
-            default_val = widget_info.parameter_defaults[param_key]
+            default_val = workflow_step.parameters
         widget_values["value"] = default_val
     if "max" in single_param:
         widget_values["max"] = single_param["max"]
@@ -81,14 +87,18 @@ def add_slider(layout, widget_info, param_key, single_param):
     if "increment" in single_param:
         widget_values["step"] = single_param["increment"]
 
+    # Determine which type of slider to use based on data type
+    # and unpack dictionary with slider info and feed when initializing
     widget = None
     if single_param["data_type"] == "float":
         widget = FloatSlider(**widget_values)
     if single_param["data_type"] == "int":
         widget = Slider(**widget_values)
 
+    layout.addRow(param_key, widget.native)
+#
+# def add_dropdown(layout, widget_info, param_key, param_vals):
 
-    layout.addRow(widget.native)
 
 
 
