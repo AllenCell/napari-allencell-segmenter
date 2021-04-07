@@ -3,6 +3,7 @@ from typing import List
 from napari.layers import Layer
 from .channel import Channel
 
+
 @dataclass
 class SegmenterModel:
     """

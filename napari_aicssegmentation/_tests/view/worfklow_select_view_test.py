@@ -5,7 +5,7 @@ from napari_aicssegmentation.view.workflow_select_view import (
     WorkflowSelectView,
     IWorkflowSelectController,
     SegmenterModel,
-    Channel
+    Channel,
 )
 from ..mocks import MockLayer
 
@@ -44,7 +44,7 @@ class TestWorkflowSelectView:
 
         # Assert
         assert self._view.combo_layers.count() == 4  # 4 because of header
-        assert self._view.combo_layers.currentText() == "Layer 2"        
+        assert self._view.combo_layers.currentText() == "Layer 2"
         assert not self._view.load_image_warning.isVisibleTo(self._view)
         assert self._view.combo_layers.isEnabled()
 
@@ -56,7 +56,7 @@ class TestWorkflowSelectView:
         assert not self._view.combo_layers.isEnabled()
 
     def test_update_channels_with_channels(self):
-        selected_channel = Channel(2)     
+        selected_channel = Channel(2)
         channels = [Channel(0), Channel(1), selected_channel]
 
         # Act
@@ -64,7 +64,7 @@ class TestWorkflowSelectView:
 
         # Assert
         assert self._view.combo_channels.count() == 4  # 4 because of header
-        assert self._view.combo_channels.currentData(QtCore.Qt.UserRole) == selected_channel               
+        assert self._view.combo_channels.currentData(QtCore.Qt.UserRole) == selected_channel
         assert self._view.combo_channels.isEnabled()
 
     def test_combo_layers_activated_select(self):
@@ -89,25 +89,25 @@ class TestWorkflowSelectView:
         self._mock_controller.unselect_layer.assert_called()
 
     def test_combo_channels_activated_select(self):
-        # Arrange  
-        expected_channel = Channel(0)     
+        # Arrange
+        expected_channel = Channel(0)
         channels = [expected_channel, Channel(1), Channel(2), Channel(3)]
-        self._view.update_channels(channels)        
+        self._view.update_channels(channels)
 
         # Act
-        self._view.combo_channels.activated.emit(1)        
+        self._view.combo_channels.activated.emit(1)
 
         # Assert
-        self._mock_controller.select_channel.assert_called_with(expected_channel)   
+        self._mock_controller.select_channel.assert_called_with(expected_channel)
 
     def test_combo_channels_activated_unselect(self):
-        # Arrange        
+        # Arrange
         channels = [Channel(0), Channel(1), Channel(2), Channel(3)]
-        self._view.update_channels(channels)        
+        self._view.update_channels(channels)
 
         # Act
         self._view.combo_channels.activated.emit(1)
         self._view.combo_channels.activated.emit(0)
 
         # Assert
-        self._mock_controller.unselect_channel.assert_called()        
+        self._mock_controller.unselect_channel.assert_called()

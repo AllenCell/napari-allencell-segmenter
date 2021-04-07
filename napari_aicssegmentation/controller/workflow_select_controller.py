@@ -1,5 +1,4 @@
 from typing import List
-from napari.layers import Layer
 from napari.utils.events.event import Event
 from napari_aicssegmentation.util.debug_utils import debug_class
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
@@ -9,7 +8,7 @@ from napari_aicssegmentation.controller._interfaces import IWorkflowSelectContro
 from napari_aicssegmentation.core.controller import Controller
 from napari_aicssegmentation.model.channel import Channel
 from napari_aicssegmentation.core.layer_reader import LayerReader
-from aicsimageio import AICSImage
+
 
 @debug_class
 class WorkflowSelectController(Controller, IWorkflowSelectController):
@@ -43,8 +42,8 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
         self.model.workflows = ["SEC61B", "LMNB1", "ACTN1"]
         self._view.load_model(self.model)
 
-    def select_layer(self, layer_name: str):        
-        self.model.selected_layer = next(filter(lambda layer: layer.name == layer_name, self.get_layers()), None)        
+    def select_layer(self, layer_name: str):
+        self.model.selected_layer = next(filter(lambda layer: layer.name == layer_name, self.get_layers()), None)
         self.model.channels = self._layer_reader.get_channels(self.model.selected_layer)
         self._view.update_channels(self.model.channels, self.model.selected_channel)
 
@@ -55,12 +54,12 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
         self._view.update_channels(self.model.channels)
 
     def select_channel(self, channel: Channel):
-        self.model.selected_channel = channel     
+        self.model.selected_channel = channel
         self._view.update_workflows(enabled=True)
-        
+
     def unselect_channel(self):
         self.model.selected_channel = None
-        self._view.update_workflows(enabled=False)        
+        self._view.update_workflows(enabled=False)
 
     def select_workflow(self, workflow: str):
         self.model.active_workflow = workflow
@@ -74,7 +73,7 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
         layers = self.get_layers()
         return [layer.name for layer in layers if layer.ndim >= 3]
 
-    def _reset_channels(self):        
+    def _reset_channels(self):
         self.model.channels = None
         self._view.update_channels(self.model.channels)
         self.unselect_channel()
@@ -89,7 +88,7 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
         This is triggered whenever changes are made to the layer list (such as adding or deleting a layer)
         """
         self.model.layers = self._get_3D_layers()
-        self._view.update_layers(self.model.layers, self.model.selected_layer) 
+        self._view.update_layers(self.model.layers, self.model.selected_layer)
 
         if self.model.selected_layer is None or self.model.selected_layer.name not in self.model.layers:
             self._reset_channels()
