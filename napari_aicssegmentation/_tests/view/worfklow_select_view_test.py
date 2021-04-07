@@ -1,11 +1,13 @@
 import pytest
-
-from unittest.mock import MagicMock, create_autospec
+from PyQt5 import QtCore
+from unittest.mock import MagicMock, Mock, create_autospec
 from napari_aicssegmentation.view.workflow_select_view import (
     WorkflowSelectView,
     IWorkflowSelectController,
     SegmenterModel,
+    Channel
 )
+from ..mocks import MockLayer
 
 
 class TestWorkflowSelectView:
@@ -38,34 +40,74 @@ class TestWorkflowSelectView:
         layers = ["Layer 1", "Layer 2", "Layer 3"]
 
         # Act
-        self._view.update_layers(layers, "Layer 2")
+        self._view.update_layers(layers, MockLayer("Layer 2"))
 
         # Assert
         assert self._view.combo_layers.count() == 4  # 4 because of header
-        assert self._view.combo_layers.currentText() == "Layer 2"
-        assert self._view.combo_layers.itemText(1) == "Layer 1"
-        assert self._view.combo_layers.itemText(2) == "Layer 2"
-        assert self._view.combo_layers.itemText(3) == "Layer 3"
+        assert self._view.combo_layers.currentText() == "Layer 2"        
         assert not self._view.load_image_warning.isVisibleTo(self._view)
         assert self._view.combo_layers.isEnabled()
 
-    def test_combo_layers_index_changed_select(self):
+    @pytest.mark.parametrize("channels", [None, list()])
+    def test_update_channels_without_channels(self, channels):
+        # Act
+        self._view.update_channels(channels)
+        # Assert
+        assert not self._view.combo_layers.isEnabled()
+
+    def test_update_channels_with_channels(self):
+        selected_channel = Channel(2)     
+        channels = [Channel(0), Channel(1), selected_channel]
+
+        # Act
+        self._view.update_channels(channels, selected_channel)
+
+        # Assert
+        assert self._view.combo_channels.count() == 4  # 4 because of header
+        assert self._view.combo_channels.currentData(QtCore.Qt.UserRole) == selected_channel               
+        assert self._view.combo_channels.isEnabled()
+
+    def test_combo_layers_activated_select(self):
         # Arrange
         self._view.combo_layers.addItems(["Layer 1", "Layer 2", "Layer 3"])
 
         # Act
-        self._view.combo_layers.setCurrentIndex(1)
+        self._view.combo_layers.activated.emit(1)
 
         # Assert
         self._mock_controller.select_layer.assert_called_with("Layer 1")
 
-    def test_combo_layers_index_changed_unselect(self):
+    def test_combo_layers_activated_unselect(self):
         # Arrange
         self._view.combo_layers.addItems(["Layer 1", "Layer 2", "Layer 3"])
 
         # Act
-        self._view.combo_layers.setCurrentIndex(1)
-        self._view.combo_layers.setCurrentIndex(0)
+        self._view.combo_layers.activated.emit(1)
+        self._view.combo_layers.activated.emit(0)
 
         # Assert
         self._mock_controller.unselect_layer.assert_called()
+
+    def test_combo_channels_activated_select(self):
+        # Arrange  
+        expected_channel = Channel(0)     
+        channels = [expected_channel, Channel(1), Channel(2), Channel(3)]
+        self._view.update_channels(channels)        
+
+        # Act
+        self._view.combo_channels.activated.emit(1)        
+
+        # Assert
+        self._mock_controller.select_channel.assert_called_with(expected_channel)   
+
+    def test_combo_channels_activated_unselect(self):
+        # Arrange        
+        channels = [Channel(0), Channel(1), Channel(2), Channel(3)]
+        self._view.update_channels(channels)        
+
+        # Act
+        self._view.combo_channels.activated.emit(1)
+        self._view.combo_channels.activated.emit(0)
+
+        # Assert
+        self._mock_controller.unselect_channel.assert_called()        

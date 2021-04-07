@@ -120,15 +120,24 @@ class WorkflowSelectView(View):
         if channels is None or len(channels) == 0:
             self.combo_channels.setEnabled(False)
         else:
-            combo_model = QStandardItemModel()
-            combo_model.appendRow(QStandardItem(self.combo_channels.itemText(0)))
+            model = QStandardItemModel()
+            model.appendRow(QStandardItem(self.combo_channels.itemText(0)))
+
             for channel in channels:
                 item = QStandardItem(channel.display_name)
                 item.setData(channel, QtCore.Qt.UserRole)
-                combo_model.appendRow(item)            
-            self.combo_channels.setModel(combo_model)
+                model.appendRow(item)      
+
+            self.combo_channels.setModel(model)
+
             if selected_channel is not None:
+                # TODO relying on display name isn't the best as it will probably cause issues if channel names aren't unique
+                # TODO refactor by making Channel derive from QStandardItem and do something like this:
+                #      selected_index = model.indexFromItem(selected_channel)                
+                #      self.combo_channels.setCurrentIndex(selected_index)
                 self.combo_channels.setCurrentText(selected_channel.display_name)
+
+                
             self.combo_channels.setEnabled(True)
 
     def update_workflows(self, enabled: bool):
@@ -246,7 +255,7 @@ class WorkflowSelectView(View):
         if index == 0:  # index 0 is the dropdown header
             self._controller.unselect_layer()
         else:
-            self._controller.select_layer(self.combo_layers.currentText())
+            self._controller.select_layer(self.combo_layers.itemText(index))
 
     def _combo_channels_activated(self, index: int):
         if index == 0:
