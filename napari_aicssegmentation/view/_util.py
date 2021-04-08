@@ -3,12 +3,11 @@ from PyQt5.QtWidgets import QComboBox
 from napari_aicssegmentation.widgets.form import FormRow
 
 
-def dropdown_row(number: int, placeholder: str, enabled=False) -> FormRow:
+def dropdown_row(label: str, placeholder: str, enabled=False) -> FormRow:
     """
-    Given the contents of a dropdown and a number for the label, return a label and a QComboBox
-    widget that can be used to create a row in a QFormLayout
+    Given the contents of a dropdown and a label, return a FormRow containing
+    a label and a QComboBox widget that can be used with the custom Form widget
     """
-    label = f"{number}."
 
     dropdown = QComboBox()
     dropdown.addItem(placeholder)

@@ -54,11 +54,11 @@ class WorkflowSelectView(View):
         self.load_image_warning.setVisible(False)
 
         # Dropdowns
-        layers_dropdown = dropdown_row(1, "Select a 3D Napari image layer", enabled=False)
+        layers_dropdown = dropdown_row("1.", "Select a 3D Napari image layer", enabled=False)
         self.combo_layers = layers_dropdown.widget
         self.combo_layers.currentIndexChanged.connect(self._combo_layers_index_changed)
 
-        channels_dropdown = dropdown_row(2, "Select a 3D image data channel", enabled=False)
+        channels_dropdown = dropdown_row("2.", "Select a 3D image data channel", enabled=False)
         self.combo_channels = channels_dropdown.widget
         layer_channel_selections = QWidget()
         layer_channel_selections.setLayout(Form([layers_dropdown, channels_dropdown]))
