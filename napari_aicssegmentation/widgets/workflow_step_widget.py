@@ -2,7 +2,8 @@
 from qtpy.QtCore import Qt
 
 from napari_aicssegmentation.widgets.collapsible_box import CollapsibleBox
-from qtpy.QtWidgets import QFormLayout, QLabel, QSlider, QDoubleSpinBox
+from qtpy.QtWidgets import QFormLayout, QLabel, QSlider, QDoubleSpinBox, QComboBox
+
 from aicssegmentation.structure_wrapper.WorkflowStep import WorkflowStep
 from magicgui.widgets import FloatSlider, Slider
 import json
@@ -20,14 +21,7 @@ def generate_workflow_widget(workflow_step: WorkflowStep) -> CollapsibleBox:
         widget (CollapsibleBox): A widget filled with information
             for that step, parameters, and default values.
     """
-    # Test code
-    if workflow_step == "test":
-        test_dict = dict()
-        test_dict["function"] = "intensity_normalization"
-        test_dict["parent"] = 0
-        test_dict["parameter"] = {"scaling_param": [3, 15]}
-        workflow_step = WorkflowStep(test_dict)
-    # Test code end
+
 
 
     widget_info = workflow_step.widget_data
@@ -78,7 +72,7 @@ def add_slider(layout, workflow_step, param_key, single_param):
             # if given two numbers for default value default to first value given
             default_val = workflow_step.parameters[param_key][0]
         else:
-            default_val = workflow_step.parameters
+            default_val = workflow_step.parameters[param_key]
         widget_values["value"] = default_val
     if "max" in single_param:
         widget_values["max"] = single_param["max"]
@@ -86,6 +80,14 @@ def add_slider(layout, workflow_step, param_key, single_param):
         widget_values["min"] = single_param["min"]
     if "increment" in single_param:
         widget_values["step"] = single_param["increment"]
+
+
+    # Sometimes default values are less than min or greater than max?
+    if widget_values["value"] < widget_values["min"]:
+        widget_values["value"] = widget_values["min"]
+    if widget_values["value"] > widget_values["max"]:
+        widget_values["value"] = widget_values["max"]
+
 
     # Determine which type of slider to use based on data type
     # and unpack dictionary with slider info and feed when initializing
@@ -96,8 +98,12 @@ def add_slider(layout, workflow_step, param_key, single_param):
         widget = Slider(**widget_values)
 
     layout.addRow(param_key, widget.native)
-#
-# def add_dropdown(layout, widget_info, param_key, param_vals):
+
+def add_dropdown(layout, widget_info, param_key, param_vals):
+    dropdown = QComboBox()
+    dropdown.addItem("test")
+    layout.addWidget(dropdown)
+
 
 
 

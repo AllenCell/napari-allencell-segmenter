@@ -3,7 +3,8 @@ from PyQt5.QtWidgets import QFrame, QVBoxLayout, QScrollArea, QLabel
 from PyQt5 import QtCore
 from napari_aicssegmentation._style import Style
 
-from napari_aicssegmentation.widgets.workflow_step_widget import generate_workflow_widget
+from napari_aicssegmentation.widgets.workflow_step_box import WorkflowStepBox
+# from aicssegmentation.structure_wrapper.WorkflowStep import WorkflowStep
 
 
 class MainTemplate(ViewTemplate):
@@ -52,9 +53,22 @@ class MainTemplate(ViewTemplate):
         self._container.setLayout(QVBoxLayout())
         self._container.layout().setContentsMargins(0, 0, 0, 0)
         page.layout().addWidget(self._container)
-<<<<<<< HEAD
-=======
         page.layout().addStretch()
 
-        page.layout().addWidget(generate_workflow_widget("test"))
->>>>>>> basic spinbox generation: working
+        test_workflow_step = dict()
+        test_workflow_step["display_name"] = "intensity_normalization"
+        test_workflow_step["function"] = {"parameters": [3, 15]}
+        # test_workflow_step = WorkflowStep(test_workflow_step)
+
+        page.layout().addWidget(WorkflowStepBox(test_workflow_step))  # Test code
+
+        test_workflow_step = dict()
+        test_workflow_step["display_name"] = "intensity_normalization_with_bound"
+        test_workflow_step["function"] = {"parameters": [3, 15]}
+        # test_workflow_step = WorkflowStep(test_workflow_step)
+        page.layout().addWidget(WorkflowStepBox(test_workflow_step))
+        test_workflow_step = dict()
+        test_workflow_step["display_name"] = "size_filter"
+        test_workflow_step["function"] = {"parameters": [1, 2]}
+        # test_workflow_step = WorkflowStep(test_workflow_step)
+        page.layout().addWidget(WorkflowStepBox(test_workflow_step))
