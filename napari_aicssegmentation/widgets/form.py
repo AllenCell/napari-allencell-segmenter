@@ -1,0 +1,29 @@
+from typing import List, NamedTuple, Union
+
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QFormLayout, QLabel, QWidget
+
+
+class FormRow(NamedTuple):
+    label: Union[str, QLabel]
+    widget: QWidget
+
+
+class Form(QFormLayout):
+    """
+    A nicely formatted form layout.
+
+    Inputs:
+        rows:       List of FormRow
+        margins:    Tuple of 4 numbers representing left, top, right, and bottom margins for
+                    the form's contents. Qt defaults to (11, 11, 11, 11).
+    """
+
+    def __init__(self, rows: List[FormRow], margins=(0, 5, 11, 0)):
+        super().__init__()
+        self.setFormAlignment(Qt.AlignLeft)
+        left, top, right, bottom = margins
+        self.setContentsMargins(left, top, right, bottom)
+
+        for row in rows:
+            self.addRow(row.label, row.widget)
