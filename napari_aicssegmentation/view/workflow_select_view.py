@@ -1,4 +1,5 @@
 from typing import List
+
 from PyQt5.QtWidgets import (
     QComboBox,
     QLabel,
@@ -11,6 +12,7 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtGui import QIcon
 from PyQt5 import QtCore
 from PyQt5.QtCore import QSize
+
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
 from napari_aicssegmentation.util.debug_utils import debug_class
 from napari_aicssegmentation.controller._interfaces import IWorkflowSelectController
@@ -18,6 +20,7 @@ from napari_aicssegmentation.core.view import View
 from napari_aicssegmentation.widgets.form import Form, FormRow
 from napari_aicssegmentation.widgets.warning_message import WarningMessage
 from napari_aicssegmentation.util.directories import Directories
+from napari_aicssegmentation.view._util import dropdown_row
 from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH
 from ._main_template import MainTemplate
 
@@ -51,11 +54,11 @@ class WorkflowSelectView(View):
         self.load_image_warning.setVisible(False)
 
         # Dropdowns
-        layers_dropdown = self._dropdown_row(1, "Select a 3D Napari image layer", enabled=False)
+        layers_dropdown = dropdown_row(1, "Select a 3D Napari image layer", enabled=False)
         self.combo_layers = layers_dropdown.widget
         self.combo_layers.currentIndexChanged.connect(self._combo_layers_index_changed)
 
-        channels_dropdown = self._dropdown_row(2, "Select a 3D image data channel", enabled=False)
+        channels_dropdown = dropdown_row(2, "Select a 3D image data channel", enabled=False)
         self.combo_channels = channels_dropdown.widget
         layer_channel_selections = QWidget()
         layer_channel_selections.setLayout(Form([layers_dropdown, channels_dropdown]))
@@ -121,19 +124,6 @@ class WorkflowSelectView(View):
             header = combo.itemText(0)
             combo.clear()
             combo.addItem(header)
-
-    def _dropdown_row(self, number: int, placeholder: str, enabled=False) -> FormRow:
-        """
-        Given the contents of a dropdown and a number for the label, return a label and a QComboBox
-        widget that can be used to create a row in a QFormLayout
-        """
-        label = f"{number}."
-
-        dropdown = QComboBox()
-        dropdown.addItem(placeholder)
-        dropdown.setDisabled(not enabled)
-
-        return FormRow(label, dropdown)
 
     def _add_step_3_layout(self, layout: QLayout, enabled=False):
         """
