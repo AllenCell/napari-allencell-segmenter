@@ -16,6 +16,7 @@ from napari_aicssegmentation.core.view import View
 from napari_aicssegmentation.widgets.collapsible_box import CollapsibleBox
 from napari_aicssegmentation.widgets.form import Form, FormRow
 from napari_aicssegmentation.view._main_template import MainTemplate
+from napari_aicssegmentation.view._util import dropdown_row
 from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH
 
 
@@ -124,7 +125,9 @@ class WorkflowStepsView(View):  # pragma: no-cover
         for i, step in enumerate(steps):
             row_1 = FormRow("Param 1", FloatSlider(value=2.5, min=0.5, max=30, step=0.5).native)
             row_2 = FormRow("Param 2", FloatSlider(value=7.5, min=0.5, max=200, step=0.5).native)
-            content = Form([row_1, row_2])
+            row_3 = dropdown_row("Mode", "thick", enabled=True)
+            row_3.widget.addItem("thin")
+            content = Form([row_1, row_2, row_3])
 
             layout.addWidget(CollapsibleBox(f"<span>{i + 1}.&nbsp;{step['name']}", content))
         
