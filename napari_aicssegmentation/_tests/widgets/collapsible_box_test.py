@@ -12,20 +12,6 @@ class TestCollapsibleBox:
 
         self.collapsible_box = CollapsibleBox("1. Intensity Normalization", layout)
 
-    def test_close(self):
-        # Arrange - box starts out open
-        assert self.collapsible_box.isOpen is True
-        assert self.collapsible_box.content_box.isHidden() is False
-        assert self.collapsible_box.title_box.objectName() == ""
-
-        # Act
-        self.collapsible_box.close()
-
-        # Assert - box should be closed and contents hidden
-        assert self.collapsible_box.isOpen is False
-        assert self.collapsible_box.content_box.isHidden() is True
-        assert self.collapsible_box.title_box.objectName() == "titleBoxClosed"
-
     def test_open(self):
         # Assert - box should be closed and contents hidden
         assert self.collapsible_box.isOpen is False
@@ -40,16 +26,22 @@ class TestCollapsibleBox:
         assert self.collapsible_box.content_box.isHidden() is False
         assert self.collapsible_box.title_box.objectName() == ""
 
-    def test_toggle(self):
-        # Arrange - Box starts out open
+    def test_close(self):
+        # Arrange - box starts out open
         assert self.collapsible_box.isOpen is True
         assert self.collapsible_box.content_box.isHidden() is False
         assert self.collapsible_box.title_box.objectName() == ""
 
         # Act
-        self.collapsible_box.toggle()
+        self.collapsible_box.close()
 
         # Assert - box should be closed and contents hidden
+        assert self.collapsible_box.isOpen is False
+        assert self.collapsible_box.content_box.isHidden() is True
+        assert self.collapsible_box.title_box.objectName() == "titleBoxClosed"
+
+    def test_toggle(self):
+        # Arrange - Box starts out closed
         assert self.collapsible_box.isOpen is False
         assert self.collapsible_box.content_box.isHidden() is True
         assert self.collapsible_box.title_box.objectName() == "titleBoxClosed"
@@ -61,3 +53,11 @@ class TestCollapsibleBox:
         assert self.collapsible_box.isOpen is True
         assert self.collapsible_box.content_box.isHidden() is False
         assert self.collapsible_box.title_box.objectName() == ""
+
+        # Act
+        self.collapsible_box.toggle()
+
+        # Assert - box should be closed and contents hidden
+        assert self.collapsible_box.isOpen is False
+        assert self.collapsible_box.content_box.isHidden() is True
+        assert self.collapsible_box.title_box.objectName() == "titleBoxClosed"
