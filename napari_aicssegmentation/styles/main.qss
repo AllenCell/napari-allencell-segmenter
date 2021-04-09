@@ -57,6 +57,14 @@ QLabel#categoryLabel {
     font-size: 16px;
 }
 
+#infoButton {
+    background-color: transparent;
+}
+
+#infoButton:hover {
+    background-color: #333941;
+}
+
 QProgressBar {
     border-radius: 8px;
     padding-left: 6px;

@@ -1,4 +1,5 @@
 from magicgui.widgets import FloatSlider, Slider
+from qtpy.QtGui import QPixmap
 from qtpy.QtWidgets import (
     QHBoxLayout,
     QLabel, 
@@ -17,6 +18,7 @@ from napari_aicssegmentation.widgets.collapsible_box import CollapsibleBox
 from napari_aicssegmentation.widgets.form import Form, FormRow
 from napari_aicssegmentation.view._main_template import MainTemplate
 from napari_aicssegmentation.view._util import dropdown_row
+from napari_aicssegmentation.util.directories import Directories
 from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH
 
 
@@ -69,16 +71,24 @@ class WorkflowStepsView(View):  # pragma: no-cover
         # To be replaced by data
         config_workflow_name = "sec61b"
         workflow_name = QLabel(f"Workflow: {config_workflow_name}")
-        info = QLabel("ⓘ")
+        info = QPushButton("ⓘ")
+        info.setObjectName("infoButton")
+        info.clicked.connect(self._show_workflow_diagram)
 
         title_layout.addStretch()
         title_layout.addWidget(workflow_name)
         title_layout.addWidget(info)
         title_layout.addStretch()
-        title_layout.setSpacing(5)
+        title_layout.setSpacing(3)
 
         widget.setObjectName("workflowTitle")
         layout.addWidget(widget)
+
+    def _show_workflow_diagram(self, checked: bool):
+        self.diagram = QLabel()
+        diagram_path = str(Directories.get_assets_dir() / "workflow_diagrams/sec61b_1.png")
+        self.diagram.setPixmap(QPixmap(diagram_path))
+        self.diagram.show()
     
     def _add_progress_bar(self, layout: QLayout):
         # To be replaced by data
@@ -108,7 +118,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
         layout.addWidget(progress_labels)
 
     def _add_workflow_steps(self, layout: QLayout, category: str):
-        # To be replaced by data
+        # TODO: Mesh this with the data-driven WorkflowStep widget
         steps = [
             {   
                 "number": 1,
