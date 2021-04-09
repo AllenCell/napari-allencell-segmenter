@@ -57,24 +57,27 @@ class WorkflowStepsView(View):  # pragma: no-cover
         layout = QHBoxLayout()
         widget.setLayout(layout)
 
-        # To be replaced by data
+        # Make widgets
+        # TODO: replace with real data
         config_workflow_name = "sec61b"
         workflow_name = QLabel(f"Workflow: {config_workflow_name}")
         info = QPushButton("ⓘ")
         info.setObjectName("infoButton")
         info.clicked.connect(self._btn_info_clicked)
 
+        # Add widgets and whitespace
         layout.addStretch()
         layout.addWidget(workflow_name)
         layout.addWidget(info)
         layout.addStretch()
         layout.setSpacing(3)
 
+        # Add to to main layout
         widget.setObjectName("workflowTitle")
         self.layout.addWidget(widget)
 
     def _add_progress_bar(self):
-        # To be replaced by data
+        # TODO: replace with real data
         num_steps = 4
 
         # Progress bar
@@ -85,6 +88,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self.layout.addWidget(progress_bar)
 
         # Tick marks
+
         progress_labels = QLabel()
         progress_labels.setFixedWidth(PAGE_CONTENT_WIDTH)
         progress_labels.setObjectName("progressLabels")
@@ -101,16 +105,18 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self.layout.addWidget(progress_labels)
 
     def _add_workflow_steps(self, category: str):
-        # TODO: Mesh this with the data-driven WorkflowStep widget
+        # TODO: replace with real data
         steps = [
             {"number": 1, "name": "Intensity Normalization"},
             {"number": 2, "name": "Edge Preserving Smoothing"},
         ]
 
+        # Category label, e.g., "Preprocessing"
         category_label = QLabel(category.upper())
         category_label.setObjectName("categoryLabel")
         self.layout.addWidget(category_label)
 
+        # TODO: replace this with the data-driven WorkflowStep widget
         for i, step in enumerate(steps):
             slider_1 = FloatSlider(value=2.5, min=0.5, max=30, step=0.5).native
             slider_1.setObjectName("slider")
