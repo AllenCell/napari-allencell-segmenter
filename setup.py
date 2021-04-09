@@ -18,6 +18,7 @@ requirements = [
     "napari-plugin-engine>=0.1.4",
     "numpy",
     "aicssegmentation>=0.1.22",
+    "aicsimageio>=3.3.4,<4"
 ]
 
 test_requirements = [
