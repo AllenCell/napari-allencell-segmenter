@@ -52,9 +52,6 @@ class WorkflowStepsView(View):  # pragma: no-cover
         # self._lbl_selected_workflow.setText(f"Selected workflow: {model.active_workflow}")
         # self._lbl_selected_workflow.repaint()
 
-    def _btn_back_clicked(self, checked: bool):
-        self._controller.navigate_back()
-
     def _add_workflow_title(self, layout: QLayout):
         widget = QWidget()
         title_layout = QHBoxLayout()
@@ -65,7 +62,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
         workflow_name = QLabel(f"Workflow: {config_workflow_name}")
         info = QPushButton("ⓘ")
         info.setObjectName("infoButton")
-        info.clicked.connect(self._show_workflow_diagram)
+        info.clicked.connect(self._btn_info_clicked)
 
         title_layout.addStretch()
         title_layout.addWidget(workflow_name)
@@ -75,12 +72,6 @@ class WorkflowStepsView(View):  # pragma: no-cover
 
         widget.setObjectName("workflowTitle")
         layout.addWidget(widget)
-
-    def _show_workflow_diagram(self, checked: bool):
-        self.diagram = QLabel()
-        diagram_path = str(Directories.get_assets_dir() / "workflow_diagrams/sec61b_1.png")
-        self.diagram.setPixmap(QPixmap(diagram_path))
-        self.diagram.show()
 
     def _add_progress_bar(self, layout: QLayout):
         # To be replaced by data
@@ -135,3 +126,16 @@ class WorkflowStepsView(View):  # pragma: no-cover
             layout.addWidget(CollapsibleBox(f"<span>{i + 1}.&nbsp;{step['name']}", content))
 
         layout.addSpacing(10)
+
+    #####################################################################
+    # Event handlers
+    #####################################################################
+
+    def _btn_back_clicked(self, checked: bool):
+        self._controller.navigate_back()
+
+    def _btn_info_clicked(self, checked: bool):
+        self.diagram = QLabel()
+        diagram_path = str(Directories.get_assets_dir() / "workflow_diagrams/sec61b_1.png")
+        self.diagram.setPixmap(QPixmap(diagram_path))
+        self.diagram.show()
