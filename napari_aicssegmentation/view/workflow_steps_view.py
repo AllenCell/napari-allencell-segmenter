@@ -1,4 +1,4 @@
-from magicgui.widgets import FloatSlider
+from magicgui.widgets import FloatSlider, Slider
 from qtpy.QtWidgets import (
     QHBoxLayout,
     QLabel, 
@@ -49,6 +49,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self._add_workflow_steps(layout, "preprocessing")
         self._add_workflow_steps(layout, "core")
         self._add_workflow_steps(layout, "postprocessing")
+        layout.addSpacing(20)
         layout.addStretch()
         layout.addWidget(btn_run_all)
 
@@ -124,12 +125,17 @@ class WorkflowStepsView(View):  # pragma: no-cover
         layout.addWidget(category_label)
 
         for i, step in enumerate(steps):
-            row_1 = FormRow("Param 1", FloatSlider(value=2.5, min=0.5, max=30, step=0.5).native)
-            row_2 = FormRow("Param 2", FloatSlider(value=7.5, min=0.5, max=200, step=0.5).native)
+            slider_1 = FloatSlider(value=2.5, min=0.5, max=30, step=0.5).native
+            slider_1.setObjectName("slider")
+            slider_2 = Slider(value=140, min=1, max=200, step=1).native
+            slider_2.setObjectName("slider")
+            row_1 = FormRow("Param 1", slider_1)
+            row_2 = FormRow("Param 2", slider_2)
+
             row_3 = dropdown_row("Mode", "thick", enabled=True)
             row_3.widget.addItem("thin")
-            content = Form([row_1, row_2, row_3], (11, 5, 0, 5))
 
+            content = Form([row_1, row_2, row_3], (11, 5, 5, 5))
             layout.addWidget(CollapsibleBox(f"<span>{i + 1}.&nbsp;{step['name']}", content))
         
         layout.addSpacing(10)
