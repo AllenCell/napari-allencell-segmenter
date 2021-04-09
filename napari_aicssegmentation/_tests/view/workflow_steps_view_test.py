@@ -13,6 +13,7 @@ class TestWorkflowSelectView:
         self._view = WorkflowStepsView(self._mock_controller)
         self._view.setup_ui()
 
+    # TODO: Add real tests once we make the UI functional
     def test_add_workflow_title(self):
         pass
 
@@ -21,4 +22,3 @@ class TestWorkflowSelectView:
 
     def test_add_workflow_steps(self):
         pass
-
