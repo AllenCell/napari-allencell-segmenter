@@ -30,6 +30,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
         if controller is None:
             raise ValueError("controller")
         self._controller = controller
+        self.setObjectName("workflowStepsView")
 
     def setup_ui(self):
         layout = QVBoxLayout()
@@ -127,7 +128,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
             row_2 = FormRow("Param 2", FloatSlider(value=7.5, min=0.5, max=200, step=0.5).native)
             row_3 = dropdown_row("Mode", "thick", enabled=True)
             row_3.widget.addItem("thin")
-            content = Form([row_1, row_2, row_3])
+            content = Form([row_1, row_2, row_3], (11, 5, 0, 5))
 
             layout.addWidget(CollapsibleBox(f"<span>{i + 1}.&nbsp;{step['name']}", content))
         

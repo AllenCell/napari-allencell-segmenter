@@ -99,10 +99,6 @@ QPushButton:disabled {
     background-color: #333941;
 }
 
-#workflowSelectView QComboBox { 
-    min-width: 320px;
-}
-
 CollapsibleBox .QFrame {
     background-color: #5a626d;
     border-radius: 3px;

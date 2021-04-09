@@ -21,7 +21,9 @@ class Form(QFormLayout):
 
     def __init__(self, rows: List[FormRow], margins=(0, 5, 11, 0)):
         super().__init__()
+        self.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
         self.setFormAlignment(Qt.AlignLeft)
+        self.setLabelAlignment(Qt.AlignLeft)
         left, top, right, bottom = margins
         self.setContentsMargins(left, top, right, bottom)
 
