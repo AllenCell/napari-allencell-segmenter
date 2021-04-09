@@ -1,5 +1,6 @@
 from typing import List
 
+from napari.layers.base.base import Layer
 from PyQt5.QtWidgets import (
     QComboBox,
     QLabel,
@@ -9,10 +10,11 @@ from PyQt5.QtWidgets import (
     QHBoxLayout,
     QLayout,
 )
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QStandardItem, QStandardItemModel
 from PyQt5 import QtCore
 from PyQt5.QtCore import QSize
 
+from napari_aicssegmentation.model.channel import Channel
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
 from napari_aicssegmentation.util.debug_utils import debug_class
 from napari_aicssegmentation.controller._interfaces import IWorkflowSelectController
@@ -56,10 +58,12 @@ class WorkflowSelectView(View):
         # Dropdowns
         layers_dropdown = dropdown_row("1.", "Select a 3D Napari image layer", enabled=False)
         self.combo_layers = layers_dropdown.widget
-        self.combo_layers.currentIndexChanged.connect(self._combo_layers_index_changed)
+        self.combo_layers.activated.connect(self._combo_layers_activated)
 
         channels_dropdown = dropdown_row("2.", "Select a 3D image data channel", enabled=False)
         self.combo_channels = channels_dropdown.widget
+        self.combo_channels.activated.connect(self._combo_channels_activated)
+
         layer_channel_selections = QWidget()
         layer_channel_selections.setLayout(Form([layers_dropdown, channels_dropdown]))
 
@@ -79,36 +83,67 @@ class WorkflowSelectView(View):
         Inputs:
             model: the model to load
         """
-        self.update_layers(model.layers, model.selected_layer_name)
-        self.update_channels(model)
-        self._load_workflows(model)
+        self.update_layers(model.layers, model.selected_layer)
+        self.update_channels(model.channels, model.selected_channel)
+        self._load_workflows(model.workflows)
 
-    def update_layers(self, layers: List[str], selected_layer_name: str = None):
+    def update_layers(self, layers: List[str], selected_layer: Layer = None):
         """
         Update / repopulate the list of selectable layers
         Inputs:
             layers: List of layer names
             selected_layer_name: (optional) name of the layer to pre-select
         """
+        self._reset_combo_box(self.combo_layers)
+
         if layers is None or len(layers) == 0:
-            self._reset_combo_box(self.combo_layers)
             self.load_image_warning.setVisible(True)
             self.combo_layers.setEnabled(False)
         else:
-            self._reset_combo_box(self.combo_layers)
             self.combo_layers.addItems(layers)
-            if selected_layer_name is not None:
-                self.combo_layers.setCurrentText(selected_layer_name)
+            if selected_layer is not None:
+                self.combo_layers.setCurrentText(selected_layer.name)
             self.combo_layers.setEnabled(True)
             self.load_image_warning.setVisible(False)
 
-    def update_channels(self, channels: List[str]):
+    def update_channels(self, channels: List[Channel], selected_channel: Channel = None):
         """
         Update / repopulate the list of selectable channels
         Inputs:
             channels: List of channel names
         """
-        # TODO load channels and update UI state -> https://github.com/AllenCell/napari-aicssegmentation/issues/24
+        self._reset_combo_box(self.combo_channels)
+
+        if channels is None or len(channels) == 0:
+            self.combo_channels.setEnabled(False)
+        else:
+            model = QStandardItemModel()
+            model.appendRow(QStandardItem(self.combo_channels.itemText(0)))
+
+            for channel in channels:
+                item = QStandardItem(channel.display_name)
+                item.setData(channel, QtCore.Qt.UserRole)
+                model.appendRow(item)
+
+            self.combo_channels.setModel(model)
+
+            if selected_channel is not None:
+                # TODO relying on display name isn't the best as it will probably
+                #      cause issues if channel names aren't unique
+                # TODO refactor by making Channel derive from QStandardItem and do something like this:
+                #      selected_index = model.indexFromItem(selected_channel)
+                #      self.combo_channels.setCurrentIndex(selected_index)
+                self.combo_channels.setCurrentText(selected_channel.display_name)
+
+            self.combo_channels.setEnabled(True)
+
+    def update_workflows(self, enabled: bool):
+        """
+        Update state of workflow list
+        Inputs:
+            enabled: True to enable the list, False to disable it
+        """
+        # TODO
         pass
 
     def _load_workflows(self, workflows):  # workflows: List[aicssegmentation.WorkflowStep]
@@ -177,8 +212,14 @@ class WorkflowSelectView(View):
     # Event handlers
     #####################################################################
 
-    def _combo_layers_index_changed(self, index: int):
+    def _combo_layers_activated(self, index: int):
         if index == 0:  # index 0 is the dropdown header
             self._controller.unselect_layer()
         else:
-            self._controller.select_layer(self.combo_layers.currentText())
+            self._controller.select_layer(self.combo_layers.itemText(index))
+
+    def _combo_channels_activated(self, index: int):
+        if index == 0:
+            self._controller.unselect_channel()
+        else:
+            self._controller.select_channel(self.combo_channels.itemData(index, role=QtCore.Qt.UserRole))
