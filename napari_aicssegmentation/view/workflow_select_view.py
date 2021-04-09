@@ -60,13 +60,11 @@ class WorkflowSelectView(View):
 
         # Dropdowns
         layers_dropdown = self._dropdown_row(1, "Select a 3D Napari image layer", enabled=False)
-        self.combo_layers = layers_dropdown.widget
-        # self.combo_layers.currentIndexChanged.connect(self._combo_layers_index_changed)
+        self.combo_layers = layers_dropdown.widget        
         self.combo_layers.activated.connect(self._combo_layers_activated)
 
         channels_dropdown = self._dropdown_row(2, "Select a 3D image data channel", enabled=False)
-        self.combo_channels = channels_dropdown.widget
-        # self.combo_channels.currentIndexChanged.connect(self._combo_channels_index_changed)
+        self.combo_channels = channels_dropdown.widget        
         self.combo_channels.activated.connect(self._combo_channels_activated)
         layer_channel_selections = self._form_layout([layers_dropdown, channels_dropdown])
 

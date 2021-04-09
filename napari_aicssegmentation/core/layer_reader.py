@@ -21,8 +21,13 @@ class LayerReader:
             return None
 
         img = AICSImage(layer.data)  # gives us a 6D image
+        # we're expecting either STCZYX or STZCYX but we don't know for sure
+        # Attempt to guess based on array length. Channels array should be shorter in general.
+        index_c = 2
+        if(img.shape[2] > img.shape[3]):
+            index_c = 3
 
         channels = list()
-        for index in range(img.shape[3]):
+        for index in range(img.shape[index_c]):
             channels.append(Channel(index))
         return channels
