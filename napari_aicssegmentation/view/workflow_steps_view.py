@@ -1,14 +1,6 @@
 from magicgui.widgets import FloatSlider, Slider
 from qtpy.QtGui import QPixmap
-from qtpy.QtWidgets import (
-    QHBoxLayout,
-    QLabel, 
-    QLayout, 
-    QProgressBar,
-    QPushButton, 
-    QVBoxLayout, 
-    QWidget
-)
+from qtpy.QtWidgets import QHBoxLayout, QLabel, QLayout, QProgressBar, QPushButton, QVBoxLayout, QWidget
 
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
 from napari_aicssegmentation.util.debug_utils import debug_class
@@ -89,7 +81,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
         diagram_path = str(Directories.get_assets_dir() / "workflow_diagrams/sec61b_1.png")
         self.diagram.setPixmap(QPixmap(diagram_path))
         self.diagram.show()
-    
+
     def _add_progress_bar(self, layout: QLayout):
         # To be replaced by data
         num_steps = 4
@@ -97,7 +89,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
         # Progress bar
         progress_bar = QProgressBar()
         progress_bar.setRange(0, num_steps)
-        progress_bar.setValue(3) # TODO: Change arg to 0
+        progress_bar.setValue(3)  # TODO: Change arg to 0
         progress_bar.setTextVisible(False)
         layout.addWidget(progress_bar)
 
@@ -120,16 +112,10 @@ class WorkflowStepsView(View):  # pragma: no-cover
     def _add_workflow_steps(self, layout: QLayout, category: str):
         # TODO: Mesh this with the data-driven WorkflowStep widget
         steps = [
-            {   
-                "number": 1,
-                "name": "Intensity Normalization",
-            },
-            {
-                "number": 2,
-                "name": "Edge Preserving Smoothing",
-            },
+            {"number": 1, "name": "Intensity Normalization",},
+            {"number": 2, "name": "Edge Preserving Smoothing",},
         ]
-        
+
         category_label = QLabel(category.upper())
         category_label.setObjectName("categoryLabel")
         layout.addWidget(category_label)
@@ -147,5 +133,5 @@ class WorkflowStepsView(View):  # pragma: no-cover
 
             content = Form([row_1, row_2, row_3], (11, 5, 5, 5))
             layout.addWidget(CollapsibleBox(f"<span>{i + 1}.&nbsp;{step['name']}", content))
-        
+
         layout.addSpacing(10)

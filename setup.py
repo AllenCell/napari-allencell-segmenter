@@ -22,7 +22,7 @@ requirements = [
 ]
 
 test_requirements = [
-    "black>=19.10b0",
+    "black==19.10b0",
     "codecov>=2.0.22",
     "docutils>=0.10,<0.16",
     "flake8>=3.7.7",
@@ -36,7 +36,7 @@ test_requirements = [
 ]
 
 dev_requirements = [
-    "black>=19.10b0",
+    "black==19.10b0",
     "bumpversion>=0.5.3",
     "coverage>=5.0a4",
     "docutils>=0.10,<0.16",
