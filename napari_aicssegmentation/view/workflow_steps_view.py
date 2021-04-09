@@ -1,6 +1,6 @@
 from magicgui.widgets import FloatSlider, Slider
 from qtpy.QtGui import QPixmap
-from qtpy.QtWidgets import QHBoxLayout, QLabel, QLayout, QProgressBar, QPushButton, QVBoxLayout, QWidget
+from qtpy.QtWidgets import QHBoxLayout, QLabel, QProgressBar, QPushButton, QVBoxLayout, QWidget
 
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
 from napari_aicssegmentation.util.debug_utils import debug_class
