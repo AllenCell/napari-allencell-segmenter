@@ -27,10 +27,10 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self.setObjectName("workflowStepsView")
 
     def setup_ui(self):
-        layout = QVBoxLayout()
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(0)
-        self.setLayout(layout)
+        self.layout = QVBoxLayout()
+        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.setSpacing(0)
+        self.setLayout(self.layout)
 
         # self._lbl_selected_workflow = QLabel()
 
@@ -38,24 +38,24 @@ class WorkflowStepsView(View):  # pragma: no-cover
         btn_run_all.clicked.connect(self._btn_back_clicked)
 
         # Add all widgets
-        self._add_workflow_title(layout)
-        self._add_progress_bar(layout)
-        self._add_workflow_steps(layout, "preprocessing")
-        self._add_workflow_steps(layout, "core")
-        self._add_workflow_steps(layout, "postprocessing")
-        layout.addSpacing(20)
-        layout.addStretch()
-        layout.addWidget(btn_run_all)
+        self._add_workflow_title()
+        self._add_progress_bar()
+        self._add_workflow_steps("preprocessing")
+        self._add_workflow_steps("core")
+        self._add_workflow_steps("postprocessing")
+        self.layout.addSpacing(20)
+        self.layout.addStretch()
+        self.layout.addWidget(btn_run_all)
 
     def load_model(self, model: SegmenterModel):
         pass
         # self._lbl_selected_workflow.setText(f"Selected workflow: {model.active_workflow}")
         # self._lbl_selected_workflow.repaint()
 
-    def _add_workflow_title(self, layout: QLayout):
+    def _add_workflow_title(self):
         widget = QWidget()
-        title_layout = QHBoxLayout()
-        widget.setLayout(title_layout)
+        layout = QHBoxLayout()
+        widget.setLayout(layout)
 
         # To be replaced by data
         config_workflow_name = "sec61b"
@@ -64,16 +64,16 @@ class WorkflowStepsView(View):  # pragma: no-cover
         info.setObjectName("infoButton")
         info.clicked.connect(self._btn_info_clicked)
 
-        title_layout.addStretch()
-        title_layout.addWidget(workflow_name)
-        title_layout.addWidget(info)
-        title_layout.addStretch()
-        title_layout.setSpacing(3)
+        layout.addStretch()
+        layout.addWidget(workflow_name)
+        layout.addWidget(info)
+        layout.addStretch()
+        layout.setSpacing(3)
 
         widget.setObjectName("workflowTitle")
-        layout.addWidget(widget)
+        self.layout.addWidget(widget)
 
-    def _add_progress_bar(self, layout: QLayout):
+    def _add_progress_bar(self):
         # To be replaced by data
         num_steps = 4
 
@@ -82,7 +82,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
         progress_bar.setRange(0, num_steps)
         progress_bar.setValue(3)  # TODO: Change arg to 0
         progress_bar.setTextVisible(False)
-        layout.addWidget(progress_bar)
+        self.layout.addWidget(progress_bar)
 
         # Tick marks
         progress_labels = QLabel()
@@ -98,9 +98,9 @@ class WorkflowStepsView(View):  # pragma: no-cover
             labels_layout.addWidget(tick)
             if step < num_steps:
                 labels_layout.addStretch()
-        layout.addWidget(progress_labels)
+        self.layout.addWidget(progress_labels)
 
-    def _add_workflow_steps(self, layout: QLayout, category: str):
+    def _add_workflow_steps(self, category: str):
         # TODO: Mesh this with the data-driven WorkflowStep widget
         steps = [
             {"number": 1, "name": "Intensity Normalization"},
@@ -109,7 +109,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
 
         category_label = QLabel(category.upper())
         category_label.setObjectName("categoryLabel")
-        layout.addWidget(category_label)
+        self.layout.addWidget(category_label)
 
         for i, step in enumerate(steps):
             slider_1 = FloatSlider(value=2.5, min=0.5, max=30, step=0.5).native
@@ -123,9 +123,9 @@ class WorkflowStepsView(View):  # pragma: no-cover
             row_3.widget.addItem("thin")
 
             content = Form([row_1, row_2, row_3], (11, 5, 5, 5))
-            layout.addWidget(CollapsibleBox(f"<span>{i + 1}.&nbsp;{step['name']}", content))
+            self.layout.addWidget(CollapsibleBox(f"<span>{i + 1}.&nbsp;{step['name']}", content))
 
-        layout.addSpacing(10)
+        self.layout.addSpacing(10)
 
     #####################################################################
     # Event handlers
