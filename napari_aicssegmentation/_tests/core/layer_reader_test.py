@@ -1,4 +1,5 @@
 import numpy
+import pytest
 
 from napari_aicssegmentation.core.layer_reader import LayerReader
 from ..mocks import MockLayer
@@ -12,9 +13,9 @@ class TestLayerReader:
         channels = self._layer_reader.get_channels(None)
         assert channels is None
 
-    def test_get_channels(self):
+    @pytest.mark.parametrize("data", [numpy.ones((75, 4, 600, 900)), numpy.ones((4, 75, 600, 900))])  # ZCYX, CZYX
+    def test_get_channels(self, data):
         # Arrange
-        data = numpy.ones((75, 4, 600, 900))  # ZCYX
         layer = MockLayer(name="Test", data=data)
 
         # Act
