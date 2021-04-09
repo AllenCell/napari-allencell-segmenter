@@ -112,8 +112,8 @@ class WorkflowStepsView(View):  # pragma: no-cover
     def _add_workflow_steps(self, layout: QLayout, category: str):
         # TODO: Mesh this with the data-driven WorkflowStep widget
         steps = [
-            {"number": 1, "name": "Intensity Normalization",},
-            {"number": 2, "name": "Edge Preserving Smoothing",},
+            {"number": 1, "name": "Intensity Normalization"},
+            {"number": 2, "name": "Edge Preserving Smoothing"},
         ]
 
         category_label = QLabel(category.upper())
