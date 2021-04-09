@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from napari_aicssegmentation.model.channel import Channel
 
 
 class IWorkflowSelectController(ABC):
@@ -23,11 +24,18 @@ class IWorkflowSelectController(ABC):
         pass
 
     @abstractmethod
-    def select_channel(self, channel_name: str):
+    def select_channel(self, channel: Channel):
         """
         Handle user selection of channel
         Inputs
-            channel_name: name of the channel to select
+            channel: the channel to select
+        """
+        pass
+
+    @abstractmethod
+    def unselect_channel(self):
+        """
+        Handle user resetting channel selection
         """
         pass
 

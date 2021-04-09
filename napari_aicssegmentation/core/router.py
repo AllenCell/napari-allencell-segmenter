@@ -1,11 +1,10 @@
 from napari_aicssegmentation.util.debug_utils import debug_class
 from napari_aicssegmentation.controller.workflow_select_controller import WorkflowSelectController
 from napari_aicssegmentation.controller.workflow_steps_controller import WorkflowStepsController
+from napari_aicssegmentation.core.layer_reader import LayerReader
 from ._interfaces import IApplication, IRouter
 
 
-# TODO it would be nice to have all controllers injected as dependencies (better for testing)
-# However I would want them to be lazily instianciated to avoid loading all Controllers/Views in memory immediately
 @debug_class
 class Router(IRouter):
     _controller = None
@@ -16,7 +15,7 @@ class Router(IRouter):
         self._application = application
 
     def workflow_selection(self):
-        self._controller = WorkflowSelectController(self._application)
+        self._controller = WorkflowSelectController(self._application, LayerReader())
         self._controller.index()
 
     def workflow_steps(self):
