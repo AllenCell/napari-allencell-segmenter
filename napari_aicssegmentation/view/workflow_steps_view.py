@@ -9,8 +9,8 @@ from napari_aicssegmentation.core.view import View
 from napari_aicssegmentation.widgets.collapsible_box import CollapsibleBox
 from napari_aicssegmentation.widgets.form import Form, FormRow
 from napari_aicssegmentation.view._main_template import MainTemplate
-from napari_aicssegmentation.view._util import dropdown_row
 from napari_aicssegmentation.util.directories import Directories
+from napari_aicssegmentation.util.ui_utils import UiUtils
 from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH
 
 
@@ -125,7 +125,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
             row_1 = FormRow("Param 1", slider_1)
             row_2 = FormRow("Param 2", slider_2)
 
-            row_3 = dropdown_row("Mode", "thick", enabled=True)
+            row_3 = UiUtils.dropdown_row("Mode", "thick", enabled=True)
             row_3.widget.addItem("thin")
 
             content = Form([row_1, row_2, row_3], (11, 5, 5, 5))

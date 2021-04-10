@@ -22,7 +22,7 @@ from napari_aicssegmentation.core.view import View
 from napari_aicssegmentation.widgets.form import Form, FormRow
 from napari_aicssegmentation.widgets.warning_message import WarningMessage
 from napari_aicssegmentation.util.directories import Directories
-from napari_aicssegmentation.view._util import dropdown_row
+from napari_aicssegmentation.util.ui_utils import UiUtils
 from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH
 from ._main_template import MainTemplate
 
@@ -56,11 +56,11 @@ class WorkflowSelectView(View):
         self.load_image_warning.setVisible(False)
 
         # Dropdowns
-        layers_dropdown = dropdown_row("1.", "Select a 3D Napari image layer", enabled=False)
+        layers_dropdown = UiUtils.dropdown_row("1.", "Select a 3D Napari image layer", enabled=False)
         self.combo_layers = layers_dropdown.widget
         self.combo_layers.activated.connect(self._combo_layers_activated)
 
-        channels_dropdown = dropdown_row("2.", "Select a 3D image data channel", enabled=False)
+        channels_dropdown = UiUtils.dropdown_row("2.", "Select a 3D image data channel", enabled=False)
         self.combo_channels = channels_dropdown.widget
         self.combo_channels.activated.connect(self._combo_channels_activated)
 
