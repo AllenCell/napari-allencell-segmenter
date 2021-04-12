@@ -1,12 +1,9 @@
-
-from qtpy.QtCore import Qt
-
 from napari_aicssegmentation.widgets.collapsible_box import CollapsibleBox
-from qtpy.QtWidgets import QFormLayout, QLabel, QSlider, QDoubleSpinBox, QComboBox
+from qtpy.QtWidgets import QFormLayout, QComboBox
 
 from aicssegmentation.structure_wrapper.WorkflowStep import WorkflowStep
 from magicgui.widgets import FloatSlider, Slider
-import json
+
 
 def generate_workflow_widget(workflow_step: WorkflowStep) -> CollapsibleBox:
     """
@@ -22,8 +19,6 @@ def generate_workflow_widget(workflow_step: WorkflowStep) -> CollapsibleBox:
             for that step, parameters, and default values.
     """
 
-
-
     widget_info = workflow_step.widget_data
     widget = QFormLayout()
 
@@ -32,7 +27,6 @@ def generate_workflow_widget(workflow_step: WorkflowStep) -> CollapsibleBox:
         create_step_widget(widget, workflow_step, param_key)
 
     return CollapsibleBox(workflow_step.widget_data.display_name, widget)
-
 
 
 def create_step_widget(layout, workflow_step, param_key):
@@ -63,7 +57,6 @@ def parse_param_and_add(layout, workflow_step, key, single_param):
 
 def add_slider(layout, workflow_step, param_key, single_param):
     # Add a slider
-    spinbox = QDoubleSpinBox()
     widget_values = dict()
 
     # Build dictionary of widget information (default value, min, max, increment)
@@ -81,13 +74,11 @@ def add_slider(layout, workflow_step, param_key, single_param):
     if "increment" in single_param:
         widget_values["step"] = single_param["increment"]
 
-
     # Sometimes default values are less than min or greater than max?
     if widget_values["value"] < widget_values["min"]:
         widget_values["value"] = widget_values["min"]
     if widget_values["value"] > widget_values["max"]:
         widget_values["value"] = widget_values["max"]
-
 
     # Determine which type of slider to use based on data type
     # and unpack dictionary with slider info and feed when initializing
@@ -99,12 +90,8 @@ def add_slider(layout, workflow_step, param_key, single_param):
 
     layout.addRow(param_key, widget.native)
 
+
 def add_dropdown(layout, widget_info, param_key, param_vals):
     dropdown = QComboBox()
     dropdown.addItem("test")
     layout.addWidget(dropdown)
-
-
-
-
-
