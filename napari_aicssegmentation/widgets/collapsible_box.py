@@ -1,9 +1,7 @@
-from pathlib import Path
-
 from qtpy.QtGui import QPixmap
 from qtpy.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout, QWidget
 
-DIR = Path.cwd() / "napari_aicssegmentation"
+from napari_aicssegmentation.util.directories import Directories
 
 
 class CollapsibleBox(QWidget):
@@ -45,7 +43,7 @@ class CollapsibleBox(QWidget):
 
         title = QLabel(self._title)
         icon = QLabel()
-        icon.setPixmap(QPixmap(str(DIR / "assets/icons/gear.svg")))
+        icon.setPixmap(QPixmap(str(Directories.get_assets_dir() / "icons/gear.svg")))
         title_box_layout.addWidget(title)
         title_box_layout.addStretch()
         title_box_layout.addWidget(icon)
