@@ -6,18 +6,17 @@ from qtpy.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout, QWidget
 DIR = Path.cwd() / "napari_aicssegmentation"
 
 
-"""
-A collapsible box widget containing a title box and a content box. The title box can be clicked
-to toggle the visibility of the content box.
-
-Params:
-    title:      String
-    content:    QLayout to be nested inside the content box
-    isOpen:     Boolean, whether the widget is open or collapsed
-"""
-
-
 class CollapsibleBox(QWidget):
+    """
+    A collapsible box widget containing a title box and a content box. The title box can be clicked
+    to toggle the visibility of the content box.
+
+    Params:
+        title:      String
+        content:    QLayout to be nested inside the content box
+        isOpen:     Boolean, whether the widget is open or collapsed
+    """
+
     def __init__(self, title, content, isOpen=False):
         super().__init__()
         self._title = title
