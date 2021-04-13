@@ -10,24 +10,25 @@ class CollapsibleBox(QWidget):
     to toggle the visibility of the content box.
 
     Params:
-        title:      String
-        content:    QLayout to be nested inside the content box
-        isOpen:     Boolean, whether the widget is open or collapsed
+        title (string):             To be displayed at the top of the box (only thing visible when 
+                                    collapsed)
+        content_layout (QLayout):   QLayout to be nested inside the content box
+        isOpen (bool):              Whether the widget is open or collapsed by default
     """
 
-    def __init__(self, title, content, isOpen=False):
+    def __init__(self, title, content_layout, isOpen=True):
         super().__init__()
         self._title = title
-        self._content = content
+        self._content = content_layout
         self.isOpen = isOpen
+        
+        self.title_box = self._create_title_box()
+        self.content_box = self._create_content_box()
 
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 5, 0, 3)
         layout.setSpacing(0)  # No space between title_box and content_box
         self.setLayout(layout)
-
-        self.title_box = self._create_title_box()
-        self.content_box = self._create_content_box()
 
         layout.addWidget(self.title_box)
         layout.addWidget(self.content_box)

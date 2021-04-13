@@ -4,11 +4,7 @@ from PyQt5 import QtCore
 from napari_aicssegmentation._style import Style
 
 from napari_aicssegmentation.widgets.workflow_step_box import WorkflowStepBox
-<<<<<<< HEAD
 # from aicssegmentation.structure_wrapper.WorkflowStep import WorkflowStep
-=======
-from aicssegmentation.structure_wrapper.WorkflowStep import WorkflowStep
->>>>>>> Turn widget into a class
 
 
 class MainTemplate(ViewTemplate):
