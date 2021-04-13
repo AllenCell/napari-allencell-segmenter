@@ -19,7 +19,7 @@ class CollapsibleBox(QWidget):
     def __init__(self, title, content_layout, isOpen=True):
         super().__init__()
         self._title = title
-        self._content = content_layout
+        self._content_layout = content_layout
         self.isOpen = isOpen
         
         self.title_box = self._create_title_box()
@@ -55,7 +55,7 @@ class CollapsibleBox(QWidget):
         content_box = QFrame()
         content_box_layout = QVBoxLayout()
         content_box_layout.setContentsMargins(9, 9, 9, 9)
-        content_box_layout.addLayout(self._content)
+        content_box_layout.addLayout(self._content_layout)
         content_box.setLayout(content_box_layout)
         content_box.setObjectName("contentBox")
 

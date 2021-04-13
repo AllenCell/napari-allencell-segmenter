@@ -17,14 +17,13 @@ class WorkflowStepBox(CollapsibleBox):
     # TODO: type step param as WorkflowStep
     def __init__(self, step):
         self.step = step
-        super().__init__("test", QVBoxLayout())
-        # self.step = step
-        print("complete")
-        # self. = QVBoxLayout()
+        self._content_layout = QVBoxLayout()
 
         # Get all the separate parameters to put into this layout.
-        # for param in step.function.parameters:
+        # for param in step["function"]["parameters"]:
         #     self.create_param_widget(box_contents, param)
+
+        super().__init__(step["display_name"], self._content_layout)
 
     def create_param_widget(self, layout, step, param_key):
         # Get dictionary of information for this parameter
