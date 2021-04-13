@@ -50,4 +50,3 @@ class MainTemplate(ViewTemplate):
         self._container.setLayout(QVBoxLayout())
         self._container.layout().setContentsMargins(0, 0, 0, 0)
         page.layout().addWidget(self._container)
-        page.layout().addStretch()
