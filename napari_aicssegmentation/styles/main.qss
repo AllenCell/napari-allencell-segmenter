@@ -43,6 +43,51 @@ QLabel#workflowSelectionTitle {
     font-weight: bold;
 }
 
+QLabel#categoryLabel {
+    font-size: 12px;
+    color: #82868b;
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+#workflowTitle QLabel {
+    padding-left: 0px;
+    padding-right: 0px;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+#infoButton {
+    background-color: transparent;
+}
+
+#infoButton:hover {
+    background-color: #333941;
+}
+
+QProgressBar {
+    border-radius: 8px;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    height: 12px;
+}
+
+QProgressBar:chunk {
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+#progressLabels {
+    margin-bottom: 0.5em;
+}
+
+#progressLabels QLabel {
+    color: #82868b;
+    font-size: 8px;
+}
+
 #columnLabels QLabel {
     font-size: 12px;
     font-weight: bold;
@@ -62,13 +107,9 @@ QPushButton:disabled {
     background-color: #333941;
 }
 
-#workflowSelectView QComboBox { 
-    min-width: 320px;
-}
-
 CollapsibleBox .QFrame {
     background-color: #5a626d;
-    border-radius: 2px;
+    border-radius: 3px;
     border-color: #6d7075;
     border-width: 0.5px;
     border-style: solid;
@@ -86,7 +127,7 @@ CollapsibleBox QFrame#titleBoxClosed:hover {
 
 CollapsibleBox QFrame:disabled {
     background-color: #333942;
-    border-radius: 2px;
+    border-radius: 3px;
     border-color: #333942;
     color: #7C848A;
 }
@@ -94,4 +135,10 @@ CollapsibleBox QFrame:disabled {
 CollapsibleBox .QFrame#contentBox {
     background-color: #30353d;
     border-top: 0px;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+}
+
+CollapsibleBox #slider {
+    background-color: transparent;
 }

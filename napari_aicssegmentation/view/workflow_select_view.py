@@ -1,13 +1,11 @@
+from typing import List
+
 from napari.layers.base.base import Layer
-from napari_aicssegmentation.model.channel import Channel
-from typing import List, NamedTuple, Union
 from PyQt5.QtWidgets import (
     QComboBox,
     QLabel,
     QPushButton,
     QVBoxLayout,
-    QFrame,
-    QFormLayout,
     QWidget,
     QHBoxLayout,
     QLayout,
@@ -15,19 +13,18 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtGui import QIcon, QStandardItem, QStandardItemModel
 from PyQt5 import QtCore
 from PyQt5.QtCore import QSize
+
+from napari_aicssegmentation.model.channel import Channel
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
 from napari_aicssegmentation.util.debug_utils import debug_class
 from napari_aicssegmentation.controller._interfaces import IWorkflowSelectController
 from napari_aicssegmentation.core.view import View
+from napari_aicssegmentation.widgets.form import Form, FormRow
 from napari_aicssegmentation.widgets.warning_message import WarningMessage
 from napari_aicssegmentation.util.directories import Directories
+from napari_aicssegmentation.util.ui_utils import UiUtils
 from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH
 from ._main_template import MainTemplate
-
-
-class FormRow(NamedTuple):
-    label: Union[str, QLabel]
-    widget: QWidget
 
 
 @debug_class
@@ -59,14 +56,16 @@ class WorkflowSelectView(View):
         self.load_image_warning.setVisible(False)
 
         # Dropdowns
-        layers_dropdown = self._dropdown_row(1, "Select a 3D Napari image layer", enabled=False)
+        layers_dropdown = UiUtils.dropdown_row("1.", "Select a 3D Napari image layer", enabled=False)
         self.combo_layers = layers_dropdown.widget
         self.combo_layers.activated.connect(self._combo_layers_activated)
 
-        channels_dropdown = self._dropdown_row(2, "Select a 3D image data channel", enabled=False)
+        channels_dropdown = UiUtils.dropdown_row("2.", "Select a 3D image data channel", enabled=False)
         self.combo_channels = channels_dropdown.widget
         self.combo_channels.activated.connect(self._combo_channels_activated)
-        layer_channel_selections = self._form_layout([layers_dropdown, channels_dropdown])
+
+        layer_channel_selections = QWidget()
+        layer_channel_selections.setLayout(Form([layers_dropdown, channels_dropdown]))
 
         # Add all widgets
         widgets = [
@@ -161,42 +160,6 @@ class WorkflowSelectView(View):
             combo.clear()
             combo.addItem(header)
 
-    def _dropdown_row(self, number: int, placeholder: str, enabled=False) -> FormRow:
-        """
-        Given the contents of a dropdown and a number for the label, return a label and a QComboBox
-        widget that can be used to create a row in a QFormLayout
-        """
-        label = f"{number}."
-
-        dropdown = QComboBox()
-        dropdown.addItem(placeholder)
-        dropdown.setDisabled(not enabled)
-
-        return FormRow(label, dropdown)
-
-    # TODO turn into an actual reusable widget if this is needed anywhere else
-    def _form_layout(self, rows: List[FormRow], margins=(0, 5, 11, 0)) -> QFrame:
-        """
-        Create a nicely formatted form layout given contents to add as rows.
-
-        Inputs:
-            rows:       List of FormRow
-            margins:    Tuple of 4 numbers representing left, top, right, and bottom margins for
-                        the form's contents. Qt defaults to (11, 11, 11, 11).
-        Output:
-            A QFrame widget with a QFormLayout
-        """
-        widget = QFrame()
-        layout = QFormLayout()
-        layout.setFormAlignment(QtCore.Qt.AlignLeft)
-        left, top, right, bottom = margins
-        layout.setContentsMargins(left, top, right, bottom)
-
-        for row in rows:
-            layout.addRow(row.label, row.widget)
-        widget.setLayout(layout)
-        return widget
-
     def _add_step_3_layout(self, layout: QLayout, enabled=False):
         """
         Add widgets and set the layout for the Step 3 instructions and the workflow buttons
@@ -207,7 +170,8 @@ class WorkflowSelectView(View):
             "Click a button below that most closely resembles your image channel to select & start a workflow"
         )
         step_3_instructions.setWordWrap(True)
-        step_3 = self._form_layout([FormRow(step_3_label, step_3_instructions)], (0, 0, 11, 0))
+        step_3 = QWidget()
+        step_3.setLayout(Form([FormRow(step_3_label, step_3_instructions)], (0, 0, 11, 0)))
 
         if enabled is False:
             step_3_instructions.setObjectName("step3InstructionsDisabled")

@@ -1,31 +1,28 @@
-from pathlib import Path
-
 from qtpy.QtGui import QPixmap
 from qtpy.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout, QWidget
 
-DIR = Path.cwd() / "napari_aicssegmentation"
-
-
-"""
-A collapsible box widget containing a title box and a content box. The title box can be clicked
-to toggle the visibility of the content box.
-
-Params:
-    title:      String
-    content:    QLayout to be nested inside the content box
-    isOpen:     Boolean, whether the widget is open or collapsed
-"""
+from napari_aicssegmentation.util.directories import Directories
 
 
 class CollapsibleBox(QWidget):
-    def __init__(self, title, content, isOpen=True):
+    """
+    A collapsible box widget containing a title box and a content box. The title box can be clicked
+    to toggle the visibility of the content box.
+
+    Params:
+        title:      String
+        content:    QLayout to be nested inside the content box
+        isOpen:     Boolean, whether the widget is open or collapsed
+    """
+
+    def __init__(self, title, content, isOpen=False):
         super().__init__()
         self._title = title
         self._content = content
         self.isOpen = isOpen
 
         layout = QVBoxLayout()
-        layout.setContentsMargins(0, 11, 0, 11)
+        layout.setContentsMargins(0, 5, 0, 3)
         layout.setSpacing(0)  # No space between title_box and content_box
         self.setLayout(layout)
 
@@ -38,15 +35,15 @@ class CollapsibleBox(QWidget):
     def _create_title_box(self):
         title_box = QFrame()
         title_box_layout = QHBoxLayout()
-        title_box_layout.setContentsMargins(9, 9, 9, 9)
+        title_box_layout.setContentsMargins(11, 9, 9, 9)
         title_box.setLayout(title_box_layout)
-        title_box.setFixedHeight(40)
+        title_box.setFixedHeight(38)
         if self.isOpen is False:
             title_box.setObjectName("titleBoxClosed")
 
         title = QLabel(self._title)
         icon = QLabel()
-        icon.setPixmap(QPixmap(str(DIR / "assets/icons/gear.svg")))
+        icon.setPixmap(QPixmap(str(Directories.get_assets_dir() / "icons/gear.svg")))
         title_box_layout.addWidget(title)
         title_box_layout.addStretch()
         title_box_layout.addWidget(icon)
