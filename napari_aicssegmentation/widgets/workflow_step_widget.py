@@ -1,10 +1,10 @@
-from typing import Dict, List, Any
-
 # from aicssegmentation.structure_wrapper.WorkflowStep import WorkflowStep
 from magicgui.widgets import FloatSlider, Slider
-from qtpy.QtWidgets import QComboBox, QLabel, QVBoxLayout, QWidget
+from qtpy.QtWidgets import QLabel, QVBoxLayout, QWidget
 
 from napari_aicssegmentation.widgets.collapsible_box import CollapsibleBox
+from napari_aicssegmentation.widgets.form import Form, FormRow
+from napari_aicssegmentation.util.ui_utils import UiUtils
 
 
 class WorkflowStepWidget(QWidget):
@@ -19,49 +19,57 @@ class WorkflowStepWidget(QWidget):
     # TODO: type step param as WorkflowStep
     def __init__(self, step):
         super().__init__()
+        self.form_rows = []
+
         layout = QVBoxLayout()
         self.setLayout(layout)
-        box_content_layout = QVBoxLayout()
 
-        if len(step["function"]["parameters"]) == 0:
-            box_content_layout.addWidget(QLabel("No parameters needed"))
+        if len(step["function"]["parameters"]) == 0: # or is not None?
+            self.form_rows.append(FormRow("", QLabel("No parameters needed")))
         else:
             # Get all the separate parameters to put into this layout.
-            for param_name, param_values in step["function"]["parameters"].items():
-                self.create_param_widgets(box_content_layout, param_name, param_values)
+            for param_label, param_data in step["function"]["parameters"].items():
+                self.add_param_widgets(param_label, param_data)
 
-        layout.addWidget(CollapsibleBox(step["display_name"], box_content_layout))
+        layout.addWidget(CollapsibleBox(step["display_name"], Form(self.form_rows)))
 
-    def create_param_widgets(self, layout, param_name, param_values):
+    def add_param_widgets(self, param_label, param_data):
+        """
+        - param_label is a string like "scaling_param"
+        - param_data is a list of FunctionParameter objects
+        """
         # TODO: maybe do something to append a number to the label for a multi-value param
-        for param_value in param_values:
+        for param in param_data:
             # Parse out type of widget to be added
-            widget_type = param_value["widget_type"]
+            widget_type = param["widget_type"]
             # Slider
             if widget_type == "slider":
-                self.add_slider(layout, key, single_param)
+                self.add_slider(param_label, param)
             # Drop Down
             elif widget_type == "drop-down":
-                self.add_dropdown(layout, widget_info, key, single_param)
+                self.add_dropdown(param_label, param)
 
-    def add_slider(self, layout, step, param_key, single_param):
+    def add_slider(self, param_label, param):
         # Add a slider
         widget_values = dict()
 
         # Build dictionary of widget information (default value, min, max, increment)
-        if step.parameters is not None:
-            if isinstance(step.parameters[param_key], list):
-                # if given two numbers for default value default to first value given
-                default_val = step.parameters[param_key][0]
-            else:
-                default_val = step.parameters[param_key]
-            widget_values["value"] = default_val
-        if "max" in single_param:
-            widget_values["max"] = single_param["max"]
-        if "min" in single_param:
-            widget_values["min"] = single_param["min"]
-        if "increment" in single_param:
-            widget_values["step"] = single_param["increment"]
+        # if step.parameters is not None:
+        #     if isinstance(step.parameters[param_key], list):
+        #         # if given two numbers for default value default to first value given
+        #         default_val = step.parameters[param_key][0]
+        #     else:
+        #         default_val = step.parameters[param_key]
+        #     widget_values["value"] = default_val
+
+        widget_values["value"] = param["default_value"]
+
+        if "max" in param:
+            widget_values["max"] = param["max"]
+        if "min" in param:
+            widget_values["min"] = param["min"]
+        if "increment" in param:
+            widget_values["step"] = param["increment"]
 
         # Sometimes default values are less than min or greater than max?
         if widget_values["value"] < widget_values["min"]:
@@ -72,14 +80,13 @@ class WorkflowStepWidget(QWidget):
         # Determine which type of slider to use based on data type
         # and unpack dictionary with slider info and feed when initializing
         widget = None
-        if single_param["data_type"] == "float":
+        if param["data_type"] == "float":
             widget = FloatSlider(**widget_values)
-        if single_param["data_type"] == "int":
+        if param["data_type"] == "int":
             widget = Slider(**widget_values)
 
-        layout.addRow(param_key, widget.native)
+        self.form_rows.append(FormRow(param_label, widget.native))
 
-    def add_dropdown(self, layout, widget_info, param_key, param_vals):
-        dropdown = QComboBox()
-        dropdown.addItem("test")
-        layout.addWidget(dropdown)
+    def add_dropdown(self, param_label, param):
+        dropdown = UiUtils.dropdown_row(param_label, param["default_value"], options=param["option"], enabled=True)
+        self.form_rows.append(dropdown)

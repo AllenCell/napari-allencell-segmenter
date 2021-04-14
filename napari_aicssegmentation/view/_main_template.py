@@ -65,28 +65,30 @@ class MainTemplate(ViewTemplate):
                 "scaling_param": [
                     {
                         "widget_type": "slider",
-                        "data_type": int,
-                        "min_value": 1,
-                        "max_value": 5,
+                        "data_type": "int",
+                        "min": 1,
+                        "max": 5,
+                        "increment": 1,
                         "default_value": 2,
                     },
                     {
                         "widget_type": "slider",
-                        "data_type": float,
-                        "min_value": 0.5,
-                        "max_value": 3.5,
+                        "data_type": "float",
+                        "min": 0.5,
+                        "max": 3.5,
+                        "increment": 0.1,
                         "default_value": 1.1,
                     },
                 ],
                 "other_param": [
                     {
                         "widget_type": "drop-down",
-                        "data_type": bool,
-                        "min_value": 0.5,
+                        "data_type": "bool",
                         "option": [
                             "True",
                             "False"
-                        ]
+                        ],
+                        "default_value": "True"
                     },
                 ]
             },
@@ -94,7 +96,7 @@ class MainTemplate(ViewTemplate):
 
         # test_workflow_step = WorkflowStep(test_workflow_step)
 
-        # page.layout().addWidget(WorkflowStepWidget(test_workflow_step))  # Test code
+        page.layout().addWidget(WorkflowStepWidget(test_workflow_step))  # Test code
 
         test_workflow_step = dict()
         test_workflow_step["display_name"] = "intensity_normalization_with_bound"
