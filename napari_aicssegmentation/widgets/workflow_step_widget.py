@@ -38,16 +38,24 @@ class WorkflowStepWidget(QWidget):
         - param_label is a string like "scaling_param"
         - param_data is a list of FunctionParameter objects
         """
-        # TODO: maybe do something to append a number to the label for a multi-value param
-        for param in param_data:
+        param_label_formatted = param_label
+        is_label_numbered = False
+        if len(param_data) > 1:
+            is_label_numbered = True
+        
+        for i, param in enumerate(param_data):
             # Parse out type of widget to be added
             widget_type = param["widget_type"]
+
+            if is_label_numbered:
+                param_label_formatted = f"{param_label} {i + 1}"
+
             # Slider
             if widget_type == "slider":
-                self.add_slider(param_label, param)
+                self.add_slider(param_label_formatted, param)
             # Drop Down
             elif widget_type == "drop-down":
-                self.add_dropdown(param_label, param)
+                self.add_dropdown(param_label_formatted, param)
 
     def add_slider(self, param_label, param):
         # Add a slider
