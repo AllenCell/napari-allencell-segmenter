@@ -94,13 +94,13 @@ class MainTemplate(ViewTemplate):
 
         # test_workflow_step = WorkflowStep(test_workflow_step)
 
-        page.layout().addWidget(WorkflowStepWidget(test_workflow_step))  # Test code
+        # page.layout().addWidget(WorkflowStepWidget(test_workflow_step))  # Test code
 
-        # test_workflow_step = dict()
-        # test_workflow_step["display_name"] = "intensity_normalization_with_bound"
-        # test_workflow_step["function"] = {"parameters": [3, 15]}
-        # # test_workflow_step = WorkflowStep(test_workflow_step)
-        # page.layout().addWidget(WorkflowStepWidget(test_workflow_step))
+        test_workflow_step = dict()
+        test_workflow_step["display_name"] = "intensity_normalization_with_bound"
+        test_workflow_step["function"] = {"parameters": []}
+        # test_workflow_step = WorkflowStep(test_workflow_step)
+        page.layout().addWidget(WorkflowStepWidget(test_workflow_step))
         # test_workflow_step = dict()
         # test_workflow_step["display_name"] = "size_filter"
         # test_workflow_step["function"] = {"parameters": [1, 2]}
