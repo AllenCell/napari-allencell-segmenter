@@ -1,13 +1,15 @@
+from typing import Dict, List, Any
+
 # from aicssegmentation.structure_wrapper.WorkflowStep import WorkflowStep
 from magicgui.widgets import FloatSlider, Slider
-from qtpy.QtWidgets import QComboBox, QVBoxLayout
+from qtpy.QtWidgets import QComboBox, QLabel, QVBoxLayout, QWidget
 
 from napari_aicssegmentation.widgets.collapsible_box import CollapsibleBox
 
 
-class WorkflowStepBox(CollapsibleBox):
+class WorkflowStepWidget(QWidget):
     """
-    A collapsible box widget containing all the parameter controls and other necessary
+    A widget wrapping a CollapsibleBox that contains all the parameter controls and other necessary
     child widgets for a given WorkflowStep
 
     Params:
@@ -16,38 +18,31 @@ class WorkflowStepBox(CollapsibleBox):
 
     # TODO: type step param as WorkflowStep
     def __init__(self, step):
-        self.step = step
-        self._content_layout = QVBoxLayout()
+        super().__init__()
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+        box_content_layout = QVBoxLayout()
 
-        # Get all the separate parameters to put into this layout.
-        # for param in step["function"]["parameters"]:
-        #     self.create_param_widget(box_contents, param)
-
-        super().__init__(step["display_name"], self._content_layout)
-
-    def create_param_widget(self, layout, step, param_key):
-        # Get dictionary of information for this parameter
-        param_vals = step.widget_data.param_info[param_key]
-
-        # Sometimes one parameter has multiple inputs
-        if isinstance(param_vals, list):
-            # Split single param- multi inputs and treat as
-            # multiple single inputs
-            for single_param_val in param_vals:
-                self.parse_param_and_add(layout, step, param_key, single_param_val)
+        if len(step["function"]["parameters"]) == 0:
+            box_content_layout.addWidget(QLabel("No parameters needed"))
         else:
-            # One parameter with single input
-            self.parse_param_and_add(layout, step, param_key, param_vals)
+            # Get all the separate parameters to put into this layout.
+            for param_name, param_values in step["function"]["parameters"].items():
+                self.create_param_widgets(box_content_layout, param_name, param_values)
 
-    def parse_param_and_add(self, layout, step, key, single_param):
-        # Parse out type of widget to be added
-        widget_type = single_param["widget_type"]
-        # Slider
-        if widget_type == "slider":
-            self.add_slider(layout, step, key, single_param)
-        # # Drop Down
-        # elif widget_type == "drop-down":
-        #     add_dropdown(layout, widget_info, key, single_param)
+        layout.addWidget(CollapsibleBox(step["display_name"], box_content_layout))
+
+    def create_param_widgets(self, layout, param_name, param_values):
+        # TODO: maybe do something to append a number to the label for a multi-value param
+        for param_value in param_values:
+            # Parse out type of widget to be added
+            widget_type = param_value["widget_type"]
+            # Slider
+            if widget_type == "slider":
+                self.add_slider(layout, key, single_param)
+            # Drop Down
+            elif widget_type == "drop-down":
+                self.add_dropdown(layout, widget_info, key, single_param)
 
     def add_slider(self, layout, step, param_key, single_param):
         # Add a slider
