@@ -84,7 +84,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
         # Progress bar
         progress_bar = QProgressBar()
         progress_bar.setRange(0, num_steps)
-        progress_bar.setValue(num_steps - 2) # TODO: Replace with real value
+        progress_bar.setValue(num_steps - 2)  # TODO: Replace with real value
         progress_bar.setTextVisible(False)
         self.layout.addWidget(progress_bar)
 
@@ -116,7 +116,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
         for step in self.all_steps:
             if step.category == category:
                 steps.append(step)
-        
+
         # Add a widget for all steps in this category
         for i, step in enumerate(steps):
             self.layout.addWidget(WorkflowStepWidget(step))

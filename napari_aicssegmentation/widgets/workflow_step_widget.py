@@ -12,8 +12,8 @@ from napari_aicssegmentation.util.ui_utils import UiUtils
 
 class WorkflowStepWidget(QWidget):
     """
-    A widget wrapping a CollapsibleBox that contains all the parameter controls and other
-    necessary child widgets for a given WorkflowStep
+    A widget wrapping a CollapsibleBox that contains all the parameter controls
+    for a given WorkflowStep
 
     Params:
         step (WorkflowStep): WorkflowStep object for this widget
@@ -82,7 +82,5 @@ class WorkflowStepWidget(QWidget):
         self.form_rows.append(FormRow(param_label, widget))
 
     def add_dropdown(self, param_label, param, default_value):
-        dropdown_row = UiUtils.dropdown_row(
-            param_label, default=default_value, options=param.options, enabled=True
-        )
+        dropdown_row = UiUtils.dropdown_row(param_label, default=default_value, options=param.options, enabled=True)
         self.form_rows.append(dropdown_row)
