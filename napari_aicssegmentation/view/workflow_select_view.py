@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import (
     QHBoxLayout,
     QLayout,
 )
-from PyQt5.QtGui import QIcon, QStandardItem, QStandardItemModel
+from PyQt5.QtGui import QIcon, QStandardItem, QStandardItemModel, QPixmap, QImage
 from PyQt5 import QtCore
 from PyQt5.QtCore import QSize
 
@@ -25,6 +25,11 @@ from napari_aicssegmentation.util.directories import Directories
 from napari_aicssegmentation.util.ui_utils import UiUtils
 from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH
 from ._main_template import MainTemplate
+
+from aicssegmentation.workflow import WorkflowEngine, WorkflowStep, WorkflowDefinition
+import numpy as np
+import cv2
+
 
 
 @debug_class
@@ -197,16 +202,30 @@ class WorkflowSelectView(View):
             column_labels.setObjectName("columnLabelsDisabled")
         layout.addWidget(column_labels, alignment=QtCore.Qt.AlignCenter)
 
-        # Workflow buttons
-        image_files = (Directories.get_assets_dir() / "workflow_images").glob("*.png")
-        for image_file in image_files:
+        # Workflow engine to get defs
+        engine = WorkflowEngine()
+        for workflow in engine.workflow_definitions:
+            # Some images are RGBA and others are Grayscale
+            pre, post = workflow.thumbnail_pre, workflow.thumbnail_post
+            # If RGBA convert to grayscale
+            if len(workflow.thumbnail_pre.shape) > 2:
+                # cv2 expects color channel dim to be last index
+                pre = cv2.cvtColor(np.moveaxis(workflow.thumbnail_pre, 0, -1), cv2.COLOR_RGBA2GRAY)
+            if len(workflow.thumbnail_post.shape) > 2:
+                # cv2 expects color channel dim to be last index
+                post = cv2.cvtColor(np.moveaxis(workflow.thumbnail_post, 0, -1), cv2.COLOR_RGBA2GRAY)
+            # Stitch Image
+            image_stitched = np.hstack([pre, post])
             button = QPushButton("")
-            button.setIcon(QIcon(str(image_file)))
+            # Get np image into QPixmap
+            image = QPixmap(QImage(image_stitched.data, image_stitched.shape[1], image_stitched.shape[0], QImage.Format_Indexed8))
+            button.setIcon(QIcon(image))
             button.setIconSize(QSize(PAGE_CONTENT_WIDTH - 40, 200))
             button.setFixedSize(PAGE_CONTENT_WIDTH, 200)
-            if enabled is False:
-                button.setDisabled(True)
+            # if enabled is False:
+            #     button.setDisabled(True)
             layout.addWidget(button, alignment=QtCore.Qt.AlignCenter)
+
 
     #####################################################################
     # Event handlers
@@ -223,3 +242,21 @@ class WorkflowSelectView(View):
             self._controller.unselect_channel()
         else:
             self._controller.select_channel(self.combo_channels.itemData(index, role=QtCore.Qt.UserRole))
+
+    def rgb_to_grayscale(self, img):
+        grayImage = np.zeros(img.shape)
+        R = np.array(img[:, :, 0])
+        G = np.array(img[:, :, 1])
+        B = np.array(img[:, :, 2])
+
+        R = (R * .299)
+        G = (G * .587)
+        B = (B * .114)
+
+        Avg = (R + G + B)
+        grayImage = img
+
+        for i in range(3):
+            grayImage[:, :, i] = Avg
+
+        return grayImage
