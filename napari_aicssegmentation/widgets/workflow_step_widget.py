@@ -43,18 +43,16 @@ class WorkflowStepWidget(QWidget):
         layout.addWidget(CollapsibleBox(step_name, Form(self.form_rows, (11, 5, 5, 5))))
 
     def add_param_widgets(self, param_label: str, param_data: List[FunctionParameter], default_values: List or Any):
-        # Prepare to append a number to the label if multiple parameter widgets
-        # share the same label
-        param_label_numbered = param_label
-        is_label_numbered = False
-        if len(param_data) > 1:
-            is_label_numbered = True
-
         for i, param in enumerate(param_data):
-            if is_label_numbered:
+            # Append a number to the label if multiple parameter widgets share the
+            # same label
+            param_label_numbered = param_label
+            if len(param_data) > 1:
                 param_label_numbered = f"{param_label} {i + 1}"
 
+            # If default_values is not a list, that is the default value
             default_value = default_values
+            # If default_values is a list, get the right one by index
             if isinstance(default_values, list):
                 default_value = default_values[i]
 
