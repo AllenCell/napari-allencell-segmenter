@@ -82,7 +82,7 @@ class WorkflowStepWidget(QWidget):
         self.form_rows.append(FormRow(param_label, widget))
 
     def add_dropdown(self, param_label, param, default_value):
-        dropdown = UiUtils.dropdown_row(
-            param_label, default_value, options=param.options, enabled=True
+        dropdown_row = UiUtils.dropdown_row(
+            param_label, default=default_value, options=param.options, enabled=True
         )
-        self.form_rows.append(dropdown)
+        self.form_rows.append(dropdown_row)
