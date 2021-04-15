@@ -1,4 +1,7 @@
-# from aicssegmentation.structure_wrapper.WorkflowStep import WorkflowStep
+from typing import List
+
+from aicssegmentation.workflow import WorkflowStep
+from aicssegmentation.workflow.segmenter_function import FunctionParameter, WidgetType
 from magicgui.widgets import FloatSlider, Slider
 from qtpy.QtWidgets import QLabel, QVBoxLayout, QWidget
 
@@ -9,92 +12,83 @@ from napari_aicssegmentation.util.ui_utils import UiUtils
 
 class WorkflowStepWidget(QWidget):
     """
-    A widget wrapping a CollapsibleBox that contains all the parameter controls and other necessary
-    child widgets for a given WorkflowStep
+    A widget wrapping a CollapsibleBox that contains all the parameter controls and other
+    necessary child widgets for a given WorkflowStep
 
     Params:
         step (WorkflowStep): WorkflowStep object for this widget
     """
 
-    # TODO: type step param as WorkflowStep
-    def __init__(self, step):
+    def __init__(self, step: WorkflowStep):
         super().__init__()
         self.form_rows = []
 
         layout = QVBoxLayout()
         self.setLayout(layout)
 
-        if len(step["function"]["parameters"]) == 0: # or is not None?
-            self.form_rows.append(FormRow("", QLabel("No parameters needed")))
-        else:
-            # Get all the separate parameters to put into this layout.
-            for param_label, param_data in step["function"]["parameters"].items():
-                self.add_param_widgets(param_label, param_data)
+        # if len(step.function.parameters) is None:
+        #     self.form_rows.append(FormRow("", QLabel("No parameters needed")))
+        # else:
+        #     # Get all the separate parameters to put into this layout.
+        #     for param_label, param_data in step.function.parameters.items():
+        #         self.add_param_widgets(param_label, param_data)
 
-        layout.addWidget(CollapsibleBox(step["display_name"], Form(self.form_rows)))
+        step_name = f"<span>{step.step_number}.&nbsp;{step.name}</span>"
+        layout.addWidget(CollapsibleBox(step_name, Form(self.form_rows)))
 
-    def add_param_widgets(self, param_label, param_data):
-        """
-        - param_label is a string like "scaling_param"
-        - param_data is a list of FunctionParameter objects
-        """
-        param_label_formatted = param_label
+    def add_param_widgets(self, param_label: str, param_data: List[FunctionParameter]):
+        # Prepare to append a number to the label if multiple parameter widgets
+        # share the same label
+        param_label_numbered = param_label
         is_label_numbered = False
         if len(param_data) > 1:
             is_label_numbered = True
-        
+
         for i, param in enumerate(param_data):
-            # Parse out type of widget to be added
-            widget_type = param["widget_type"]
-
             if is_label_numbered:
-                param_label_formatted = f"{param_label} {i + 1}"
+                param_label_numbered = f"{param_label} {i + 1}"
 
-            # Slider
-            if widget_type == "slider":
-                self.add_slider(param_label_formatted, param)
-            # Drop Down
-            elif widget_type == "drop-down":
-                self.add_dropdown(param_label_formatted, param)
+            if param.widget_type == WidgetType.SLIDER:
+                self.add_slider(param_label_numbered, param)
+            elif param.widget_type == WidgetType.DROPDOWN:
+                self.add_dropdown(param_label_numbered, param)
 
     def add_slider(self, param_label, param):
-        # Add a slider
-        widget_values = dict()
+        widget_kwargs = dict()
 
-        # Build dictionary of widget information (default value, min, max, increment)
         # if step.parameters is not None:
         #     if isinstance(step.parameters[param_key], list):
         #         # if given two numbers for default value default to first value given
         #         default_val = step.parameters[param_key][0]
         #     else:
         #         default_val = step.parameters[param_key]
-        #     widget_values["value"] = default_val
+        #     widget_kwargs["value"] = default_val
 
-        widget_values["value"] = param["default_value"]
+        # Build dictionary of widget information (default value, min, max, increment)
+        widget_kwargs["step"] = param.increment
+        widget_kwargs["max_value"] = param.max_value
+        widget_kwargs["min_value"] = param.min_value
+        widget_kwargs["value"] = param["default_value"]
 
-        if "max" in param:
-            widget_values["max"] = param["max"]
-        if "min" in param:
-            widget_values["min"] = param["min"]
-        if "increment" in param:
-            widget_values["step"] = param["increment"]
-
+        # NOTE: This is on Jianxu's radar to fix
         # Sometimes default values are less than min or greater than max?
-        if widget_values["value"] < widget_values["min"]:
-            widget_values["value"] = widget_values["min"]
-        if widget_values["value"] > widget_values["max"]:
-            widget_values["value"] = widget_values["max"]
+        if widget_kwargs["value"] < widget_kwargs["min_value"]:
+            widget_kwargs["value"] = widget_kwargs["min_value"]
+        if widget_kwargs["value"] > widget_kwargs["max_value"]:
+            widget_kwargs["value"] = widget_kwargs["max_value"]
 
         # Determine which type of slider to use based on data type
         # and unpack dictionary with slider info and feed when initializing
         widget = None
-        if param["data_type"] == "float":
-            widget = FloatSlider(**widget_values)
-        if param["data_type"] == "int":
-            widget = Slider(**widget_values)
+        if param.data_type == "float":
+            widget = FloatSlider(**widget_kwargs)
+        if param.data_type == "int":
+            widget = Slider(**widget_kwargs)
 
         self.form_rows.append(FormRow(param_label, widget.native))
 
     def add_dropdown(self, param_label, param):
-        dropdown = UiUtils.dropdown_row(param_label, param["default_value"], options=param["option"], enabled=True)
+        dropdown = UiUtils.dropdown_row(
+            param_label, param["default_value"], options=param.options, enabled=True
+        )
         self.form_rows.append(dropdown)
