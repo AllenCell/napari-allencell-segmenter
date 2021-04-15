@@ -24,6 +24,7 @@ class WorkflowStepWidget(QWidget):
         self.form_rows = []
 
         layout = QVBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
 
         # if len(step.function.parameters) is None:
