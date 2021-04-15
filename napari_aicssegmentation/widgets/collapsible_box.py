@@ -16,7 +16,7 @@ class CollapsibleBox(QWidget):
         isOpen (bool):              Whether the widget is open or collapsed by default
     """
 
-    def __init__(self, title, content_layout, isOpen=True):
+    def __init__(self, title, content_layout, isOpen=False):
         super().__init__()
         self._title = title
         self._content_layout = content_layout
