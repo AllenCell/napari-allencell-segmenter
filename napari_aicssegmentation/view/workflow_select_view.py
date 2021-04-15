@@ -37,6 +37,7 @@ class WorkflowSelectView(View):
 
     combo_layers: QComboBox
     combo_channels: QComboBox
+    workflow_buttons: List[QPushButton]
     load_image_warning: WarningMessage
 
     def __init__(self, controller: IWorkflowSelectController):
@@ -72,6 +73,7 @@ class WorkflowSelectView(View):
         layer_channel_selections = QWidget()
         layer_channel_selections.setLayout(Form([layers_dropdown, channels_dropdown]))
 
+
         # Add all widgets
         widgets = [
             workflow_selection_title,
@@ -80,6 +82,15 @@ class WorkflowSelectView(View):
         ]
         for widget in widgets:
             layout.addWidget(widget)
+
+        # Add workflow buttons
+        engine = WorkflowEngine()
+        self._load_workflows(engine.workflow_definitions)
+        for button in self.workflow_buttons:
+            layout.addWidget(button)
+
+        self.update_workflows(enabled=True)
+
         self._add_step_3_layout(layout, enabled=False)
 
     def load_model(self, model: SegmenterModel):
@@ -149,12 +160,42 @@ class WorkflowSelectView(View):
             enabled: True to enable the list, False to disable it
         """
         # TODO
-        pass
 
-    def _load_workflows(self, workflows):  # workflows: List[aicssegmentation.WorkflowStep]
+        if enabled:
+            for button in self.workflow_buttons:
+                button.setDisabled(False)
+        else:
+            for button in self.workflow_buttons:
+                button.setDisabled(True)
+
+
+
+    def _load_workflows(self, workflows):
         # TODO generate workflow grid from list of workflows
-        # -> https://github.com/AllenCell/napari-aicssegmentation/issues/26
-        pass
+        self.workflow_buttons = list()
+        for workflow in workflows:
+            if not isinstance(workflow, str):
+                # Some images are RGBA and others are Grayscale
+                pre, post = workflow.thumbnail_pre, workflow.thumbnail_post
+                # If RGBA convert to grayscale
+                if len(workflow.thumbnail_pre.shape) > 2:
+                    # cv2 expects color channel dim to be last index
+                    pre = cv2.cvtColor(np.moveaxis(workflow.thumbnail_pre, 0, -1), cv2.COLOR_RGBA2GRAY)
+                if len(workflow.thumbnail_post.shape) > 2:
+                    # cv2 expects color channel dim to be last index
+                    post = cv2.cvtColor(np.moveaxis(workflow.thumbnail_post, 0, -1), cv2.COLOR_RGBA2GRAY)
+                # Stitch Image
+                image_stitched = np.hstack([pre, post])
+                button = QPushButton("")
+                # Get np image into QPixmap
+                image = QPixmap(
+                    QImage(image_stitched.data, image_stitched.shape[1], image_stitched.shape[0], QImage.Format_Indexed8))
+                button.setIcon(QIcon(image))
+                button.setIconSize(QSize(PAGE_CONTENT_WIDTH - 40, 200))
+                button.setFixedSize(PAGE_CONTENT_WIDTH, 200)
+
+                button.setDisabled(True)
+                self.workflow_buttons.append(button)
 
     def _reset_combo_box(self, combo: QComboBox):
         """
@@ -202,29 +243,6 @@ class WorkflowSelectView(View):
             column_labels.setObjectName("columnLabelsDisabled")
         layout.addWidget(column_labels, alignment=QtCore.Qt.AlignCenter)
 
-        # Workflow engine to get defs
-        engine = WorkflowEngine()
-        for workflow in engine.workflow_definitions:
-            # Some images are RGBA and others are Grayscale
-            pre, post = workflow.thumbnail_pre, workflow.thumbnail_post
-            # If RGBA convert to grayscale
-            if len(workflow.thumbnail_pre.shape) > 2:
-                # cv2 expects color channel dim to be last index
-                pre = cv2.cvtColor(np.moveaxis(workflow.thumbnail_pre, 0, -1), cv2.COLOR_RGBA2GRAY)
-            if len(workflow.thumbnail_post.shape) > 2:
-                # cv2 expects color channel dim to be last index
-                post = cv2.cvtColor(np.moveaxis(workflow.thumbnail_post, 0, -1), cv2.COLOR_RGBA2GRAY)
-            # Stitch Image
-            image_stitched = np.hstack([pre, post])
-            button = QPushButton("")
-            # Get np image into QPixmap
-            image = QPixmap(QImage(image_stitched.data, image_stitched.shape[1], image_stitched.shape[0], QImage.Format_Indexed8))
-            button.setIcon(QIcon(image))
-            button.setIconSize(QSize(PAGE_CONTENT_WIDTH - 40, 200))
-            button.setFixedSize(PAGE_CONTENT_WIDTH, 200)
-            # if enabled is False:
-            #     button.setDisabled(True)
-            layout.addWidget(button, alignment=QtCore.Qt.AlignCenter)
 
 
     #####################################################################
@@ -243,20 +261,4 @@ class WorkflowSelectView(View):
         else:
             self._controller.select_channel(self.combo_channels.itemData(index, role=QtCore.Qt.UserRole))
 
-    def rgb_to_grayscale(self, img):
-        grayImage = np.zeros(img.shape)
-        R = np.array(img[:, :, 0])
-        G = np.array(img[:, :, 1])
-        B = np.array(img[:, :, 2])
 
-        R = (R * .299)
-        G = (G * .587)
-        B = (B * .114)
-
-        Avg = (R + G + B)
-        grayImage = img
-
-        for i in range(3):
-            grayImage[:, :, i] = Avg
-
-        return grayImage
