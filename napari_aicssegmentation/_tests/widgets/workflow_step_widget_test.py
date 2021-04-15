@@ -10,5 +10,3 @@ class TestWorkflowStepWidget:
 
     def setup_method(self):
         pass
-
-    

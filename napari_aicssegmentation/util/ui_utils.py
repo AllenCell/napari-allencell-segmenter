@@ -13,7 +13,7 @@ class UiUtils:
         dropdown = QComboBox()
         dropdown.addItem(placeholder)
         dropdown.setDisabled(not enabled)
-        
+
         if options is None:
             options = []
         else:

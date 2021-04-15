@@ -21,7 +21,7 @@ class CollapsibleBox(QWidget):
         self._title = title
         self._content_layout = content_layout
         self.isOpen = isOpen
-        
+
         self.title_box = self._create_title_box()
         self.content_box = self._create_content_box()
 
