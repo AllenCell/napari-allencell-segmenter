@@ -27,7 +27,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
 
         # TODO: replace this with connection to model (first page selection)
         engine = WorkflowEngine()
-        self.workflow = engine.workflow_definitions[0]
+        self.workflow = engine.workflow_definitions[2]
         self.all_steps = self.workflow.steps
 
     def setup_ui(self):
@@ -84,7 +84,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
         # Progress bar
         progress_bar = QProgressBar()
         progress_bar.setRange(0, num_steps)
-        progress_bar.setValue(num_steps - 2)  # TODO: Replace with real value
+        progress_bar.setValue(0)
         progress_bar.setTextVisible(False)
         self.layout.addWidget(progress_bar)
 

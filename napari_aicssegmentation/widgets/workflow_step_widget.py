@@ -3,7 +3,8 @@ from typing import List
 from aicssegmentation.workflow import WorkflowStep
 from aicssegmentation.workflow.segmenter_function import FunctionParameter, WidgetType
 from magicgui.widgets import FloatSlider, Slider
-from qtpy.QtWidgets import QLabel, QVBoxLayout, QWidget
+from qtpy.QtCore import Qt
+from qtpy.QtWidgets import QDoubleSpinBox, QLabel, QVBoxLayout, QWidget
 
 from napari_aicssegmentation.widgets.collapsible_box import CollapsibleBox
 from napari_aicssegmentation.widgets.form import Form, FormRow
@@ -28,7 +29,10 @@ class WorkflowStepWidget(QWidget):
         self.setLayout(layout)
 
         if step.function.parameters is None:
-            self.form_rows.append(FormRow("", QLabel("No parameters needed")))
+            no_param_label = QLabel("No parameters needed")
+            no_param_label.setAlignment(Qt.AlignCenter)
+            no_param_label.setContentsMargins(0, 0, 6, 0)
+            self.form_rows.append(FormRow("", no_param_label))
         else:
             # Get all the separate parameters to put into this layout
             for param_label, param_data in step.function.parameters.items():
