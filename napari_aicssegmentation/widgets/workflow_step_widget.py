@@ -1,10 +1,10 @@
-from typing import List
+from typing import List, Any
 
 from aicssegmentation.workflow import WorkflowStep
 from aicssegmentation.workflow.segmenter_function import FunctionParameter, WidgetType
 from magicgui.widgets import FloatSlider, Slider
 from qtpy.QtCore import Qt
-from qtpy.QtWidgets import QDoubleSpinBox, QLabel, QVBoxLayout, QWidget
+from qtpy.QtWidgets import QLabel, QVBoxLayout, QWidget
 
 from napari_aicssegmentation.widgets.collapsible_box import CollapsibleBox
 from napari_aicssegmentation.widgets.form import Form, FormRow
@@ -42,7 +42,7 @@ class WorkflowStepWidget(QWidget):
         step_name = f"<span>{step.step_number}.&nbsp;{step.name}</span>"
         layout.addWidget(CollapsibleBox(step_name, Form(self.form_rows, (11, 5, 5, 5))))
 
-    def add_param_widgets(self, param_label: str, param_data: List[FunctionParameter], default_values: List):
+    def add_param_widgets(self, param_label: str, param_data: List[FunctionParameter], default_values: List or Any):
         # Prepare to append a number to the label if multiple parameter widgets
         # share the same label
         param_label_numbered = param_label
@@ -54,10 +54,14 @@ class WorkflowStepWidget(QWidget):
             if is_label_numbered:
                 param_label_numbered = f"{param_label} {i + 1}"
 
+            default_value = default_values
+            if isinstance(default_values, list):
+                default_value = default_values[i]
+
             if param.widget_type == WidgetType.SLIDER:
-                self.add_slider(param_label_numbered, param, default_values[i])
+                self.add_slider(param_label_numbered, param, default_value)
             elif param.widget_type == WidgetType.DROPDOWN:
-                self.add_dropdown(param_label_numbered, param, default_values[i])
+                self.add_dropdown(param_label_numbered, param, default_value)
 
     def add_slider(self, param_label, param, default_value):
         # NOTE: This is on Jianxu's radar to fix
