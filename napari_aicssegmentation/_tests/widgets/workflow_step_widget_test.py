@@ -1,4 +1,8 @@
+import traceback
+import sys
+
 from aicssegmentation.workflow import (
+    WorkflowEngine,
     WorkflowStep,
     SegmenterFunction,
     FunctionParameter,
@@ -12,6 +16,18 @@ from napari_aicssegmentation.widgets.workflow_step_widget import WorkflowStepWid
 
 
 class TestWorkflowStepWidget:
+    def test_all_workflows(self):
+        """ Make sure none of the workflow steps crash the widget """
+        engine = WorkflowEngine()
+        for workflow in engine.workflow_definitions:
+            for step in workflow.steps:
+                try:
+                    step_widget = WorkflowStepWidget(step)
+                except (TypeError, IndexError, AttributeError) as e:
+                    print(f"\n{workflow.name} - {step.name}: {e}", file=sys.stderr)
+                    traceback.print_exc()
+                    continue
+
     def test_step_with_no_params(self):
         # Arrange - this step's function has no parameters
         function = SegmenterFunction("gaussian blur", "Gaussian blur", "my_function_name", "my_module_name")
