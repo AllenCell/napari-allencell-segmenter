@@ -13,6 +13,7 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import QSize
 import numpy as np
 import cv2
+from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH
 class WorkflowThumbnails(QWidget):
 
     """
@@ -56,8 +57,8 @@ class WorkflowThumbnails(QWidget):
 
                 button.setEnabled(False)
 
-                self.workflow_buttons.add_buttons(button)
-            self.layout().addWidget(button)
+
+                self.layout().addWidget(button)
 
     def enable_buttons(self):
         if not self.enabled:
@@ -71,7 +72,5 @@ class WorkflowThumbnails(QWidget):
                 button.setEnabled = False
             self.enabled = False
 
-    def get_widget(self):
-        return self.layout()
 
 

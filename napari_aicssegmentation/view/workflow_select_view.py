@@ -86,10 +86,8 @@ class WorkflowSelectView(View):
 
         # Add workflow buttons
         engine = WorkflowEngine()
-        self._load_workflows(engine.workflow_definitions)
-        thumbnailButton = WorkflowThumbnails()
-        layout().addWidget(thumbnailButton)
-
+        workflow_thumbnails = self._load_workflows(engine.workflow_definitions)
+        layout.addWidget((workflow_thumbnails))
 
         self._add_step_3_layout(layout, enabled=False)
 
@@ -170,32 +168,8 @@ class WorkflowSelectView(View):
 
     def _load_workflows(self, workflows):
         # TODO generate workflow grid from list of workflows
-        self.workflow_buttons = WorkflowThumbnails()
-        for workflow in workflows:
-            if not isinstance(workflow, str):
-                # Some images are RGBA and others are Grayscale
-                # TODO?: convert all images to grayscale?
-                pre, post = workflow.thumbnail_pre, workflow.thumbnail_post
-                # If RGBA convert to grayscale
-                if len(workflow.thumbnail_pre.shape) > 2:
-                    # cv2 expects color channel dim to be last index
-                    pre = cv2.cvtColor(np.moveaxis(workflow.thumbnail_pre, 0, -1), cv2.COLOR_RGBA2GRAY)
-                if len(workflow.thumbnail_post.shape) > 2:
-                    # cv2 expects color channel dim to be last index
-                    post = cv2.cvtColor(np.moveaxis(workflow.thumbnail_post, 0, -1), cv2.COLOR_RGBA2GRAY)
-                # Stitch Image
-                image_stitched = np.hstack([pre, post])
-                button = QPushButton("")
-                # Get np image into QPixmap
-                image = QPixmap(
-                    QImage(image_stitched.data, image_stitched.shape[1], image_stitched.shape[0], QImage.Format_Indexed8))
-                button.setIcon(QIcon(image))
-                button.setIconSize(QSize(PAGE_CONTENT_WIDTH - 40, 200))
-                button.setFixedSize(PAGE_CONTENT_WIDTH, 200)
+        return WorkflowThumbnails(workflows)
 
-                button.setEnabled(False)
-
-                self.workflow_buttons.add_buttons(button)
 
     def _reset_combo_box(self, combo: QComboBox):
         """
