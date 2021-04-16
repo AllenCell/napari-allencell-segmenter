@@ -87,7 +87,8 @@ class WorkflowSelectView(View):
         # Add workflow buttons
         engine = WorkflowEngine()
         self._load_workflows(engine.workflow_definitions)
-        layout.addWidget(self.workflow_buttons.get_widget())
+        thumbnailButton = WorkflowThumbnails()
+        layout().addWidget(thumbnailButton)
 
 
         self._add_step_3_layout(layout, enabled=False)
