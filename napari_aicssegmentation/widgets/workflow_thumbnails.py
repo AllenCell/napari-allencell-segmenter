@@ -61,16 +61,14 @@ class WorkflowThumbnails(QWidget):
                 self.layout().addWidget(button)
 
     def enable_buttons(self):
-        if not self.enabled:
-            for button in self.buttons:
-                button.setEnabled = True
-            self.enabled = True
+        for ui_element in self.layout().parent().children():
+            if isinstance(ui_element, QPushButton):
+                ui_element.setEnabled(True)
+
 
     def disable_buttons(self):
-        if self.enabled:
-            for button in self.buttons:
-                button.setEnabled = False
-            self.enabled = False
-
+        for ui_element in self.layout().parent().children():
+            if isinstance(ui_element, QPushButton):
+                ui_element.setEnabled(False)
 
 
