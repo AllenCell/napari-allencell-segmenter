@@ -25,6 +25,7 @@ from napari_aicssegmentation.util.directories import Directories
 from napari_aicssegmentation.util.ui_utils import UiUtils
 from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH
 from ._main_template import MainTemplate
+from napari_aicssegmentation.widgets.workflow_thumbnails import WorkflowThumbnails
 
 from aicssegmentation.workflow import WorkflowEngine, WorkflowStep, WorkflowDefinition
 import numpy as np
@@ -37,8 +38,8 @@ class WorkflowSelectView(View):
 
     combo_layers: QComboBox
     combo_channels: QComboBox
-    workflow_buttons: List[QPushButton]
     load_image_warning: WarningMessage
+    workflow_buttons: WorkflowThumbnails
 
     def __init__(self, controller: IWorkflowSelectController):
         super().__init__(template_class=MainTemplate)
@@ -86,10 +87,8 @@ class WorkflowSelectView(View):
         # Add workflow buttons
         engine = WorkflowEngine()
         self._load_workflows(engine.workflow_definitions)
-        for button in self.workflow_buttons:
-            layout.addWidget(button)
+        layout.addWidget(self.workflow_buttons.get_widget())
 
-        self.update_workflows(enabled=True)
 
         self._add_step_3_layout(layout, enabled=False)
 
@@ -162,20 +161,19 @@ class WorkflowSelectView(View):
         # TODO
 
         if enabled:
-            for button in self.workflow_buttons:
-                button.setDisabled(False)
+            self.workflow_buttons.enable_buttons()
         else:
-            for button in self.workflow_buttons:
-                button.setDisabled(True)
+            self.workflow_buttons.disable_buttons()
 
 
 
     def _load_workflows(self, workflows):
         # TODO generate workflow grid from list of workflows
-        self.workflow_buttons = list()
+        self.workflow_buttons = WorkflowThumbnails()
         for workflow in workflows:
             if not isinstance(workflow, str):
                 # Some images are RGBA and others are Grayscale
+                # TODO?: convert all images to grayscale?
                 pre, post = workflow.thumbnail_pre, workflow.thumbnail_post
                 # If RGBA convert to grayscale
                 if len(workflow.thumbnail_pre.shape) > 2:
@@ -194,8 +192,9 @@ class WorkflowSelectView(View):
                 button.setIconSize(QSize(PAGE_CONTENT_WIDTH - 40, 200))
                 button.setFixedSize(PAGE_CONTENT_WIDTH, 200)
 
-                button.setDisabled(True)
-                self.workflow_buttons.append(button)
+                button.setEnabled(False)
+
+                self.workflow_buttons.add_buttons(button)
 
     def _reset_combo_box(self, combo: QComboBox):
         """
