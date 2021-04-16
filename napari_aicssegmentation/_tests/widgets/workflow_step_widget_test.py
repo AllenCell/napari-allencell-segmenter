@@ -1,5 +1,3 @@
-from unittest.mock import MagicMock, Mock, create_autospec
-
 from aicssegmentation.workflow import (
     WorkflowStep,
     SegmenterFunction,
@@ -8,10 +6,9 @@ from aicssegmentation.workflow import (
     WorkflowStepCategory,
 )
 import pytest
-from PyQt5.QtWidgets import QComboBox, QLabel, QPushButton, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QComboBox
 
 from napari_aicssegmentation.widgets.workflow_step_widget import WorkflowStepWidget
-from napari_aicssegmentation.widgets.form import FormRow
 
 
 class TestWorkflowStepWidget:
@@ -30,7 +27,6 @@ class TestWorkflowStepWidget:
 
     def test_step_with_single_value_per_param(self):
         # Arrange
-        function_parameter = create_autospec(FunctionParameter)
         parameters = {
             "scaling_param": [FunctionParameter("scaling", WidgetType.DROPDOWN, "str", options=["red", "blue"])]
         }
@@ -48,7 +44,6 @@ class TestWorkflowStepWidget:
 
     def test_step_with_multiple_values_per_param(self):
         # Arrange
-        function_parameter = create_autospec(FunctionParameter)
         parameters = {
             "scaling_param": [
                 FunctionParameter("scaling", WidgetType.DROPDOWN, "str", options=["red", "blue"]),

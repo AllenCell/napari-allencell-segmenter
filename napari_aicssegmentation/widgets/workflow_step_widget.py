@@ -1,7 +1,6 @@
-from typing import List, Any
+from typing import List, Any, Union
 
-from aicssegmentation.workflow import WorkflowStep
-from aicssegmentation.workflow.segmenter_function import FunctionParameter, WidgetType
+from aicssegmentation.workflow import WorkflowStep, FunctionParameter, WidgetType
 from magicgui.widgets import FloatSlider, Slider
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import QLabel, QVBoxLayout, QWidget
@@ -22,8 +21,8 @@ class WorkflowStepWidget(QWidget):
 
     def __init__(self, step: WorkflowStep):
         super().__init__()
-        self.form_rows = []
         self.step_name = f"<span>{step.step_number}.&nbsp;{step.name}</span>"
+        self.form_rows = []
 
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
@@ -35,18 +34,16 @@ class WorkflowStepWidget(QWidget):
             no_param_label.setContentsMargins(0, 0, 6, 0)
             self.form_rows.append(FormRow("", no_param_label))
         else:
-            # Get all the separate parameters to put into this layout
             for param_label, param_data in step.function.parameters.items():
                 default_values = step.parameter_defaults[param_label]
-                self.add_param_widgets(param_label, param_data, default_values)
+                self.add_param_rows(param_label, param_data, default_values)
 
         box = CollapsibleBox(self.step_name, Form(self.form_rows, (11, 5, 5, 5)))
         layout.addWidget(box)
 
-    def add_param_widgets(self, param_label: str, param_data: List[FunctionParameter], default_values: List or Any):
+    def add_param_rows(self, param_label: str, param_data: List[FunctionParameter], default_values: Union[List, Any]):
         for i, param in enumerate(param_data):
-            # Append a number to the label if multiple parameter widgets share the
-            # same label
+            # Append a number to the label if multiple parameter widgets share the same label
             param_label_numbered = param_label
             if len(param_data) > 1:
                 param_label_numbered = f"{param_label} {i + 1}"
@@ -77,13 +74,12 @@ class WorkflowStepWidget(QWidget):
         kwargs["min"] = param.min_value
         kwargs["value"] = default_value
 
-        # Determine which type of slider to use based on data type
-        # and unpack dictionary with slider info and feed when initializing
         widget = None
         if param.data_type == "float":
-            widget = FloatSlider(**kwargs).native
+            widget = FloatSlider(**kwargs)
         if param.data_type == "int":
-            widget = Slider(**kwargs).native
+            widget = Slider(**kwargs)
+        widget = widget.native
         widget.setObjectName("slider")
 
         self.form_rows.append(FormRow(param_label, widget))

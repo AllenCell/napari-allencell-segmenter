@@ -1,5 +1,4 @@
-from aicssegmentation.workflow import WorkflowEngine
-from aicssegmentation.workflow.workflow_step import WorkflowStepCategory
+from aicssegmentation.workflow import WorkflowEngine, WorkflowStepCategory
 from qtpy.QtGui import QPixmap
 from qtpy.QtWidgets import QHBoxLayout, QLabel, QProgressBar, QPushButton, QVBoxLayout, QWidget
 
