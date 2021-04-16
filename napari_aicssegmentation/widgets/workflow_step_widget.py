@@ -23,6 +23,7 @@ class WorkflowStepWidget(QWidget):
     def __init__(self, step: WorkflowStep):
         super().__init__()
         self.form_rows = []
+        self.step_name = f"<span>{step.step_number}.&nbsp;{step.name}</span>"
 
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
@@ -39,8 +40,8 @@ class WorkflowStepWidget(QWidget):
                 default_values = step.parameter_defaults[param_label]
                 self.add_param_widgets(param_label, param_data, default_values)
 
-        step_name = f"<span>{step.step_number}.&nbsp;{step.name}</span>"
-        layout.addWidget(CollapsibleBox(step_name, Form(self.form_rows, (11, 5, 5, 5))))
+        box = CollapsibleBox(self.step_name, Form(self.form_rows, (11, 5, 5, 5)))
+        layout.addWidget(box)
 
     def add_param_widgets(self, param_label: str, param_data: List[FunctionParameter], default_values: List or Any):
         for i, param in enumerate(param_data):
