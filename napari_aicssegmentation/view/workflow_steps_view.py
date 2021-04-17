@@ -26,7 +26,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
 
         # TODO: replace this with connection to model (first page selection)
         engine = WorkflowEngine()
-        self.workflow = engine.workflow_definitions[2]
+        self.workflow = engine.workflow_definitions[3]
         self.all_steps = self.workflow.steps
 
     def setup_ui(self):
@@ -110,14 +110,8 @@ class WorkflowStepsView(View):  # pragma: no-cover
         category_label.setObjectName("categoryLabel")
         self.layout.addWidget(category_label)
 
-        # Gather all the steps in this category
-        steps = []
-        for step in self.all_steps:
-            if step.category == category:
-                steps.append(step)
-
-        # Add a widget for all steps in this category
-        for i, step in enumerate(steps):
+        # Add a widget for all the steps in this category
+        for step in filter(lambda step: step.category == category, self.all_steps):
             self.layout.addWidget(WorkflowStepWidget(step))
 
         self.layout.addSpacing(10)
