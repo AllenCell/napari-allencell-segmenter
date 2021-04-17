@@ -36,12 +36,12 @@ class WorkflowStepWidget(QWidget):
         else:
             for param_label, param_data in step.function.parameters.items():
                 default_values = step.parameter_defaults[param_label]
-                self.add_param_rows(param_label, param_data, default_values)
+                self._add_param_rows(param_label, param_data, default_values)
 
         box = CollapsibleBox(self.step_name, Form(self.form_rows, (11, 5, 5, 5)))
         layout.addWidget(box)
 
-    def add_param_rows(self, param_label: str, param_data: List[FunctionParameter], default_values: Union[List, Any]):
+    def _add_param_rows(self, param_label: str, param_data: List[FunctionParameter], default_values: Union[List, Any]):
         for i, param in enumerate(param_data):
             # Append a number to the label if multiple parameter widgets share the same label
             param_label_numbered = param_label
@@ -55,11 +55,11 @@ class WorkflowStepWidget(QWidget):
                 default_value = default_values[i]
 
             if param.widget_type == WidgetType.SLIDER:
-                self.add_slider(param_label_numbered, param, default_value)
+                self._add_slider(param_label_numbered, param, default_value)
             elif param.widget_type == WidgetType.DROPDOWN:
-                self.add_dropdown(param_label_numbered, param, default_value)
+                self._add_dropdown(param_label_numbered, param, default_value)
 
-    def add_slider(self, param_label, param, default_value):
+    def _add_slider(self, param_label, param, default_value):
         # NOTE: This is on Jianxu's radar to fix
         # Sometimes default values are less than min or greater than max
         if default_value < param.min_value:
@@ -84,6 +84,6 @@ class WorkflowStepWidget(QWidget):
 
         self.form_rows.append(FormRow(param_label, widget))
 
-    def add_dropdown(self, param_label, param, default_value):
+    def _add_dropdown(self, param_label, param, default_value):
         dropdown_row = UiUtils.dropdown_row(param_label, default=default_value, options=param.options, enabled=True)
         self.form_rows.append(dropdown_row)
