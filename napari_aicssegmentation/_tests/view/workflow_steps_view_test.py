@@ -7,7 +7,7 @@ from napari_aicssegmentation.view.workflow_steps_view import (
 )
 
 
-class TestWorkflowSelectView:
+class TestWorkflowStepsView:
     def setup_method(self):
         self._mock_controller: MagicMock = create_autospec(IWorkflowStepsController)
         self._view = WorkflowStepsView(self._mock_controller)
