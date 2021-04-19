@@ -60,12 +60,8 @@ class WorkflowStepWidget(QWidget):
                 self._add_dropdown(param_label_numbered, param, default_value)
 
     def _add_slider(self, param_label, param, default_value):
-        # NOTE: This is on Jianxu's radar to fix
-        # Sometimes default values are less than min or greater than max
-        if default_value < param.min_value:
-            default_value = param.min_value
-        elif default_value > param.max_value:
-            default_value = param.max_value
+        if default_value < param.min_value or default_value > param.max_value:
+            raise ValueError("Default value outside of min-max range")
 
         # Build dictionary of keyword args for slider widgets
         kwargs = dict()
