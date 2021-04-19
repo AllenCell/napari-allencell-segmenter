@@ -1,6 +1,6 @@
 from aicssegmentation.workflow import WorkflowEngine, WorkflowStepCategory
 from qtpy.QtGui import QPixmap
-from qtpy.QtWidgets import QHBoxLayout, QLabel, QProgressBar, QPushButton, QVBoxLayout, QWidget
+from qtpy.QtWidgets import QHBoxLayout, QLabel, QProgressBar, QPushButton, QSizePolicy, QVBoxLayout, QWidget
 
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
 from napari_aicssegmentation.util.debug_utils import debug_class
@@ -37,9 +37,6 @@ class WorkflowStepsView(View):  # pragma: no-cover
 
         # self._lbl_selected_workflow = QLabel()
 
-        btn_run_all = QPushButton("Run all")
-        btn_run_all.clicked.connect(self._btn_back_clicked)
-
         # Add all widgets
         self._add_workflow_title()
         self._add_progress_bar()
@@ -48,7 +45,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self._add_workflow_steps(WorkflowStepCategory.POST_PROCESSING)
         self.layout.addSpacing(20)
         self.layout.addStretch()
-        self.layout.addWidget(btn_run_all)
+        self._add_bottom_buttons()
 
     def load_model(self, model: SegmenterModel):
         pass
@@ -116,15 +113,35 @@ class WorkflowStepsView(View):  # pragma: no-cover
 
         self.layout.addSpacing(10)
 
+    def _add_bottom_buttons(self):
+        layout = QHBoxLayout()
+        layout.setSpacing(5)
+
+        btn_close_workflow = QPushButton("Close workflow")
+        btn_close_workflow.setFixedWidth(120)
+        btn_close_workflow.clicked.connect(self._btn_close_clicked)
+
+        btn_run_all = QPushButton("Run all")
+        btn_run_all.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        btn_run_all.clicked.connect(self._btn_run_all_clicked)
+
+        layout.addWidget(btn_close_workflow)
+        layout.addWidget(btn_run_all)
+
+        self.layout.addLayout(layout)
+
     #####################################################################
     # Event handlers
     #####################################################################
-
-    def _btn_back_clicked(self, checked: bool):
-        self._controller.navigate_back()
 
     def _btn_info_clicked(self, checked: bool):
         self.diagram = QLabel()
         diagram_path = str(Directories.get_assets_dir() / "workflow_diagrams/sec61b_1.png")
         self.diagram.setPixmap(QPixmap(diagram_path))
         self.diagram.show()
+
+    def _btn_close_clicked(self, checked: bool):
+        self._controller.navigate_back()
+
+    def _btn_run_all_clicked(self, checked: bool):
+        self._controller.navigate_back()
