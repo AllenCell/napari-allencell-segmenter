@@ -24,7 +24,6 @@ class TestWorkflowStepWidget:
                 print(f"{workflow.name} - {step.name}")
                 step_widget = WorkflowStepWidget(step)
 
-
     def test_step_with_no_params(self):
         # Arrange - this step's function has no parameters
         function = SegmenterFunction("gaussian blur", "Gaussian blur", "my_function_name", "my_module_name")
