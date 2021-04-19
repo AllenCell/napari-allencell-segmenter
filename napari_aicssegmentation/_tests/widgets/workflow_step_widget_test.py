@@ -21,12 +21,9 @@ class TestWorkflowStepWidget:
         engine = WorkflowEngine()
         for workflow in engine.workflow_definitions:
             for step in workflow.steps:
-                try:
-                    step_widget = WorkflowStepWidget(step)
-                except (TypeError, IndexError, AttributeError) as e:
-                    print(f"\n{workflow.name} - {step.name}: {e}", file=sys.stderr)
-                    traceback.print_exc()
-                    continue
+                print(f"{workflow.name} - {step.name}")
+                step_widget = WorkflowStepWidget(step)
+
 
     def test_step_with_no_params(self):
         # Arrange - this step's function has no parameters
