@@ -1,6 +1,15 @@
 from aicssegmentation.workflow import WorkflowEngine, WorkflowStepCategory
 from qtpy.QtGui import QPixmap
-from qtpy.QtWidgets import QHBoxLayout, QLabel, QProgressBar, QPushButton, QSizePolicy, QVBoxLayout, QWidget
+from qtpy.QtWidgets import (
+    QHBoxLayout,
+    QLabel,
+    QMessageBox,
+    QProgressBar,
+    QPushButton,
+    QSizePolicy,
+    QVBoxLayout,
+    QWidget,
+)
 
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
 from napari_aicssegmentation.util.debug_utils import debug_class
@@ -23,6 +32,9 @@ class WorkflowStepsView(View):  # pragma: no-cover
             raise ValueError("controller")
         self._controller = controller
         self.setObjectName("workflowStepsView")
+
+        self.diagram = QLabel()
+        self.modal = QMessageBox()
 
         # TODO: replace this with connection to model (first page selection)
         engine = WorkflowEngine()
@@ -135,13 +147,22 @@ class WorkflowStepsView(View):  # pragma: no-cover
     #####################################################################
 
     def _btn_info_clicked(self, checked: bool):
-        self.diagram = QLabel()
         diagram_path = str(Directories.get_assets_dir() / "workflow_diagrams/sec61b_1.png")
         self.diagram.setPixmap(QPixmap(diagram_path))
         self.diagram.show()
 
     def _btn_close_clicked(self, checked: bool):
-        self._controller.navigate_back()
+        prompt = (
+            "You are closing an in-progress Allen Cell & Structure Segmenter plugin workflow to return "
+            "to the Workflow Selection screen. Your progress in this workflow will be lost."
+        )
+        self.modal.setIcon(QMessageBox.Warning)
+        self.modal.setText(f"Workflow: {self.workflow.name}")
+        self.modal.setInformativeText(prompt)
+        self.modal.setStandardButtons(QMessageBox.Cancel)
+        self.modal.setModal(True)
+        self.modal.show()
+        # self._controller.navigate_back()
 
     def _btn_run_all_clicked(self, checked: bool):
         self._controller.navigate_back()
