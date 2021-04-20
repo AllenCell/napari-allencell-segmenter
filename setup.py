@@ -19,7 +19,8 @@ requirements = [
     "numpy",
     "aicssegmentation>=0.1.22",
     "magicgui >= 0.2.9",
-    "aicsimageio>=3.3.4,<4"
+    "aicsimageio>=3.3.4,<4",
+    "cv2"
 ]
 
 test_requirements = [
