@@ -1,6 +1,7 @@
-from napari_aicssegmentation.core.view import ViewTemplate
 from PyQt5.QtWidgets import QFrame, QVBoxLayout, QScrollArea, QLabel
 from PyQt5 import QtCore
+
+from napari_aicssegmentation.core.view import ViewTemplate
 from napari_aicssegmentation._style import Style
 
 
