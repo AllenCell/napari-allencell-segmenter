@@ -19,6 +19,8 @@ class CollapsibleBox(QWidget):
     def __init__(self, title, content_layout, isOpen=False):
         super().__init__()
         self._title = title
+        # TODO: Refactor to avoid requiring a content_layout argument at object creation:
+        # https://github.com/AllenCell/napari-aicssegmentation/pull/56#discussion_r615056471
         self._content_layout = content_layout
         self.isOpen = isOpen
 
