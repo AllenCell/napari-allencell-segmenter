@@ -12,6 +12,7 @@ from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH
 from aicssegmentation.workflow import WorkflowDefinition
 from typing import List
 
+
 class WorkflowThumbnails(QWidget):
 
     """
@@ -31,7 +32,6 @@ class WorkflowThumbnails(QWidget):
         self.setLayout(layout)
         self.add_buttons(workflow_defs)
 
-
     def add_buttons(self, workflows: List[WorkflowDefinition]):
         """
         Add all buttons given a List of WorkflowDefinitions
@@ -41,7 +41,7 @@ class WorkflowThumbnails(QWidget):
                 # Some images are RGBA and others are Grayscale
                 # TODO?: convert all images to RBGA
                 pre: np.ndarray = workflow.thumbnail_pre
-                post:np.ndarray = workflow.thumbnail_post
+                post: np.ndarray = workflow.thumbnail_post
                 # If RGBA convert to grayscale
                 if len(workflow.thumbnail_pre.shape) > 2:
                     # cv2 expects color channel dim to be last index
@@ -54,13 +54,15 @@ class WorkflowThumbnails(QWidget):
                 button: QPushButton = QPushButton("")
                 # Get np image into QPixmap
                 image: QPixmap = QPixmap(
-                    QImage(image_stitched.data, image_stitched.shape[1], image_stitched.shape[0], QImage.Format_Indexed8))
+                    QImage(
+                        image_stitched.data, image_stitched.shape[1], image_stitched.shape[0], QImage.Format_Indexed8
+                    )
+                )
                 button.setIcon(QIcon(image))
                 button.setIconSize(QSize(PAGE_CONTENT_WIDTH - 40, 200))
                 button.setFixedSize(PAGE_CONTENT_WIDTH, 200)
 
                 button.setEnabled(False)
-
 
                 self.layout().addWidget(button)
 
@@ -72,7 +74,6 @@ class WorkflowThumbnails(QWidget):
             if isinstance(ui_element, QPushButton):
                 ui_element.setEnabled(True)
 
-
     def disable_buttons(self):
         """
         Disable all buttons in the widget
@@ -80,5 +81,3 @@ class WorkflowThumbnails(QWidget):
         for ui_element in self.layout().parent().children():
             if isinstance(ui_element, QPushButton):
                 ui_element.setEnabled(False)
-
-
