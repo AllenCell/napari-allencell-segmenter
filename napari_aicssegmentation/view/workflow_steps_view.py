@@ -34,7 +34,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self.setObjectName("workflowStepsView")
 
         self.diagram = QLabel()
-        self.modal = QMessageBox()
+        self.confirmation_modal = QMessageBox()
 
         # TODO: replace this with connection to model (first page selection)
         engine = WorkflowEngine()
@@ -153,16 +153,25 @@ class WorkflowStepsView(View):  # pragma: no-cover
 
     def _btn_close_clicked(self, checked: bool):
         prompt = (
-            "You are closing an in-progress Allen Cell & Structure Segmenter plugin workflow to return "
-            "to the Workflow Selection screen. Your progress in this workflow will be lost."
+            "<span>You are closing an in-progress Allen Cell & Structure Segmenter plugin workflow to return "
+            "to the Workflow Selection screen.&nbsp;Your progress in this workflow will be lost.</span>"
         )
-        self.modal.setIcon(QMessageBox.Warning)
-        self.modal.setText(f"Workflow: {self.workflow.name}")
-        self.modal.setInformativeText(prompt)
-        self.modal.setStandardButtons(QMessageBox.Cancel)
-        self.modal.setModal(True)
-        self.modal.show()
-        # self._controller.navigate_back()
+        
+        self.confirmation_modal.setModal(True)
+        self.confirmation_modal.setIcon(QMessageBox.Warning)
+        self.confirmation_modal.setText(f"Workflow: {self.workflow.name}")
+        self.confirmation_modal.setInformativeText(prompt)
+        self.confirmation_modal.setStandardButtons(QMessageBox.Cancel)
+
+        if len(self.confirmation_modal.buttons()) < 2:
+            self.close_keep = self.confirmation_modal.addButton("Close workflow", QMessageBox.AcceptRole)
+
+        self.confirmation_modal.exec()
+        self._handle_modal_input(self.confirmation_modal.clickedButton())
+
+    def _handle_modal_input(self, input):
+        if input == self.close_keep:
+            self._controller.navigate_back()
 
     def _btn_run_all_clicked(self, checked: bool):
         self._controller.navigate_back()
