@@ -4,15 +4,13 @@ from napari.layers.base.base import Layer
 from PyQt5.QtWidgets import (
     QComboBox,
     QLabel,
-    QPushButton,
     QVBoxLayout,
     QWidget,
     QHBoxLayout,
     QLayout,
 )
-from PyQt5.QtGui import QIcon, QStandardItem, QStandardItemModel, QPixmap, QImage
+from PyQt5.QtGui import QStandardItem, QStandardItemModel
 from PyQt5 import QtCore
-from PyQt5.QtCore import QSize
 
 from napari_aicssegmentation.model.channel import Channel
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
@@ -21,16 +19,13 @@ from napari_aicssegmentation.controller._interfaces import IWorkflowSelectContro
 from napari_aicssegmentation.core.view import View
 from napari_aicssegmentation.widgets.form import Form, FormRow
 from napari_aicssegmentation.widgets.warning_message import WarningMessage
-from napari_aicssegmentation.util.directories import Directories
+
 from napari_aicssegmentation.util.ui_utils import UiUtils
 from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH
 from ._main_template import MainTemplate
 from napari_aicssegmentation.widgets.workflow_thumbnails import WorkflowThumbnails
 
-from aicssegmentation.workflow import WorkflowEngine, WorkflowStep, WorkflowDefinition
-import numpy as np
-import cv2
-
+from aicssegmentation.workflow import WorkflowEngine
 
 
 @debug_class
@@ -73,7 +68,6 @@ class WorkflowSelectView(View):
 
         layer_channel_selections = QWidget()
         layer_channel_selections.setLayout(Form([layers_dropdown, channels_dropdown]))
-
 
         # Add all widgets
         widgets = [
@@ -164,12 +158,9 @@ class WorkflowSelectView(View):
         else:
             self.workflow_buttons.disable_buttons()
 
-
-
     def _load_workflows(self, workflows):
         # TODO generate workflow grid from list of workflows
         return WorkflowThumbnails(workflows)
-
 
     def _reset_combo_box(self, combo: QComboBox):
         """
@@ -217,8 +208,6 @@ class WorkflowSelectView(View):
             column_labels.setObjectName("columnLabelsDisabled")
         layout.addWidget(column_labels, alignment=QtCore.Qt.AlignCenter)
 
-
-
     #####################################################################
     # Event handlers
     #####################################################################
@@ -234,5 +223,3 @@ class WorkflowSelectView(View):
             self._controller.unselect_channel()
         else:
             self._controller.select_channel(self.combo_channels.itemData(index, role=QtCore.Qt.UserRole))
-
-
