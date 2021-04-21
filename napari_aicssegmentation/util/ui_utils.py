@@ -5,14 +5,20 @@ from napari_aicssegmentation.widgets.form import FormRow
 
 class UiUtils:
     @staticmethod
-    def dropdown_row(label: str, placeholder: str, enabled=False) -> FormRow:
+    def dropdown_row(label: str, placeholder: str = None, default: str = None, options=None, enabled=False) -> FormRow:
         """
         Given the contents of a dropdown and a label, return a FormRow containing
         a label and a QComboBox widget that can be used with the custom Form widget
         """
-
         dropdown = QComboBox()
-        dropdown.addItem(placeholder)
         dropdown.setDisabled(not enabled)
+        if placeholder is not None:
+            dropdown.addItem(placeholder)
+        if options is not None:
+            str_options = [str(option) for option in options]
+            dropdown.addItems(str_options)
+        if placeholder is None and default is not None:
+            default_index = options.index(default)
+            dropdown.setCurrentIndex(default_index)
 
         return FormRow(label, dropdown)

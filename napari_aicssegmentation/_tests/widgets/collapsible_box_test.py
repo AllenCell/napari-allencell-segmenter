@@ -1,5 +1,5 @@
 import pytest
-from PyQt5.QtWidgets import QLabel, QPushButton, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QLabel, QPushButton, QVBoxLayout
 
 from napari_aicssegmentation.widgets.collapsible_box import CollapsibleBox
 

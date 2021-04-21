@@ -1,4 +1,4 @@
-from magicgui.widgets import FloatSlider, Slider
+from aicssegmentation.workflow import WorkflowEngine, WorkflowStepCategory
 from qtpy.QtGui import QPixmap
 from qtpy.QtWidgets import QHBoxLayout, QLabel, QProgressBar, QPushButton, QVBoxLayout, QWidget
 
@@ -6,11 +6,9 @@ from napari_aicssegmentation.model.segmenter_model import SegmenterModel
 from napari_aicssegmentation.util.debug_utils import debug_class
 from napari_aicssegmentation.controller._interfaces import IWorkflowStepsController
 from napari_aicssegmentation.core.view import View
-from napari_aicssegmentation.widgets.collapsible_box import CollapsibleBox
-from napari_aicssegmentation.widgets.form import Form, FormRow
+from napari_aicssegmentation.widgets.workflow_step_widget import WorkflowStepWidget
 from napari_aicssegmentation.view._main_template import MainTemplate
 from napari_aicssegmentation.util.directories import Directories
-from napari_aicssegmentation.util.ui_utils import UiUtils
 from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH
 
 
@@ -26,6 +24,11 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self._controller = controller
         self.setObjectName("workflowStepsView")
 
+        # TODO: replace this with connection to model (first page selection)
+        engine = WorkflowEngine()
+        self.workflow = engine.workflow_definitions[3]
+        self.all_steps = self.workflow.steps
+
     def setup_ui(self):
         self.layout = QVBoxLayout()
         self.layout.setContentsMargins(0, 0, 0, 0)
@@ -40,9 +43,9 @@ class WorkflowStepsView(View):  # pragma: no-cover
         # Add all widgets
         self._add_workflow_title()
         self._add_progress_bar()
-        self._add_workflow_steps("preprocessing")
-        self._add_workflow_steps("core")
-        self._add_workflow_steps("postprocessing")
+        self._add_workflow_steps(WorkflowStepCategory.PRE_PROCESSING)
+        self._add_workflow_steps(WorkflowStepCategory.CORE)
+        self._add_workflow_steps(WorkflowStepCategory.POST_PROCESSING)
         self.layout.addSpacing(20)
         self.layout.addStretch()
         self.layout.addWidget(btn_run_all)
@@ -58,9 +61,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
         widget.setLayout(layout)
 
         # Make widgets
-        # TODO: replace with real data
-        config_workflow_name = "sec61b"
-        workflow_name = QLabel(f"Workflow: {config_workflow_name}")
+        workflow_name = QLabel(f"Workflow: {self.workflow.name}")
         info = QPushButton("ⓘ")
         info.setObjectName("infoButton")
         info.clicked.connect(self._btn_info_clicked)
@@ -77,13 +78,12 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self.layout.addWidget(widget)
 
     def _add_progress_bar(self):
-        # TODO: replace with real data
-        num_steps = 4
+        num_steps = len(self.workflow.steps)
 
         # Progress bar
         progress_bar = QProgressBar()
         progress_bar.setRange(0, num_steps)
-        progress_bar.setValue(3)  # TODO: Change arg to 0
+        progress_bar.setValue(0)
         progress_bar.setTextVisible(False)
         self.layout.addWidget(progress_bar)
 
@@ -104,32 +104,15 @@ class WorkflowStepsView(View):  # pragma: no-cover
                 labels_layout.addStretch()
         self.layout.addWidget(progress_labels)
 
-    def _add_workflow_steps(self, category: str):
-        # TODO: replace with real data
-        steps = [
-            {"number": 1, "name": "Intensity Normalization"},
-            {"number": 2, "name": "Edge Preserving Smoothing"},
-        ]
-
-        # Category label, e.g., "Preprocessing"
-        category_label = QLabel(category.upper())
+    def _add_workflow_steps(self, category: WorkflowStepCategory):
+        # Add category label, e.g., "Preprocessing"
+        category_label = QLabel(category.value.upper())
         category_label.setObjectName("categoryLabel")
         self.layout.addWidget(category_label)
 
-        # TODO: replace this with the data-driven WorkflowStep widget
-        for i, step in enumerate(steps):
-            slider_1 = FloatSlider(value=2.5, min=0.5, max=30, step=0.5).native
-            slider_1.setObjectName("slider")
-            slider_2 = Slider(value=140, min=1, max=200, step=1).native
-            slider_2.setObjectName("slider")
-            row_1 = FormRow("Param 1", slider_1)
-            row_2 = FormRow("Param 2", slider_2)
-
-            row_3 = UiUtils.dropdown_row("Mode", "thick", enabled=True)
-            row_3.widget.addItem("thin")
-
-            content = Form([row_1, row_2, row_3], (11, 5, 5, 5))
-            self.layout.addWidget(CollapsibleBox(f"<span>{i + 1}.&nbsp;{step['name']}", content))
+        # Add a widget for all the steps in this category
+        for step in filter(lambda step: step.category == category, self.all_steps):
+            self.layout.addWidget(WorkflowStepWidget(step))
 
         self.layout.addSpacing(10)
 
