@@ -11,7 +11,7 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtGui import QIcon, QPixmap, QImage
 from PyQt5 import QtCore
 from napari_aicssegmentation.widgets.form import Form, FormRow
-from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH
+from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH, Style
 from aicssegmentation.workflow import WorkflowDefinition
 from typing import List
 
@@ -113,12 +113,16 @@ class WorkflowThumbnails(QWidget):
     def setEnabled(self, enabled: bool) -> None:
         super().setEnabled(enabled)
         if enabled:
-            self.column_labels.setObjectName("column_labels")
+            self.column_labels.setObjectName("columnLabels")
             self.step_3_instructions.setObjectName("step3Instructions")
-            self.column_labels.setStyleSheet("QLabel { color: #f0f1f2 }")
-            self.step_3_instructions.setStyleSheet("QLabel { color: #f0f1f2 }")
+            self.setStyleSheet(Style.get_stylesheet("main.qss"))
+
             self._enable_buttons()
         else:
+            self.column_labels.setObjectName("columnLabelsDisabled")
+            self.step_3_instructions.setObjectName("step3InstructionsDisabled")
+            self.setStyleSheet(Style.get_stylesheet("main.qss"))
+
             self._disable_buttons()
 
     def _enable_buttons(self):
