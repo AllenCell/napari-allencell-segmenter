@@ -50,10 +50,18 @@ class IWorkflowSelectController(ABC):
 
 
 class IWorkflowStepsController(ABC):
+    @property
+    def model(self):
+        pass
+
     @abstractmethod
     def index(self):
         pass
 
     @abstractmethod
     def navigate_back(self):
+        pass
+
+    @abstractmethod
+    def reset_model(self):
         pass

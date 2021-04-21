@@ -156,7 +156,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
             "<span>You are closing an in-progress Allen Cell & Structure Segmenter plugin workflow to return "
             "to the Workflow Selection screen.&nbsp;Your progress in this workflow will be lost.</span>"
         )
-        
+
         self.confirmation_modal.setModal(True)
         self.confirmation_modal.setIcon(QMessageBox.Warning)
         self.confirmation_modal.setText(f"Workflow: {self.workflow.name}")
@@ -171,6 +171,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
 
     def _handle_modal_input(self, input):
         if input == self.close_keep:
+            self._controller.reset_model()
             self._controller.navigate_back()
 
     def _btn_run_all_clicked(self, checked: bool):
