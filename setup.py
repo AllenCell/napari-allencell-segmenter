@@ -17,9 +17,10 @@ requirements = [
     "napari>=0.4.7",
     "napari-plugin-engine>=0.1.4",
     "numpy",
-    "aicssegmentation @ git+https://github.com/AllenCell/aics-segmentation.git@refactor#egg=aicssegmentation",
+    "aicssegmentation @ git+https://github.com/AllenCell/aics-segmentation.git@feature/workflow-engine#egg=aicssegmentation",
     "magicgui >= 0.2.9",
-    "aicsimageio>=3.3.4,<4"
+    "aicsimageio>=3.3.4,<4",
+    "opencv-python-headless>=4.5.1"
 ]
 
 test_requirements = [
