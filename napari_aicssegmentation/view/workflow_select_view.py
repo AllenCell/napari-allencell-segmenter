@@ -160,47 +160,6 @@ class WorkflowSelectView(View):
             combo.clear()
             combo.addItem(header)
 
-    # def _add_step_3_layout(self, layout: QLayout, enabled=False):
-    #     """
-    #     Add widgets and set the layout for the Step 3 instructions and the workflow buttons
-    #     """
-    #     step_3_label = QLabel("3.")
-    #     step_3_label.setAlignment(QtCore.Qt.AlignTop)
-    #     step_3_instructions = QLabel(
-    #         "Click a button below that most closely resembles your image channel to select & start a workflow"
-    #     )
-    #     step_3_instructions.setWordWrap(True)
-    #     step_3 = QWidget()
-    #     step_3.setLayout(Form([FormRow(step_3_label, step_3_instructions)], (0, 0, 11, 0)))
-
-    #     if enabled is False:
-    #         step_3_instructions.setObjectName("step3InstructionsDisabled")
-    #     layout.addWidget(step_3)
-
-    #     # Row of text labeling the columns of workflow images
-    #     column_labels = QWidget()
-    #     column_layout = QHBoxLayout()
-    #     column_layout.setContentsMargins(11, 11, 11, 0)
-    #     column_labels.setLayout(column_layout)
-
-    #     image_input_label = QLabel("Image input")
-    #     image_input_label.setAlignment(QtCore.Qt.AlignCenter)
-    #     segmentation_output_label = QLabel("Segmentation output")
-    #     segmentation_output_label.setAlignment(QtCore.Qt.AlignCenter)
-    #     column_labels.layout().addWidget(image_input_label)
-    #     column_labels.layout().addWidget(segmentation_output_label)
-
-    #     column_labels.setObjectName("columnLabels")
-    #     column_labels.setFixedWidth(PAGE_CONTENT_WIDTH)
-
-    #     if enabled is False:
-    #         column_labels.setObjectName("columnLabelsDisabled")
-    #     layout.addWidget(column_labels, alignment=QtCore.Qt.AlignCenter)
-
-    #     # Add workflow buttons
-    #     self.workflow_grid = WorkflowThumbnails()
-    #     layout.addWidget(self.workflow_grid)
-
     #####################################################################
     # Event handlers
     #####################################################################
