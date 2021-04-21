@@ -9,6 +9,7 @@ from napari_aicssegmentation.core.view_manager import ViewManager
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
 from aicssegmentation.workflow import WorkflowEngine
 
+
 class TestWorkflowStepsController:
     def setup_method(self):
         self._mock_application: MagicMock = create_autospec(IApplication)

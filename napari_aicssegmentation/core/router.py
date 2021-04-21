@@ -15,7 +15,7 @@ class Router(IRouter):
             raise ValueError("application")
         self._application = application
         # TODO do some proper dependency injection in the future if the project grows
-        self._layer_reader = LayerReader() 
+        self._layer_reader = LayerReader()
         self._workflow_engine = WorkflowEngine()
 
     def workflow_selection(self):
