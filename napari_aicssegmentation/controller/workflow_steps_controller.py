@@ -26,5 +26,6 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
     def navigate_back(self):
         self.router.workflow_selection()
 
-    def reset_model(self):
+    def close_workflow(self):
         self.model.reset()
+        self.navigate_back()

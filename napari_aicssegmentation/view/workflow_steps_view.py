@@ -167,12 +167,8 @@ class WorkflowStepsView(View):  # pragma: no-cover
             self.close_keep = self.confirmation_modal.addButton("Close workflow", QMessageBox.AcceptRole)
 
         self.confirmation_modal.exec()
-        self._handle_modal_input(self.confirmation_modal.clickedButton())
-
-    def _handle_modal_input(self, input):
-        if input == self.close_keep:
-            self._controller.reset_model()
-            self._controller.navigate_back()
+        if self.confirmation_modal.clickedButton() == self.close_keep:
+            self._controller.close_workflow()
 
     def _btn_run_all_clicked(self, checked: bool):
         self._controller.navigate_back()
