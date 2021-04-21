@@ -14,11 +14,14 @@ class Router(IRouter):
         if application is None:
             raise ValueError("application")
         self._application = application
+        # TODO do some proper dependency injection in the future if the project grows
+        self._layer_reader = LayerReader()
+        self._workflow_engine = WorkflowEngine()
 
     def workflow_selection(self):
-        self._controller = WorkflowSelectController(self._application, LayerReader(), WorkflowEngine())
+        self._controller = WorkflowSelectController(self._application, self._layer_reader, self._workflow_engine)
         self._controller.index()
 
     def workflow_steps(self):
-        self._controller = WorkflowStepsController(self._application)
+        self._controller = WorkflowStepsController(self._application, self._workflow_engine)
         self._controller.index()
