@@ -26,16 +26,14 @@ class TestWorkflowStepsView:
     def test_add_workflow_steps(self):
         pass
 
-    def test_btn_close_clicked(self):
-        pass
-
     def test_handle_modal_input_close_keep(self):
         # Arrange
         channel = Channel(0, "Brightfield")
         self._view._controller.model.selected_channel = channel
 
-        # Act
         self._view.close_keep = self._view.confirmation_modal.addButton("Close workflow", QMessageBox.AcceptRole)
+
+        # Act
         self._view._handle_modal_input(self._view.close_keep)
 
         # Assert
