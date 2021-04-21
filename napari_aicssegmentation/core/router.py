@@ -1,3 +1,4 @@
+from aicssegmentation.workflow import WorkflowEngine
 from napari_aicssegmentation.util.debug_utils import debug_class
 from napari_aicssegmentation.controller.workflow_select_controller import WorkflowSelectController
 from napari_aicssegmentation.controller.workflow_steps_controller import WorkflowStepsController
@@ -15,7 +16,7 @@ class Router(IRouter):
         self._application = application
 
     def workflow_selection(self):
-        self._controller = WorkflowSelectController(self._application, LayerReader())
+        self._controller = WorkflowSelectController(self._application, LayerReader(), WorkflowEngine())
         self._controller.index()
 
     def workflow_steps(self):

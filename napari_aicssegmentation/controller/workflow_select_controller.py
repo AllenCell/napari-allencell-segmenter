@@ -8,15 +8,18 @@ from napari_aicssegmentation.controller._interfaces import IWorkflowSelectContro
 from napari_aicssegmentation.core.controller import Controller
 from napari_aicssegmentation.model.channel import Channel
 from napari_aicssegmentation.core.layer_reader import LayerReader
-
+from aicssegmentation.workflow import WorkflowEngine
 
 @debug_class
 class WorkflowSelectController(Controller, IWorkflowSelectController):
-    def __init__(self, application: IApplication, layer_reader: LayerReader):
+    def __init__(self, application: IApplication, layer_reader: LayerReader, workflow_engine: WorkflowEngine):
         super().__init__(application)
         if layer_reader is None:
             raise ValueError("layer_reader")
+        if workflow_engine is None:
+            raise ValueError("workflow_engine")
         self._layer_reader = layer_reader
+        self._workflow_engine = workflow_engine
         self._view = WorkflowSelectView(self)
         self.viewer.events.layers_change.connect(self._handle_layers_change)
 
@@ -36,10 +39,8 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
         if self.get_active_layer() is not None and self.get_active_layer().name in self.model.layers:
             self.model.selected_layer = self.get_active_layer()
             self.model.channels = self._layer_reader.get_channels(self.model.selected_layer)
-
-        # TODO load workflow objects from Segmenter workflow engine
-        # -> https://github.com/AllenCell/napari-aicssegmentation/issues/26
-        self.model.workflows = ["SEC61B", "LMNB1", "ACTN1"]
+        
+        self.model.workflows = self._workflow_engine.workflow_definitions
         self._view.load_model(self.model)
 
     def select_layer(self, layer_name: str):

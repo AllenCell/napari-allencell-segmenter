@@ -1,5 +1,4 @@
 from typing import List
-
 from napari.layers.base.base import Layer
 from PyQt5.QtWidgets import (
     QComboBox,
@@ -11,7 +10,6 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
 from PyQt5 import QtCore
-
 from napari_aicssegmentation.model.channel import Channel
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
 from napari_aicssegmentation.util.debug_utils import debug_class
@@ -19,14 +17,11 @@ from napari_aicssegmentation.controller._interfaces import IWorkflowSelectContro
 from napari_aicssegmentation.core.view import View
 from napari_aicssegmentation.widgets.form import Form, FormRow
 from napari_aicssegmentation.widgets.warning_message import WarningMessage
-
 from napari_aicssegmentation.util.ui_utils import UiUtils
 from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH
-from ._main_template import MainTemplate
 from napari_aicssegmentation.widgets.workflow_thumbnails import WorkflowThumbnails
-
-from aicssegmentation.workflow import WorkflowEngine
-
+from aicssegmentation.workflow.workflow_definition import WorkflowDefinition
+from ._main_template import MainTemplate
 
 @debug_class
 class WorkflowSelectView(View):
@@ -34,7 +29,7 @@ class WorkflowSelectView(View):
     combo_layers: QComboBox
     combo_channels: QComboBox
     load_image_warning: WarningMessage
-    workflow_buttons: WorkflowThumbnails
+    workflow_grid: WorkflowThumbnails
 
     def __init__(self, controller: IWorkflowSelectController):
         super().__init__(template_class=MainTemplate)
@@ -76,14 +71,10 @@ class WorkflowSelectView(View):
             layer_channel_selections,
         ]
         for widget in widgets:
-            layout.addWidget(widget)
-
-        # Add workflow buttons
-        engine = WorkflowEngine()
-        self.workflow_buttons = self._load_workflows(engine.workflow_definitions)
-        layout.addWidget((self.workflow_buttons))
+            layout.addWidget(widget)        
 
         self._add_step_3_layout(layout, enabled=False)
+       
 
     def load_model(self, model: SegmenterModel):
         """
@@ -151,16 +142,13 @@ class WorkflowSelectView(View):
         Inputs:
             enabled: True to enable the list, False to disable it
         """
-        # TODO
+        self.workflow_grid.setEnabled(enabled)
 
-        if enabled:
-            self.workflow_buttons.enable_buttons()
-        else:
-            self.workflow_buttons.disable_buttons()
-
-    def _load_workflows(self, workflows):
-        # TODO generate workflow grid from list of workflows
-        return WorkflowThumbnails(workflows)
+    def _load_workflows(self, workflows: List[WorkflowDefinition]):
+        """
+        Load workflows into workflow grid
+        """
+        self.workflow_grid.load_workflows(workflows)
 
     def _reset_combo_box(self, combo: QComboBox):
         """
@@ -207,6 +195,10 @@ class WorkflowSelectView(View):
         if enabled is False:
             column_labels.setObjectName("columnLabelsDisabled")
         layout.addWidget(column_labels, alignment=QtCore.Qt.AlignCenter)
+
+        # Add workflow buttons        
+        self.workflow_grid = WorkflowThumbnails()
+        layout.addWidget(self.workflow_grid)         
 
     #####################################################################
     # Event handlers
