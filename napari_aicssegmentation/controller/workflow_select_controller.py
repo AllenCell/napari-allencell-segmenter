@@ -10,6 +10,7 @@ from napari_aicssegmentation.model.channel import Channel
 from napari_aicssegmentation.core.layer_reader import LayerReader
 from aicssegmentation.workflow import WorkflowEngine
 
+
 @debug_class
 class WorkflowSelectController(Controller, IWorkflowSelectController):
     def __init__(self, application: IApplication, layer_reader: LayerReader, workflow_engine: WorkflowEngine):
@@ -39,7 +40,7 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
         if self.get_active_layer() is not None and self.get_active_layer().name in self.model.layers:
             self.model.selected_layer = self.get_active_layer()
             self.model.channels = self._layer_reader.get_channels(self.model.selected_layer)
-        
+
         self.model.workflows = self._workflow_engine.workflow_definitions
         self._view.load_model(self.model)
 

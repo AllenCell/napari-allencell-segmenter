@@ -31,9 +31,9 @@ class TestWorkflowSelectController:
         self._mock_workflow_engine: MagicMock = create_autospec(WorkflowEngine)
 
         with mock.patch("napari_aicssegmentation.controller.workflow_select_controller.WorkflowSelectView"):
-            self._controller = WorkflowSelectController(self._mock_application, 
-                                                        self._mock_layer_reader, 
-                                                        self._mock_workflow_engine)
+            self._controller = WorkflowSelectController(
+                self._mock_application, self._mock_layer_reader, self._mock_workflow_engine
+            )
 
     def test_index(self):
         # Arrange
@@ -46,9 +46,9 @@ class TestWorkflowSelectController:
         ]
         channels = [Channel(0), Channel(1), Channel(2), Channel(3)]
         workflows = [
-            create_autospec(WorkflowDefinition), 
-            create_autospec(WorkflowDefinition), 
-            create_autospec(WorkflowDefinition)
+            create_autospec(WorkflowDefinition),
+            create_autospec(WorkflowDefinition),
+            create_autospec(WorkflowDefinition),
         ]
         type(self._mock_viewer).layers = PropertyMock(return_value=layers)
         type(self._mock_viewer).active_layer = PropertyMock(return_value=active_layer)
