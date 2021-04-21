@@ -1,26 +1,25 @@
 from typing import List
+
+from aicssegmentation.workflow.workflow_definition import WorkflowDefinition
 from napari.layers.base.base import Layer
 from PyQt5.QtWidgets import (
     QComboBox,
     QLabel,
     QVBoxLayout,
     QWidget,
-    QHBoxLayout,
-    QLayout,
 )
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
 from PyQt5 import QtCore
+
 from napari_aicssegmentation.model.channel import Channel
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
 from napari_aicssegmentation.util.debug_utils import debug_class
 from napari_aicssegmentation.controller._interfaces import IWorkflowSelectController
 from napari_aicssegmentation.core.view import View
-from napari_aicssegmentation.widgets.form import Form, FormRow
+from napari_aicssegmentation.widgets.form import Form
 from napari_aicssegmentation.widgets.warning_message import WarningMessage
 from napari_aicssegmentation.util.ui_utils import UiUtils
-from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH
 from napari_aicssegmentation.widgets.workflow_thumbnails import WorkflowThumbnails
-from aicssegmentation.workflow.workflow_definition import WorkflowDefinition
 from ._main_template import MainTemplate
 
 
@@ -73,7 +72,7 @@ class WorkflowSelectView(View):
         ]
         for widget in widgets:
             layout.addWidget(widget)
-        
+
         self.workflow_grid = WorkflowThumbnails()
         self.layout().addWidget(self.workflow_grid)
 

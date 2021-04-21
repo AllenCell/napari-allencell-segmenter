@@ -1,6 +1,8 @@
-import numpy as np
-import cv2
+from typing import List
 
+from aicssegmentation.workflow import WorkflowDefinition
+import cv2
+import numpy as np
 from PyQt5.QtWidgets import (
     QPushButton,
     QHBoxLayout,
@@ -10,10 +12,9 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtGui import QIcon, QPixmap, QImage
 from PyQt5 import QtCore
+
 from napari_aicssegmentation.widgets.form import Form, FormRow
 from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH, Style
-from aicssegmentation.workflow import WorkflowDefinition
-from typing import List
 
 
 class WorkflowThumbnails(QWidget):
@@ -44,7 +45,7 @@ class WorkflowThumbnails(QWidget):
         self._workflows = workflows
         self._add_labels()
         self._add_buttons(workflows)
-    
+
     def _add_labels(self):
         """
         Add widgets and set the layout for the Step 3 instructions and the workflow buttons
