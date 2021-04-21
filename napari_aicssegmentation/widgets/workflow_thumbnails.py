@@ -33,6 +33,8 @@ class WorkflowThumbnails(QWidget):
         """
         Load given Workflow definitions and rebuild the grid
         """
+        if workflows is None:
+            raise ValueError("workflows")
         self._workflows = workflows
         self._add_buttons(workflows)        
 
