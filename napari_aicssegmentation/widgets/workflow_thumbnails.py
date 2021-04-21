@@ -29,10 +29,6 @@ class WorkflowThumbnails(QWidget):
 
     def __init__(self, workflow_defs: List[WorkflowDefinition] = None):
         super().__init__()
-        layout = QVBoxLayout()
-        layout.setContentsMargins(0, 0, 0, 0)
-        self.setLayout(layout)  # reset setLayout
-
         if workflow_defs is not None:
             self.load_workflows(workflow_defs)
 
@@ -42,6 +38,11 @@ class WorkflowThumbnails(QWidget):
         """
         if workflows is None:
             raise ValueError("workflows")
+
+        layout = QVBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        self.setLayout(layout)  # reset setLayout
+
         self._workflows = workflows
         self._add_labels()
         self._add_buttons(workflows)
