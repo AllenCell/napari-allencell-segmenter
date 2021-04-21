@@ -2,7 +2,7 @@ import napari
 
 from napari.utils.events.event import Event
 from unittest import mock
-from unittest.mock import MagicMock, create_autospec, PropertyMock, patch
+from unittest.mock import MagicMock, create_autospec, PropertyMock
 from napari_aicssegmentation.controller.workflow_select_controller import WorkflowSelectController
 from napari_aicssegmentation.core._interfaces import IApplication, IRouter
 from napari_aicssegmentation.core.layer_reader import LayerReader
@@ -10,6 +10,7 @@ from napari_aicssegmentation.core.state import State
 from napari_aicssegmentation.core.view_manager import ViewManager
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
 from napari_aicssegmentation.model.channel import Channel
+from aicssegmentation.workflow import WorkflowEngine, WorkflowDefinition
 from ..mocks import MockLayer
 
 
@@ -27,9 +28,12 @@ class TestWorkflowSelectController:
         self._model = SegmenterModel()
         type(self._mock_state).segmenter_model = PropertyMock(return_value=self._model)
         self._mock_layer_reader: MagicMock = create_autospec(LayerReader)
+        self._mock_workflow_engine: MagicMock = create_autospec(WorkflowEngine)
 
         with mock.patch("napari_aicssegmentation.controller.workflow_select_controller.WorkflowSelectView"):
-            self._controller = WorkflowSelectController(self._mock_application, self._mock_layer_reader)
+            self._controller = WorkflowSelectController(self._mock_application, 
+                                                        self._mock_layer_reader, 
+                                                        self._mock_workflow_engine)
 
     def test_index(self):
         # Arrange
@@ -41,8 +45,14 @@ class TestWorkflowSelectController:
             MockLayer(name="2D Layer", ndim=2),
         ]
         channels = [Channel(0), Channel(1), Channel(2), Channel(3)]
+        workflows = [
+            create_autospec(WorkflowDefinition), 
+            create_autospec(WorkflowDefinition), 
+            create_autospec(WorkflowDefinition)
+        ]
         type(self._mock_viewer).layers = PropertyMock(return_value=layers)
         type(self._mock_viewer).active_layer = PropertyMock(return_value=active_layer)
+        type(self._mock_workflow_engine).workflow_definitions = PropertyMock(return_value=workflows)
         self._mock_layer_reader.get_channels.return_value = channels
 
         # Act
@@ -54,12 +64,7 @@ class TestWorkflowSelectController:
         assert self._controller.model.layers == ["Layer 1", "Layer 2", "Layer 3"]
         assert self._controller.model.selected_layer == active_layer
         assert self._controller.model.channels == channels
-
-        assert self._controller.model.workflows == [
-            "SEC61B",
-            "LMNB1",
-            "ACTN1",
-        ]  # TODO update once workflows loaded from Segmenter
+        assert self._controller.model.workflows == workflows
 
     def test_select_layer(self):
         # Arrange

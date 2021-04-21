@@ -1,11 +1,14 @@
 import pytest
+import numpy as np
+
 from PyQt5 import QtCore
-from unittest.mock import MagicMock, Mock, create_autospec
+from unittest.mock import MagicMock, PropertyMock, create_autospec
 from napari_aicssegmentation.view.workflow_select_view import (
     WorkflowSelectView,
     IWorkflowSelectController,
     SegmenterModel,
     Channel,
+    WorkflowDefinition
 )
 from ..mocks import MockLayer
 
@@ -16,10 +19,23 @@ class TestWorkflowSelectView:
         self._view = WorkflowSelectView(self._mock_controller)
         self._view.setup_ui()
 
+    def _get_mock_workflow_def(self, name: str) -> MagicMock:
+        mock_workflow = create_autospec(WorkflowDefinition)        
+        type(mock_workflow).name = PropertyMock(return_value = name)
+        type(mock_workflow).steps = PropertyMock(return_value = list())
+        type(mock_workflow).thumbnail_pre = PropertyMock(return_value = np.ones((50, 50)))
+        type(mock_workflow).thumbnail_post = PropertyMock(return_value = np.ones((50, 50)))        
+        return mock_workflow
+
     def test_load_model(self):
         # Arrange
         model = SegmenterModel()
-        model.layers = ["Layer 1", "Layer 2", "Layer 3"]
+        model.layers = ["Layer 1", "Layer 2", "Layer 3"]      
+        model.workflows = [
+            self._get_mock_workflow_def("sec61b"),
+            self._get_mock_workflow_def("lmnb1"),
+            self._get_mock_workflow_def("son"),
+        ]
 
         # Act
         self._view.load_model(model)
