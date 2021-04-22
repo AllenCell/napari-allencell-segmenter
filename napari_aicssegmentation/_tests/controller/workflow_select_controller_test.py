@@ -116,7 +116,7 @@ class TestWorkflowSelectController:
         self._model.selected_layer = MockLayer("Layer 1", ndim=3)
         self._mock_workflow_engine.get_executable_workflow.return_value = expected_workflow
 
-        # Act        
+        # Act
         self._controller.select_workflow("sec61b")
 
         # Assert

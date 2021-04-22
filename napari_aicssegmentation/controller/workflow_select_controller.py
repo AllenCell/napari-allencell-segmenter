@@ -74,10 +74,8 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
             + "] "
             + workflow_name,
         )
-        
-        self.model.active_workflow = self._workflow_engine.get_executable_workflow(
-            workflow_name, layer0.data
-        )        
+
+        self.model.active_workflow = self._workflow_engine.get_executable_workflow(workflow_name, layer0.data)
 
         self.router.workflow_steps()
 

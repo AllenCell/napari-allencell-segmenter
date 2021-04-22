@@ -4,6 +4,7 @@ from napari.layers import Layer
 from .channel import Channel
 from aicssegmentation.workflow import Workflow
 
+
 @dataclass
 class SegmenterModel:
     """
