@@ -175,5 +175,5 @@ class WorkflowSelectView(View):
         else:
             self._controller.select_channel(self.combo_channels.itemData(index, role=QtCore.Qt.UserRole))
 
-    def combo_workflow_activated(self, selected_workflow):
+    def combo_workflow_activated(self, event):
         self._controller.select_workflow(self.sender().objectName())

@@ -25,7 +25,7 @@ from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH
 class WorkflowStepsView(View):  # pragma: no-cover
     # _lbl_selected_workflow: QLabel
 
-    def __init__(self, controller: IWorkflowStepsController, selected_workflow: str):
+    def __init__(self, controller: IWorkflowStepsController):
         super().__init__(template_class=MainTemplate)
 
         if controller is None:
@@ -37,8 +37,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self.modal_close_workflow = QMessageBox()
 
         # TODO: replace this with connection to model (first page selection)
-        engine = WorkflowEngine()
-        self.workflow = engine.get_executable_workflow(selected_workflow, controller.model.selected_layer.data)
+        self.workflow = self._controller.model.active_workflow
         self.all_steps = self.workflow.workflow_definition.steps
 
     def setup_ui(self):
@@ -156,6 +155,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
             "<span>You are closing an in-progress Allen Cell & Structure Segmenter plugin workflow to return "
             "to the Workflow Selection screen.&nbsp;Your progress in this workflow will be lost.</span>"
         )
+
 
         self.modal_close_workflow.setModal(True)
         self.modal_close_workflow.setIcon(QMessageBox.Warning)

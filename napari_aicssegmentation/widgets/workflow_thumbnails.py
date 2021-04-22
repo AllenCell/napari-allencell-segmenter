@@ -111,6 +111,7 @@ class WorkflowThumbnails(QWidget):
 
             button.setEnabled(False)
             button.setObjectName(workflow.name)
+            # TODO: Do this without using self.view.
             button.clicked.connect(self.view.combo_workflow_activated)
 
             self.layout().addWidget(button)
