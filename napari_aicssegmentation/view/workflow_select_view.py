@@ -23,6 +23,7 @@ from napari_aicssegmentation.widgets.workflow_thumbnails import WorkflowThumbnai
 from aicssegmentation.workflow.workflow_definition import WorkflowDefinition
 from ._main_template import MainTemplate
 
+
 @debug_class
 class WorkflowSelectView(View):
 
@@ -71,10 +72,9 @@ class WorkflowSelectView(View):
             layer_channel_selections,
         ]
         for widget in widgets:
-            layout.addWidget(widget)        
+            layout.addWidget(widget)
 
         self._add_step_3_layout(layout, enabled=False)
-       
 
     def load_model(self, model: SegmenterModel):
         """
@@ -196,9 +196,9 @@ class WorkflowSelectView(View):
             column_labels.setObjectName("columnLabelsDisabled")
         layout.addWidget(column_labels, alignment=QtCore.Qt.AlignCenter)
 
-        # Add workflow buttons        
+        # Add workflow buttons
         self.workflow_grid = WorkflowThumbnails(view=self)
-        layout.addWidget(self.workflow_grid)         
+        layout.addWidget(self.workflow_grid)
 
     #####################################################################
     # Event handlers
@@ -216,7 +216,5 @@ class WorkflowSelectView(View):
         else:
             self._controller.select_channel(self.combo_channels.itemData(index, role=QtCore.Qt.UserRole))
 
-    def combo_workflow_activated(self, selected: str):
-        if selected is not None:
-            self._controller.select_workflow(selected)
-            self.viewer.
+    def combo_workflow_activated(self, test):
+        self._controller.select_workflow(self.sender().objectName())

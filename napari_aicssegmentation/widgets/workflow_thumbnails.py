@@ -24,30 +24,30 @@ class WorkflowThumbnails(QWidget):
     """
 
     def __init__(self, workflow_defs: List[WorkflowDefinition] = None, view=None):
-        super().__init__()        
+        super().__init__()
 
-        if workflow_defs is not None:            
+        if workflow_defs is not None:
             self.load_workflows(workflow_defs)
 
         if view is not None:
             self.view = view
 
-    def load_workflows(self, workflows:List[WorkflowDefinition]):
+    def load_workflows(self, workflows: List[WorkflowDefinition]):
         """
         Load given Workflow definitions and rebuild the grid
         """
         if workflows is None:
             raise ValueError("workflows")
         self._workflows = workflows
-        self._add_buttons(workflows)        
+        self._add_buttons(workflows)
 
     def _add_buttons(self, workflows: List[WorkflowDefinition]):
         """
         Add all buttons given a List of WorkflowDefinitions
-        """                 
-        self.setLayout(QVBoxLayout()) # reset layout
+        """
+        self.setLayout(QVBoxLayout())  # reset layout
 
-        for workflow in workflows:            
+        for workflow in workflows:
             # Some images are RGBA and others are Grayscale
             # TODO?: convert all images to RBGA
             pre: np.ndarray = workflow.thumbnail_pre
@@ -64,18 +64,15 @@ class WorkflowThumbnails(QWidget):
             button: QPushButton = QPushButton("")
             # Get np image into QPixmap
             image: QPixmap = QPixmap(
-                QImage(
-                    image_stitched.data, image_stitched.shape[1], image_stitched.shape[0], QImage.Format_Indexed8
-                )
+                QImage(image_stitched.data, image_stitched.shape[1], image_stitched.shape[0], QImage.Format_Indexed8)
             )
+            button.clicked.connect(self.view.combo_workflow_activated)
             button.setIcon(QIcon(image))
             button.setIconSize(QSize(PAGE_CONTENT_WIDTH - 40, 200))
             button.setFixedSize(PAGE_CONTENT_WIDTH, 200)
 
             button.setEnabled(False)
             button.setObjectName(workflow.name)
-
-            button.clicked.connect(lambda:self.view.combo_workflow_activated(selected=workflow.name))
 
             self.layout().addWidget(button)
 
