@@ -23,11 +23,14 @@ class WorkflowThumbnails(QWidget):
             workflow definitions to display as buttons
     """
 
-    def __init__(self, workflow_defs: List[WorkflowDefinition] = None):
+    def __init__(self, workflow_defs: List[WorkflowDefinition] = None, view=None):
         super().__init__()        
 
         if workflow_defs is not None:            
             self.load_workflows(workflow_defs)
+
+        if view is not None:
+            self.view = view
 
     def load_workflows(self, workflows:List[WorkflowDefinition]):
         """
@@ -70,6 +73,9 @@ class WorkflowThumbnails(QWidget):
             button.setFixedSize(PAGE_CONTENT_WIDTH, 200)
 
             button.setEnabled(False)
+            button.setObjectName(workflow.name)
+
+            button.clicked.connect(lambda:self.view.combo_workflow_activated(selected=workflow.name))
 
             self.layout().addWidget(button)
 

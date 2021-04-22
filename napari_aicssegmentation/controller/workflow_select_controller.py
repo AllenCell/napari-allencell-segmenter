@@ -65,7 +65,8 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
     def select_workflow(self, workflow: str):
         self.model.active_workflow = workflow
         # TODO create Layer 0 -> https://github.com/AllenCell/napari-aicssegmentation/issues/27
-        self.router.workflow_steps()
+        self.
+        self.router.workflow_steps(workflow)
 
     def _get_3D_layers(self) -> List[str]:
         """

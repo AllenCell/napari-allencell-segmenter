@@ -19,6 +19,6 @@ class Router(IRouter):
         self._controller = WorkflowSelectController(self._application, LayerReader(), WorkflowEngine())
         self._controller.index()
 
-    def workflow_steps(self):
-        self._controller = WorkflowStepsController(self._application)
+    def workflow_steps(self, workflow: str):
+        self._controller = WorkflowStepsController(self._application, workflow)
         self._controller.index()

@@ -197,7 +197,7 @@ class WorkflowSelectView(View):
         layout.addWidget(column_labels, alignment=QtCore.Qt.AlignCenter)
 
         # Add workflow buttons        
-        self.workflow_grid = WorkflowThumbnails()
+        self.workflow_grid = WorkflowThumbnails(view=self)
         layout.addWidget(self.workflow_grid)         
 
     #####################################################################
@@ -215,3 +215,8 @@ class WorkflowSelectView(View):
             self._controller.unselect_channel()
         else:
             self._controller.select_channel(self.combo_channels.itemData(index, role=QtCore.Qt.UserRole))
+
+    def combo_workflow_activated(self, selected: str):
+        if selected is not None:
+            self._controller.select_workflow(selected)
+            self.viewer.

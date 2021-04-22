@@ -4,12 +4,16 @@ from napari_aicssegmentation.core._interfaces import IApplication
 from napari_aicssegmentation.controller._interfaces import IWorkflowStepsController
 from napari_aicssegmentation.core.controller import Controller
 
+from aicssegmentation.workflow import WorkflowEngine
+
 
 @debug_class
 class WorkflowStepsController(Controller, IWorkflowStepsController):
-    def __init__(self, application: IApplication):
+    def __init__(self, application: IApplication, workflow_name: str):
         super().__init__(application)
+        self.engine = WorkflowEngine(str)
         self._view = WorkflowStepsView(self)
+
 
     @property
     def view(self):
