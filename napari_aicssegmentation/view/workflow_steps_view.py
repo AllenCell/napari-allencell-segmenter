@@ -34,7 +34,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self.setObjectName("workflowStepsView")
 
         self.diagram = QLabel()
-        self.confirmation_modal = QMessageBox()
+        self.modal_close_workflow = QMessageBox()
 
         # TODO: replace this with connection to model (first page selection)
         engine = WorkflowEngine()
@@ -157,17 +157,17 @@ class WorkflowStepsView(View):  # pragma: no-cover
             "to the Workflow Selection screen.&nbsp;Your progress in this workflow will be lost.</span>"
         )
 
-        self.confirmation_modal.setModal(True)
-        self.confirmation_modal.setIcon(QMessageBox.Warning)
-        self.confirmation_modal.setText(f"Workflow: {self.workflow.name}")
-        self.confirmation_modal.setInformativeText(prompt)
-        self.confirmation_modal.setStandardButtons(QMessageBox.Cancel)
+        self.modal_close_workflow.setModal(True)
+        self.modal_close_workflow.setIcon(QMessageBox.Warning)
+        self.modal_close_workflow.setText(f"Workflow: {self.workflow.name}")
+        self.modal_close_workflow.setInformativeText(prompt)
+        self.modal_close_workflow.setStandardButtons(QMessageBox.Cancel)
 
-        if len(self.confirmation_modal.buttons()) < 2:
-            self.close_keep = self.confirmation_modal.addButton("Close workflow", QMessageBox.AcceptRole)
+        if len(self.modal_close_workflow.buttons()) < 2:
+            self.close_keep = self.modal_close_workflow.addButton("Close workflow", QMessageBox.AcceptRole)
 
-        self.confirmation_modal.exec()
-        if self.confirmation_modal.clickedButton() == self.close_keep:
+        self.modal_close_workflow.exec()
+        if self.modal_close_workflow.clickedButton() == self.close_keep:
             self._controller.close_workflow()
 
     def _btn_run_all_clicked(self, checked: bool):
