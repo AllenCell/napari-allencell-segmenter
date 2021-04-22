@@ -9,11 +9,12 @@ from napari_aicssegmentation.core.controller import Controller
 
 @debug_class
 class WorkflowStepsController(Controller, IWorkflowStepsController):
-    def __init__(self, application: IApplication, workflow_engine: WorkflowEngine):
+    def __init__(self, application: IApplication, workflow_engine: WorkflowEngine, selected_workflow: str):
         super().__init__(application)
         if workflow_engine is None:
             raise ValueError("workflow_engine")
-        self._view = WorkflowStepsView(self)
+        self._view = WorkflowStepsView(self, selected_workflow)
+        self.selected_workflow = selected_workflow
 
     @property
     def view(self):

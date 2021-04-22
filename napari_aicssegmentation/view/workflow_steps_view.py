@@ -25,7 +25,7 @@ from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH
 class WorkflowStepsView(View):  # pragma: no-cover
     # _lbl_selected_workflow: QLabel
 
-    def __init__(self, controller: IWorkflowStepsController):
+    def __init__(self, controller: IWorkflowStepsController, selected_workflow: str):
         super().__init__(template_class=MainTemplate)
 
         if controller is None:
@@ -38,8 +38,8 @@ class WorkflowStepsView(View):  # pragma: no-cover
 
         # TODO: replace this with connection to model (first page selection)
         engine = WorkflowEngine()
-        self.workflow = engine.workflow_definitions[3]
-        self.all_steps = self.workflow.steps
+        self.workflow = engine.get_executable_workflow(selected_workflow, controller.model.selected_layer.data)
+        self.all_steps = self.workflow.workflow_definition.steps
 
     def setup_ui(self):
         self.layout = QVBoxLayout()
@@ -70,7 +70,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
         widget.setLayout(layout)
 
         # Make widgets
-        workflow_name = QLabel(f"Workflow: {self.workflow.name}")
+        workflow_name = QLabel(f"Workflow: {self.workflow.workflow_definition.name}")
         info = QPushButton("ⓘ")
         info.setObjectName("infoButton")
         info.clicked.connect(self._btn_info_clicked)
@@ -87,7 +87,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self.layout.addWidget(widget)
 
     def _add_progress_bar(self):
-        num_steps = len(self.workflow.steps)
+        num_steps = len(self.workflow.workflow_definition.steps)
 
         # Progress bar
         progress_bar = QProgressBar()
@@ -159,7 +159,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
 
         self.modal_close_workflow.setModal(True)
         self.modal_close_workflow.setIcon(QMessageBox.Warning)
-        self.modal_close_workflow.setText(f"Workflow: {self.workflow.name}")
+        self.modal_close_workflow.setText(f"Workflow: {self.workflow.workflow_definition.name}")
         self.modal_close_workflow.setInformativeText(prompt)
         self.modal_close_workflow.setStandardButtons(QMessageBox.Cancel)
 
