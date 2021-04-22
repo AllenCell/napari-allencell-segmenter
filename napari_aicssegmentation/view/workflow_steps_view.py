@@ -151,13 +151,14 @@ class WorkflowStepsView(View):  # pragma: no-cover
     def _btn_info_clicked(self, checked: bool):
         diagram = QLabel()
         diagram_path = str(Directories.get_assets_dir() / "workflow_diagrams/superlongone.png")
-        diagram.setPixmap(QPixmap(diagram_path))
+        pixmap = QPixmap(diagram_path).scaledToWidth(1000, Qt.SmoothTransformation)
+        diagram.setPixmap(pixmap)
 
         self.workflow_diagram_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.workflow_diagram_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.workflow_diagram_scroll.setFixedWidth(1200)    # All diagram image files have this width
-        self.workflow_diagram_scroll.setMinimumHeight(1000)
-        self.workflow_diagram_scroll.setWidget(self.diagram)
+        self.workflow_diagram_scroll.setFixedWidth(1000)
+        self.workflow_diagram_scroll.setMinimumHeight(800)
+        self.workflow_diagram_scroll.setWidget(diagram)
         self.workflow_diagram_scroll.show()
 
     def _btn_close_clicked(self, checked: bool):
