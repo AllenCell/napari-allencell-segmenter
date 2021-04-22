@@ -64,9 +64,19 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
         self.model.selected_channel = None
         self._view.update_workflows(enabled=False)
 
-    def select_workflow(self, workflow: str):
-        self.model.active_workflow = workflow
-        # TODO create Layer 0 -> https://github.com/AllenCell/napari-aicssegmentation/issues/27
+    def select_workflow(self, workflow_name: str):
+        layer0 = self.viewer.add_image(
+            self.model.selected_layer.data,
+            name="0. "
+            + self.model.selected_layer.name
+            + ": ch["
+            + str(self.model.selected_channel.index)
+            + "] "
+            + workflow_name,
+        )
+
+        self.model.active_workflow = self._workflow_engine.get_executable_workflow(workflow_name, layer0.data)
+
         self.router.workflow_steps()
 
     def _get_3D_layers(self) -> List[str]:

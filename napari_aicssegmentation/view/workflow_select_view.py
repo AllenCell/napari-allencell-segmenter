@@ -73,7 +73,7 @@ class WorkflowSelectView(View):
         for widget in widgets:
             layout.addWidget(widget)
 
-        self.workflow_grid = WorkflowThumbnails()
+        self.workflow_grid = WorkflowThumbnails(view=self)
         self.layout().addWidget(self.workflow_grid)
 
     def load_model(self, model: SegmenterModel):
@@ -174,3 +174,6 @@ class WorkflowSelectView(View):
             self._controller.unselect_channel()
         else:
             self._controller.select_channel(self.combo_channels.itemData(index, role=QtCore.Qt.UserRole))
+
+    def combo_workflow_activated(self, event):
+        self._controller.select_workflow(self.sender().objectName())
