@@ -1,4 +1,5 @@
 from aicssegmentation.workflow import WorkflowEngine, WorkflowStepCategory
+from qtpy.QtCore import Qt
 from qtpy.QtGui import QPixmap
 from qtpy.QtWidgets import (
     QHBoxLayout,
@@ -6,6 +7,7 @@ from qtpy.QtWidgets import (
     QMessageBox,
     QProgressBar,
     QPushButton,
+    QScrollArea,
     QSizePolicy,
     QVBoxLayout,
     QWidget,
@@ -33,7 +35,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self._controller = controller
         self.setObjectName("workflowStepsView")
 
-        self.diagram = QLabel()
+        self.workflow_diagram_scroll = QScrollArea()
         self.modal_close_workflow = QMessageBox()
 
         # TODO: replace this with connection to model (first page selection)
@@ -147,9 +149,16 @@ class WorkflowStepsView(View):  # pragma: no-cover
     #####################################################################
 
     def _btn_info_clicked(self, checked: bool):
-        diagram_path = str(Directories.get_assets_dir() / "workflow_diagrams/sec61b_1.png")
-        self.diagram.setPixmap(QPixmap(diagram_path))
-        self.diagram.show()
+        diagram = QLabel()
+        diagram_path = str(Directories.get_assets_dir() / "workflow_diagrams/superlongone.png")
+        diagram.setPixmap(QPixmap(diagram_path))
+
+        self.workflow_diagram_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.workflow_diagram_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.workflow_diagram_scroll.setFixedWidth(1200)    # All diagram image files have this width
+        self.workflow_diagram_scroll.setMinimumHeight(1000)
+        self.workflow_diagram_scroll.setWidget(self.diagram)
+        self.workflow_diagram_scroll.show()
 
     def _btn_close_clicked(self, checked: bool):
         prompt = (
