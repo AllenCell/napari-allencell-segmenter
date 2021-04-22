@@ -54,6 +54,7 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
         self.model.channels = None
         self.model.selected_channel = None
         self._view.update_channels(self.model.channels)
+        self._view.update_workflows(enabled=False)
 
     def select_channel(self, channel: Channel):
         self.model.selected_channel = channel

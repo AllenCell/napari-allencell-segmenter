@@ -1,16 +1,21 @@
-import numpy as np
-import cv2
+from typing import List
 
+from PyQt5.QtCore import QSize
+from aicssegmentation.workflow import WorkflowDefinition
+import cv2
+import numpy as np
 from PyQt5.QtWidgets import (
     QPushButton,
+    QHBoxLayout,
     QVBoxLayout,
+    QLabel,
     QWidget,
 )
 from PyQt5.QtGui import QIcon, QPixmap, QImage
-from PyQt5.QtCore import QSize
-from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH
-from aicssegmentation.workflow import WorkflowDefinition
-from typing import List
+from PyQt5 import QtCore
+
+from napari_aicssegmentation.widgets.form import Form, FormRow
+from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH, Style
 
 
 class WorkflowThumbnails(QWidget):
@@ -38,15 +43,53 @@ class WorkflowThumbnails(QWidget):
         """
         if workflows is None:
             raise ValueError("workflows")
+
+        layout = QVBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        self.setLayout(layout)  # reset setLayout
+
         self._workflows = workflows
+        self._add_labels()
         self._add_buttons(workflows)
+
+    def _add_labels(self):
+        """
+        Add widgets and set the layout for the Step 3 instructions and the workflow buttons
+        """
+        self.step_3_label = QLabel("3.")
+        self.step_3_label.setAlignment(QtCore.Qt.AlignTop)
+        self.step_3_instructions = QLabel(
+            "Click a button below that most closely resembles your image channel to select & start a workflow"
+        )
+        self.step_3_instructions.setWordWrap(True)
+        step_3 = QWidget()
+        step_3.setLayout(Form([FormRow(self.step_3_label, self.step_3_instructions)], (0, 0, 11, 0)))
+
+        self.step_3_instructions.setObjectName("step3InstructionsDisabled")
+        self.layout().addWidget(step_3)
+
+        # Row of text labeling the columns of workflow images
+        self.column_labels = QWidget()
+        column_layout = QHBoxLayout()
+        column_layout.setContentsMargins(11, 11, 11, 0)
+        self.column_labels.setLayout(column_layout)
+
+        image_input_label = QLabel("Image input")
+        image_input_label.setAlignment(QtCore.Qt.AlignCenter)
+        segmentation_output_label = QLabel("Segmentation output")
+        segmentation_output_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.column_labels.layout().addWidget(image_input_label)
+        self.column_labels.layout().addWidget(segmentation_output_label)
+
+        self.column_labels.setFixedWidth(PAGE_CONTENT_WIDTH)
+        self.column_labels.setObjectName("columnLabelsDisabled")
+        self.layout().addWidget(self.column_labels, alignment=QtCore.Qt.AlignCenter)
 
     def _add_buttons(self, workflows: List[WorkflowDefinition]):
         """
         Add all buttons given a List of WorkflowDefinitions
         """
         self.setLayout(QVBoxLayout())  # reset layout
-
         for workflow in workflows:
             # Some images are RGBA and others are Grayscale
             # TODO?: convert all images to RBGA
@@ -81,6 +124,9 @@ class WorkflowThumbnails(QWidget):
         if enabled:
             self._enable_buttons()
         else:
+            self.column_labels.setObjectName("columnLabels")
+            self.step_3_instructions.setObjectName("step3Instructions")
+            self.setStyleSheet(Style.get_stylesheet("main.qss"))
             self._disable_buttons()
 
     def _enable_buttons(self):

@@ -7,6 +7,7 @@ from napari_aicssegmentation.core._interfaces import IApplication, IRouter
 from napari_aicssegmentation.core.state import State
 from napari_aicssegmentation.core.view_manager import ViewManager
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
+from aicssegmentation.workflow import WorkflowEngine
 
 
 class TestWorkflowStepsController:
@@ -20,9 +21,10 @@ class TestWorkflowStepsController:
         type(self._mock_application).view_manager = PropertyMock(return_value=self._mock_view_manager)
         self._model = SegmenterModel()
         type(self._mock_state).segmenter_model = PropertyMock(return_value=self._model)
+        self._workflow_engine: MagicMock = create_autospec(WorkflowEngine)
 
         with mock.patch("napari_aicssegmentation.controller.workflow_steps_controller.WorkflowStepsView"):
-            self._controller = WorkflowStepsController(self._mock_application)
+            self._controller = WorkflowStepsController(self._mock_application, self._workflow_engine)
 
     def test_index(self):
         # Act

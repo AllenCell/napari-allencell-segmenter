@@ -7,8 +7,11 @@ from napari_aicssegmentation.core.controller import Controller
 
 @debug_class
 class WorkflowStepsController(Controller, IWorkflowStepsController):
+
     def __init__(self, application: IApplication, workflow_name: str):
         super().__init__(application)
+        if workflow_name is None:
+            raise ValueError("workflow_engine")
         self._view = WorkflowStepsView(self, workflow_name)
 
     @property
