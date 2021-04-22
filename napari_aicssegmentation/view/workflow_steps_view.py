@@ -1,4 +1,4 @@
-from aicssegmentation.workflow import WorkflowEngine, WorkflowStepCategory
+from aicssegmentation.workflow import WorkflowStepCategory
 from qtpy.QtGui import QPixmap
 from qtpy.QtWidgets import (
     QHBoxLayout,
@@ -155,7 +155,6 @@ class WorkflowStepsView(View):  # pragma: no-cover
             "<span>You are closing an in-progress Allen Cell & Structure Segmenter plugin workflow to return "
             "to the Workflow Selection screen.&nbsp;Your progress in this workflow will be lost.</span>"
         )
-
 
         self.modal_close_workflow.setModal(True)
         self.modal_close_workflow.setIcon(QMessageBox.Warning)

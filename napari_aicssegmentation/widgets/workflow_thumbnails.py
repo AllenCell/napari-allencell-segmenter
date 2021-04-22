@@ -27,7 +27,7 @@ class WorkflowThumbnails(QWidget):
             workflow definitions to display as buttons
     """
 
-    def __init__(self, workflow_defs: List[WorkflowDefinition] = None, view = None):
+    def __init__(self, workflow_defs: List[WorkflowDefinition] = None, view=None):
         super().__init__()
         if workflow_defs is not None:
             self.load_workflows(workflow_defs)
