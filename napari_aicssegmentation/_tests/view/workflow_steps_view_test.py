@@ -16,6 +16,9 @@ class TestWorkflowStepsView:
         self._view.setup_ui()
 
     # TODO: Add real tests once we make the UI functional
+    def test_load_model(self):
+        pass
+    
     def test_add_workflow_title(self):
         pass
 
