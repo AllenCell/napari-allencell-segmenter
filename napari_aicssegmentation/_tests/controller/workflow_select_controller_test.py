@@ -1,3 +1,4 @@
+from aicssegmentation.workflow.workflow import Workflow
 import napari
 
 from napari.utils.events.event import Event
@@ -108,12 +109,18 @@ class TestWorkflowSelectController:
         self._controller.view.update_workflows.assert_called_with(enabled=False)
 
     def test_select_workflow(self):
+        # Arrange
+        expected_workflow = create_autospec(Workflow)
+        self._model.channels = [Channel(0), Channel(1), Channel(2), Channel(3)]
+        self._model.selected_channel = Channel(0)
+        self._model.selected_layer = MockLayer("Layer 1", ndim=3)
+        self._mock_workflow_engine.get_executable_workflow.return_value = expected_workflow
+
         # Act
-        workflow = "LMNB1"
-        self._controller.select_workflow(workflow)
+        self._controller.select_workflow("sec61b")
 
         # Assert
-        assert self._controller.model.active_workflow == workflow
+        assert self._controller.model.active_workflow == expected_workflow
         self._mock_router.workflow_steps.assert_called_once()
 
     def test_handle_layers_change_resets_channels(self):

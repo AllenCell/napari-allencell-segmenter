@@ -1,4 +1,4 @@
-from aicssegmentation.workflow import WorkflowEngine, WorkflowStepCategory
+from aicssegmentation.workflow import WorkflowStepCategory
 from qtpy.QtGui import QPixmap
 from qtpy.QtWidgets import (
     QHBoxLayout,
@@ -23,7 +23,7 @@ from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH
 
 @debug_class
 class WorkflowStepsView(View):  # pragma: no-cover
-    # _lbl_selected_workflow: QLabel
+    _lbl_workflow_name: QLabel
 
     def __init__(self, controller: IWorkflowStepsController):
         super().__init__(template_class=MainTemplate)
@@ -33,21 +33,22 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self._controller = controller
         self.setObjectName("workflowStepsView")
 
-        self.diagram = QLabel()
-        self.modal_close_workflow = QMessageBox()
-
-        # TODO: replace this with connection to model (first page selection)
-        engine = WorkflowEngine()
-        self.workflow = engine.workflow_definitions[3]
-        self.all_steps = self.workflow.steps
+        self._diagram = QLabel()
+        self._modal_close_workflow = QMessageBox()
 
     def setup_ui(self):
-        self.layout = QVBoxLayout()
-        self.layout.setContentsMargins(0, 0, 0, 0)
-        self.layout.setSpacing(0)
-        self.setLayout(self.layout)
+        # TODO the setup_ui + load_model pattern does not work well for a complex page
+        #      like this one that relies on the model to actually build the UI
+        #      refactor into something more straightforward like a View.on_load(model) method
+        #      that combines loading of the view + an optional model to pass in
+        pass
 
-        # self._lbl_selected_workflow = QLabel()
+    def _setup_ui(self):
+        # Workaround for now - see TODO comment in setup_ui
+        self._layout = QVBoxLayout()
+        self._layout.setContentsMargins(0, 0, 0, 0)
+        self._layout.setSpacing(0)
+        self.setLayout(self._layout)
 
         # Add all widgets
         self._add_workflow_title()
@@ -55,14 +56,14 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self._add_workflow_steps(WorkflowStepCategory.PRE_PROCESSING)
         self._add_workflow_steps(WorkflowStepCategory.CORE)
         self._add_workflow_steps(WorkflowStepCategory.POST_PROCESSING)
-        self.layout.addSpacing(20)
-        self.layout.addStretch()
+        self._layout.addSpacing(20)
+        self._layout.addStretch()
         self._add_bottom_buttons()
 
     def load_model(self, model: SegmenterModel):
-        pass
-        # self._lbl_selected_workflow.setText(f"Selected workflow: {model.active_workflow}")
-        # self._lbl_selected_workflow.repaint()
+        # Workaround for now - see TODO comment in setup_ui
+        self._workflow = model.active_workflow
+        self._setup_ui()
 
     def _add_workflow_title(self):
         widget = QWidget()
@@ -70,7 +71,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
         widget.setLayout(layout)
 
         # Make widgets
-        workflow_name = QLabel(f"Workflow: {self.workflow.name}")
+        workflow_name = QLabel(f"Workflow: {self._workflow.workflow_definition.name}")
         info = QPushButton("ⓘ")
         info.setObjectName("infoButton")
         info.clicked.connect(self._btn_info_clicked)
@@ -84,17 +85,17 @@ class WorkflowStepsView(View):  # pragma: no-cover
 
         # Add to to main layout
         widget.setObjectName("workflowTitle")
-        self.layout.addWidget(widget)
+        self._layout.addWidget(widget)
 
     def _add_progress_bar(self):
-        num_steps = len(self.workflow.steps)
+        num_steps = len(self._workflow.workflow_definition.steps)
 
         # Progress bar
         progress_bar = QProgressBar()
         progress_bar.setRange(0, num_steps)
         progress_bar.setValue(0)
         progress_bar.setTextVisible(False)
-        self.layout.addWidget(progress_bar)
+        self._layout.addWidget(progress_bar)
 
         # Tick marks
 
@@ -111,19 +112,19 @@ class WorkflowStepsView(View):  # pragma: no-cover
             labels_layout.addWidget(tick)
             if step < num_steps:
                 labels_layout.addStretch()
-        self.layout.addWidget(progress_labels)
+        self._layout.addWidget(progress_labels)
 
     def _add_workflow_steps(self, category: WorkflowStepCategory):
         # Add category label, e.g., "Preprocessing"
         category_label = QLabel(category.value.upper())
         category_label.setObjectName("categoryLabel")
-        self.layout.addWidget(category_label)
+        self._layout.addWidget(category_label)
 
         # Add a widget for all the steps in this category
-        for step in filter(lambda step: step.category == category, self.all_steps):
-            self.layout.addWidget(WorkflowStepWidget(step))
+        for step in filter(lambda step: step.category == category, self._workflow.workflow_definition.steps):
+            self._layout.addWidget(WorkflowStepWidget(step))
 
-        self.layout.addSpacing(10)
+        self._layout.addSpacing(10)
 
     def _add_bottom_buttons(self):
         layout = QHBoxLayout()
@@ -140,7 +141,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
         layout.addWidget(btn_close_workflow)
         layout.addWidget(btn_run_all)
 
-        self.layout.addLayout(layout)
+        self._layout.addLayout(layout)
 
     #####################################################################
     # Event handlers
@@ -148,8 +149,8 @@ class WorkflowStepsView(View):  # pragma: no-cover
 
     def _btn_info_clicked(self, checked: bool):
         diagram_path = str(Directories.get_assets_dir() / "workflow_diagrams/sec61b_1.png")
-        self.diagram.setPixmap(QPixmap(diagram_path))
-        self.diagram.show()
+        self._diagram.setPixmap(QPixmap(diagram_path))
+        self._diagram.show()
 
     def _btn_close_clicked(self, checked: bool):
         prompt = (
@@ -157,18 +158,19 @@ class WorkflowStepsView(View):  # pragma: no-cover
             "to the Workflow Selection screen.&nbsp;Your progress in this workflow will be lost.</span>"
         )
 
-        self.modal_close_workflow.setModal(True)
-        self.modal_close_workflow.setIcon(QMessageBox.Warning)
-        self.modal_close_workflow.setText(f"Workflow: {self.workflow.name}")
-        self.modal_close_workflow.setInformativeText(prompt)
-        self.modal_close_workflow.setStandardButtons(QMessageBox.Cancel)
+        self._modal_close_workflow.setModal(True)
+        self._modal_close_workflow.setIcon(QMessageBox.Warning)
+        self._modal_close_workflow.setText(f"Workflow: {self._workflow.workflow_definition.name}")
+        self._modal_close_workflow.setInformativeText(prompt)
+        self._modal_close_workflow.setStandardButtons(QMessageBox.Cancel)
 
-        if len(self.modal_close_workflow.buttons()) < 2:
-            self.close_keep = self.modal_close_workflow.addButton("Close workflow", QMessageBox.AcceptRole)
+        if len(self._modal_close_workflow.buttons()) < 2:
+            self.close_keep = self._modal_close_workflow.addButton("Close workflow", QMessageBox.AcceptRole)
 
-        self.modal_close_workflow.exec()
-        if self.modal_close_workflow.clickedButton() == self.close_keep:
+        self._modal_close_workflow.exec()
+        if self._modal_close_workflow.clickedButton() == self.close_keep:
             self._controller.close_workflow()
 
     def _btn_run_all_clicked(self, checked: bool):
-        self._controller.navigate_back()
+        # TODO implement
+        pass
