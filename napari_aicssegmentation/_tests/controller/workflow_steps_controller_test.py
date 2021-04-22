@@ -1,11 +1,12 @@
 import pytest
-
 from unittest import mock
 from unittest.mock import MagicMock, create_autospec, PropertyMock, patch
+
 from napari_aicssegmentation.controller.workflow_steps_controller import WorkflowStepsController
 from napari_aicssegmentation.core._interfaces import IApplication, IRouter
 from napari_aicssegmentation.core.state import State
 from napari_aicssegmentation.core.view_manager import ViewManager
+from napari_aicssegmentation.model.channel import Channel
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
 from aicssegmentation.workflow import WorkflowEngine
 
@@ -34,9 +35,14 @@ class TestWorkflowStepsController:
         self._mock_view_manager.load_view.assert_called_once_with(self._controller.view)
         self._controller.view.load_model.assert_called_once_with(self._controller.model)
 
-    def test_navigate_back(self):
+    def test_close_workflow(self):
+        # Arrange
+        channel = Channel(0, "Brightfield")
+        self._controller.model.selected_channel = channel
+
         # Act
-        self._controller.navigate_back()
+        self._controller.close_workflow()
 
         # Assert
+        self._controller.model.selected_channel == None
         self._mock_router.workflow_selection.assert_called_once()

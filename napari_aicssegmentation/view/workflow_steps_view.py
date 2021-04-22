@@ -1,6 +1,15 @@
 from aicssegmentation.workflow import WorkflowEngine, WorkflowStepCategory
 from qtpy.QtGui import QPixmap
-from qtpy.QtWidgets import QHBoxLayout, QLabel, QProgressBar, QPushButton, QVBoxLayout, QWidget
+from qtpy.QtWidgets import (
+    QHBoxLayout,
+    QLabel,
+    QMessageBox,
+    QProgressBar,
+    QPushButton,
+    QSizePolicy,
+    QVBoxLayout,
+    QWidget,
+)
 
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
 from napari_aicssegmentation.util.debug_utils import debug_class
@@ -24,6 +33,9 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self._controller = controller
         self.setObjectName("workflowStepsView")
 
+        self.diagram = QLabel()
+        self.modal_close_workflow = QMessageBox()
+
         # TODO: replace this with connection to model (first page selection)
         engine = WorkflowEngine()
         self.workflow = engine.workflow_definitions[3]
@@ -37,9 +49,6 @@ class WorkflowStepsView(View):  # pragma: no-cover
 
         # self._lbl_selected_workflow = QLabel()
 
-        btn_run_all = QPushButton("Run all")
-        btn_run_all.clicked.connect(self._btn_back_clicked)
-
         # Add all widgets
         self._add_workflow_title()
         self._add_progress_bar()
@@ -48,7 +57,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self._add_workflow_steps(WorkflowStepCategory.POST_PROCESSING)
         self.layout.addSpacing(20)
         self.layout.addStretch()
-        self.layout.addWidget(btn_run_all)
+        self._add_bottom_buttons()
 
     def load_model(self, model: SegmenterModel):
         pass
@@ -116,15 +125,50 @@ class WorkflowStepsView(View):  # pragma: no-cover
 
         self.layout.addSpacing(10)
 
+    def _add_bottom_buttons(self):
+        layout = QHBoxLayout()
+        layout.setSpacing(5)
+
+        btn_close_workflow = QPushButton("Close workflow")
+        btn_close_workflow.setFixedWidth(120)
+        btn_close_workflow.clicked.connect(self._btn_close_clicked)
+
+        btn_run_all = QPushButton("Run all")
+        btn_run_all.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        btn_run_all.clicked.connect(self._btn_run_all_clicked)
+
+        layout.addWidget(btn_close_workflow)
+        layout.addWidget(btn_run_all)
+
+        self.layout.addLayout(layout)
+
     #####################################################################
     # Event handlers
     #####################################################################
 
-    def _btn_back_clicked(self, checked: bool):
-        self._controller.navigate_back()
-
     def _btn_info_clicked(self, checked: bool):
-        self.diagram = QLabel()
         diagram_path = str(Directories.get_assets_dir() / "workflow_diagrams/sec61b_1.png")
         self.diagram.setPixmap(QPixmap(diagram_path))
         self.diagram.show()
+
+    def _btn_close_clicked(self, checked: bool):
+        prompt = (
+            "<span>You are closing an in-progress Allen Cell & Structure Segmenter plugin workflow to return "
+            "to the Workflow Selection screen.&nbsp;Your progress in this workflow will be lost.</span>"
+        )
+
+        self.modal_close_workflow.setModal(True)
+        self.modal_close_workflow.setIcon(QMessageBox.Warning)
+        self.modal_close_workflow.setText(f"Workflow: {self.workflow.name}")
+        self.modal_close_workflow.setInformativeText(prompt)
+        self.modal_close_workflow.setStandardButtons(QMessageBox.Cancel)
+
+        if len(self.modal_close_workflow.buttons()) < 2:
+            self.close_keep = self.modal_close_workflow.addButton("Close workflow", QMessageBox.AcceptRole)
+
+        self.modal_close_workflow.exec()
+        if self.modal_close_workflow.clickedButton() == self.close_keep:
+            self._controller.close_workflow()
+
+    def _btn_run_all_clicked(self, checked: bool):
+        self._controller.navigate_back()

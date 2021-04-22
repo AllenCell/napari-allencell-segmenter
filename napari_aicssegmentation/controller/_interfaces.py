@@ -55,5 +55,8 @@ class IWorkflowStepsController(ABC):
         pass
 
     @abstractmethod
-    def navigate_back(self):
+    def close_workflow(self):
+        """
+        Handle user closing a workflow
+        """
         pass
