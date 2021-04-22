@@ -1,29 +1,25 @@
 from typing import List
 
+from aicssegmentation.workflow.workflow_definition import WorkflowDefinition
 from napari.layers.base.base import Layer
 from PyQt5.QtWidgets import (
     QComboBox,
     QLabel,
-    QPushButton,
     QVBoxLayout,
     QWidget,
-    QHBoxLayout,
-    QLayout,
 )
-from PyQt5.QtGui import QIcon, QStandardItem, QStandardItemModel
+from PyQt5.QtGui import QStandardItem, QStandardItemModel
 from PyQt5 import QtCore
-from PyQt5.QtCore import QSize
 
 from napari_aicssegmentation.model.channel import Channel
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
 from napari_aicssegmentation.util.debug_utils import debug_class
 from napari_aicssegmentation.controller._interfaces import IWorkflowSelectController
 from napari_aicssegmentation.core.view import View
-from napari_aicssegmentation.widgets.form import Form, FormRow
+from napari_aicssegmentation.widgets.form import Form
 from napari_aicssegmentation.widgets.warning_message import WarningMessage
-from napari_aicssegmentation.util.directories import Directories
 from napari_aicssegmentation.util.ui_utils import UiUtils
-from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH
+from napari_aicssegmentation.widgets.workflow_thumbnails import WorkflowThumbnails
 from ._main_template import MainTemplate
 
 
@@ -33,6 +29,7 @@ class WorkflowSelectView(View):
     combo_layers: QComboBox
     combo_channels: QComboBox
     load_image_warning: WarningMessage
+    workflow_grid: WorkflowThumbnails
 
     def __init__(self, controller: IWorkflowSelectController):
         super().__init__(template_class=MainTemplate)
@@ -75,7 +72,9 @@ class WorkflowSelectView(View):
         ]
         for widget in widgets:
             layout.addWidget(widget)
-        self._add_step_3_layout(layout, enabled=False)
+
+        self.workflow_grid = WorkflowThumbnails()
+        self.layout().addWidget(self.workflow_grid)
 
     def load_model(self, model: SegmenterModel):
         """
@@ -143,13 +142,13 @@ class WorkflowSelectView(View):
         Inputs:
             enabled: True to enable the list, False to disable it
         """
-        # TODO
-        pass
+        self.workflow_grid.setEnabled(enabled)
 
-    def _load_workflows(self, workflows):  # workflows: List[aicssegmentation.WorkflowStep]
-        # TODO generate workflow grid from list of workflows
-        # -> https://github.com/AllenCell/napari-aicssegmentation/issues/26
-        pass
+    def _load_workflows(self, workflows: List[WorkflowDefinition]):
+        """
+        Load workflows into workflow grid
+        """
+        self.workflow_grid.load_workflows(workflows)
 
     def _reset_combo_box(self, combo: QComboBox):
         """
@@ -159,54 +158,6 @@ class WorkflowSelectView(View):
             header = combo.itemText(0)
             combo.clear()
             combo.addItem(header)
-
-    def _add_step_3_layout(self, layout: QLayout, enabled=False):
-        """
-        Add widgets and set the layout for the Step 3 instructions and the workflow buttons
-        """
-        step_3_label = QLabel("3.")
-        step_3_label.setAlignment(QtCore.Qt.AlignTop)
-        step_3_instructions = QLabel(
-            "Click a button below that most closely resembles your image channel to select & start a workflow"
-        )
-        step_3_instructions.setWordWrap(True)
-        step_3 = QWidget()
-        step_3.setLayout(Form([FormRow(step_3_label, step_3_instructions)], (0, 0, 11, 0)))
-
-        if enabled is False:
-            step_3_instructions.setObjectName("step3InstructionsDisabled")
-        layout.addWidget(step_3)
-
-        # Row of text labeling the columns of workflow images
-        column_labels = QWidget()
-        column_layout = QHBoxLayout()
-        column_layout.setContentsMargins(11, 11, 11, 0)
-        column_labels.setLayout(column_layout)
-
-        image_input_label = QLabel("Image input")
-        image_input_label.setAlignment(QtCore.Qt.AlignCenter)
-        segmentation_output_label = QLabel("Segmentation output")
-        segmentation_output_label.setAlignment(QtCore.Qt.AlignCenter)
-        column_labels.layout().addWidget(image_input_label)
-        column_labels.layout().addWidget(segmentation_output_label)
-
-        column_labels.setObjectName("columnLabels")
-        column_labels.setFixedWidth(PAGE_CONTENT_WIDTH)
-
-        if enabled is False:
-            column_labels.setObjectName("columnLabelsDisabled")
-        layout.addWidget(column_labels, alignment=QtCore.Qt.AlignCenter)
-
-        # Workflow buttons
-        image_files = (Directories.get_assets_dir() / "workflow_images").glob("*.png")
-        for image_file in image_files:
-            button = QPushButton("")
-            button.setIcon(QIcon(str(image_file)))
-            button.setIconSize(QSize(PAGE_CONTENT_WIDTH - 40, 200))
-            button.setFixedSize(PAGE_CONTENT_WIDTH, 200)
-            if enabled is False:
-                button.setDisabled(True)
-            layout.addWidget(button, alignment=QtCore.Qt.AlignCenter)
 
     #####################################################################
     # Event handlers
