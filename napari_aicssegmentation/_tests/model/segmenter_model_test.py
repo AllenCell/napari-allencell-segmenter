@@ -1,7 +1,5 @@
 import pytest
 
-from napari.layers import Layer
-
 from napari_aicssegmentation.model.channel import Channel
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
 
