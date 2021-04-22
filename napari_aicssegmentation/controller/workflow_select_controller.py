@@ -67,7 +67,8 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
         self.model.active_workflow = workflow
         # TODO create Layer 0 -> https://github.com/AllenCell/napari-aicssegmentation/issues/27
         self.viewer.add_image(
-            self.model.selected_layer.data, name="0. " + "C" + str(self.model.selected_channel.index) + ". " + workflow
+            self.model.selected_layer.data,
+            name="0. " + self.model.layers[0] + ": ch[" + str(self.model.selected_channel.index) + "] " + workflow,
         )
         self.router.workflow_steps(workflow)
 
