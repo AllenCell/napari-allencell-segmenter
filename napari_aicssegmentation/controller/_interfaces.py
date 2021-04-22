@@ -57,3 +57,7 @@ class IWorkflowStepsController(ABC):
     @abstractmethod
     def navigate_back(self):
         pass
+
+    @abstractmethod
+    def close_workflow(self):
+        pass
