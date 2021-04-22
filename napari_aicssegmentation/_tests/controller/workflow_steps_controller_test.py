@@ -35,13 +35,6 @@ class TestWorkflowStepsController:
         self._mock_view_manager.load_view.assert_called_once_with(self._controller.view)
         self._controller.view.load_model.assert_called_once_with(self._controller.model)
 
-    def test_navigate_back(self):
-        # Act
-        self._controller.navigate_back()
-
-        # Assert
-        self._mock_router.workflow_selection.assert_called_once()
-
     def test_close_workflow(self):
         # Arrange
         channel = Channel(0, "Brightfield")
@@ -52,3 +45,4 @@ class TestWorkflowStepsController:
 
         # Assert
         self._controller.model.selected_channel == None
+        self._mock_router.workflow_selection.assert_called_once()
