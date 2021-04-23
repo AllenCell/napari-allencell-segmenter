@@ -36,7 +36,6 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self._diagram = QLabel()
         self._modal_close_workflow = QMessageBox()
 
-
     def setup_ui(self):
         # TODO the setup_ui + load_model pattern does not work well for a complex page
         #      like this one that relies on the model to actually build the UI
