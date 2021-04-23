@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QFrame, QVBoxLayout, QScrollArea, QLabel
-from PyQt5 import QtCore
+from PyQt5.QtCore import Qt
 
 from napari_aicssegmentation.core.view import ViewTemplate
 from napari_aicssegmentation._style import Style
@@ -28,8 +28,8 @@ class MainTemplate(ViewTemplate):
 
         # Scroll
         scroll = QScrollArea()
-        scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)  # ScrollBarAsNeeded
-        scroll.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)  # ScrollBarAsNeeded
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         scroll.setWidgetResizable(True)
         scroll.setWidget(page)
         layout.addWidget(scroll)
@@ -44,7 +44,7 @@ class MainTemplate(ViewTemplate):
             """
         )
         header.setObjectName("header")
-        header.setAlignment(QtCore.Qt.AlignCenter)
+        header.setAlignment(Qt.AlignmentFlag.AlignCenter)
         page.layout().addWidget(header)
 
         # Container
