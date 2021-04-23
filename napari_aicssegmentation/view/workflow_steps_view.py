@@ -1,11 +1,15 @@
+import numpy as np
+
 from aicssegmentation.workflow import WorkflowStepCategory
-from qtpy.QtGui import QPixmap
-from qtpy.QtWidgets import (
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QMessageBox,
     QProgressBar,
     QPushButton,
+    QScrollArea,
     QSizePolicy,
     QVBoxLayout,
     QWidget,
@@ -17,13 +21,14 @@ from napari_aicssegmentation.controller._interfaces import IWorkflowStepsControl
 from napari_aicssegmentation.core.view import View
 from napari_aicssegmentation.widgets.workflow_step_widget import WorkflowStepWidget
 from napari_aicssegmentation.view._main_template import MainTemplate
-from napari_aicssegmentation.util.directories import Directories
 from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH
 
 
 @debug_class
 class WorkflowStepsView(View):  # pragma: no-cover
-    _lbl_workflow_name: QLabel
+    _workflow_diagram_scroll: QScrollArea
+    _modal_close_workflow: QMessageBox
+    _btn_close_keep: QPushButton
 
     def __init__(self, controller: IWorkflowStepsController):
         super().__init__(template_class=MainTemplate)
@@ -32,9 +37,6 @@ class WorkflowStepsView(View):  # pragma: no-cover
             raise ValueError("controller")
         self._controller = controller
         self.setObjectName("workflowStepsView")
-
-        self._diagram = QLabel()
-        self._modal_close_workflow = QMessageBox()
 
     def setup_ui(self):
         # TODO the setup_ui + load_model pattern does not work well for a complex page
@@ -59,6 +61,8 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self._layout.addSpacing(20)
         self._layout.addStretch()
         self._add_bottom_buttons()
+        self._setup_diagram_window()
+        self._setup_close_workflow_window()
 
     def load_model(self, model: SegmenterModel):
         # Workaround for now - see TODO comment in setup_ui
@@ -143,16 +147,22 @@ class WorkflowStepsView(View):  # pragma: no-cover
 
         self._layout.addLayout(layout)
 
-    #####################################################################
-    # Event handlers
-    #####################################################################
+    def _setup_diagram_window(self):
+        self._workflow_diagram_scroll = QScrollArea()
+        diagram = QLabel()
+        img_data = np.moveaxis(self._workflow.workflow_definition.diagram_image, 0, -1)
+        img = QImage(img_data, img_data.shape[1], img_data.shape[0], QImage.Format.Format_RGB888)
+        diagram.setPixmap(QPixmap(img).scaledToWidth(1000, Qt.TransformationMode.SmoothTransformation))
 
-    def _btn_info_clicked(self, checked: bool):
-        diagram_path = str(Directories.get_assets_dir() / "workflow_diagrams/sec61b_1.png")
-        self._diagram.setPixmap(QPixmap(diagram_path))
-        self._diagram.show()
+        self._workflow_diagram_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
+        self._workflow_diagram_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self._workflow_diagram_scroll.setFixedWidth(1000)
+        self._workflow_diagram_scroll.setMinimumHeight(800)
+        self._workflow_diagram_scroll.setWidget(diagram)
 
-    def _btn_close_clicked(self, checked: bool):
+    def _setup_close_workflow_window(self):
+        self._modal_close_workflow = QMessageBox()
+
         prompt = (
             "<span>You are closing an in-progress Allen Cell & Structure Segmenter plugin workflow to return "
             "to the Workflow Selection screen.&nbsp;Your progress in this workflow will be lost.</span>"
@@ -165,10 +175,18 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self._modal_close_workflow.setStandardButtons(QMessageBox.Cancel)
 
         if len(self._modal_close_workflow.buttons()) < 2:
-            self.close_keep = self._modal_close_workflow.addButton("Close workflow", QMessageBox.AcceptRole)
+            self._btn_close_keep = self._modal_close_workflow.addButton("Close workflow", QMessageBox.AcceptRole)
 
+    #####################################################################
+    # Event handlers
+    #####################################################################
+
+    def _btn_info_clicked(self, checked: bool):
+        self._workflow_diagram_scroll.show()
+
+    def _btn_close_clicked(self, checked: bool):
         self._modal_close_workflow.exec()
-        if self._modal_close_workflow.clickedButton() == self.close_keep:
+        if self._modal_close_workflow.clickedButton() == self._btn_close_keep:
             self._controller.close_workflow()
 
     def _btn_run_all_clicked(self, checked: bool):
