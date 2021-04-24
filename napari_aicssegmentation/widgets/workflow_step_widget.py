@@ -1,3 +1,4 @@
+import copy
 from typing import List, Any, Union
 
 from aicssegmentation.workflow import WorkflowStep, FunctionParameter, WidgetType
@@ -23,6 +24,7 @@ class WorkflowStepWidget(QWidget):
         super().__init__()
         self.step_name = f"<span>{step.step_number}.&nbsp;{step.name}</span>"
         self.form_rows = []
+        self.parameter_inputs = copy.deepcopy(step.parameter_defaults)
 
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
@@ -55,11 +57,11 @@ class WorkflowStepWidget(QWidget):
                 default_value = default_values[i]
 
             if param.widget_type == WidgetType.SLIDER:
-                self._add_slider(param_label_numbered, param, default_value)
+                self._add_slider(param_label, param_label_numbered, param, default_value)
             elif param.widget_type == WidgetType.DROPDOWN:
-                self._add_dropdown(param_label_numbered, param, default_value)
+                self._add_dropdown(param_label, param_label_numbered, param, default_value)
 
-    def _add_slider(self, param_label, param, default_value):
+    def _add_slider(self, param_label, param_label_numbered_, param, default_value):
         if default_value < param.min_value or default_value > param.max_value:
             raise ValueError("Default value outside of min-max range")
 
@@ -75,11 +77,21 @@ class WorkflowStepWidget(QWidget):
             widget = FloatSlider(**kwargs)
         if param.data_type == "int":
             widget = Slider(**kwargs)
+        widget.changed.connect(self._update_parameter_inputs)
         widget = widget.native
-        widget.setObjectName("slider")
+        widget.setStyleSheet("QWidget { background-color: transparent; }")
+        widget.setObjectName(param_label)
 
         self.form_rows.append(FormRow(param_label, widget))
 
-    def _add_dropdown(self, param_label, param, default_value):
-        dropdown_row = UiUtils.dropdown_row(param_label, default=default_value, options=param.options, enabled=True)
+    def _add_dropdown(self, param_label, param_label_numbered, param, default_value):
+        dropdown_row = UiUtils.dropdown_row(
+            param_label_numbered, default=default_value, options=param.options, enabled=True
+        )
+        dropdown_row.widget.setObjectName(param_label)
+        dropdown_row.widget.currentIndexChanged.connect(self._update_parameter_inputs)
         self.form_rows.append(dropdown_row)
+
+    def _update_parameter_inputs(self, event):
+        # TODO: just need to do some dom traversal to update parameter_inputs
+        print("updating parameters")

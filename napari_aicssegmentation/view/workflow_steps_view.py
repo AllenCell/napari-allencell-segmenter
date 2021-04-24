@@ -37,6 +37,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
             raise ValueError("controller")
         self._controller = controller
         self.setObjectName("workflowStepsView")
+        self.workflow_step_widgets = []
 
     def setup_ui(self):
         # TODO the setup_ui + load_model pattern does not work well for a complex page
@@ -126,7 +127,9 @@ class WorkflowStepsView(View):  # pragma: no-cover
 
         # Add a widget for all the steps in this category
         for step in filter(lambda step: step.category == category, self._workflow.workflow_definition.steps):
-            self._layout.addWidget(WorkflowStepWidget(step))
+            widget = WorkflowStepWidget(step)
+            self._layout.addWidget(widget)
+            self.workflow_step_widgets.append(widget)
 
         self._layout.addSpacing(10)
 
@@ -190,5 +193,8 @@ class WorkflowStepsView(View):  # pragma: no-cover
             self._controller.close_workflow()
 
     def _btn_run_all_clicked(self, checked: bool):
-        # TODO implement
-        self._controller.run_all_and_add_image()
+        all_parameter_inputs = []
+        for widget in self.workflow_step_widgets:
+            all_parameter_inputs.append(widget.parameter_inputs)
+
+        self._controller.run_all_and_add_image(all_parameter_inputs)

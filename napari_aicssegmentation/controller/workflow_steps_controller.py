@@ -31,6 +31,16 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self.model.reset()
         self.router.workflow_selection()
 
-    def run_all_and_add_image(self):
-        result = self.model.active_workflow.execute_all()
+    def run_all_and_add_image(self, parameters):
+        """ parameters is list of dictionaries of parameters, one dictionary for each step"""
+        workflow = self.model.active_workflow
+        workflow.reset()
+
+        step = 0
+        while not workflow.is_done():
+            workflow.execute_next(parameters[step])
+            step += 1
+
+        result = workflow.get_most_recent_result()
+
         self.viewer.add_image(result, name="Result for workflow " + self.model.active_workflow.workflow_definition.name)
