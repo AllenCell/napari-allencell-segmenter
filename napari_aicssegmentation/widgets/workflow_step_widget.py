@@ -27,7 +27,7 @@ class WorkflowStepWidget(QWidget):
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
-        self._step = step
+        
         if step.function.parameters is None:
             no_param_label = QLabel("No parameters needed")
             no_param_label.setAlignment(Qt.AlignCenter)
