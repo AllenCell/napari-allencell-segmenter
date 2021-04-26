@@ -38,7 +38,8 @@ class LayerReader:
         """
         return self.get_channels()[index]
 
-    def get_selected_channel(self, channel: Channel, layer: Layer, channel_index: int = 0):
+    @staticmethod
+    def get_channel_data(channel: Channel, layer: Layer, channel_index: int = 0):
         """
             Get the selected channel in the layer
         """
