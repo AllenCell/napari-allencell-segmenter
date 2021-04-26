@@ -33,3 +33,22 @@ class LayerReader:
         return channels
 
     def get_channel(self, index: int):
+        """
+            Get the channel at this index
+        """
+        return self.get_channels()[index]
+
+    def get_selected_channel(self, channel: Channel, layer: Layer, channel_index: int = 0):
+        """
+            Get the selected channel in the layer
+        """
+        if len(layer.data.shape) != 4:
+            raise TypeError("get selected channel given Layer with < 4 dimensions")
+        if channel_index == 0:
+            return layer.data[channel.index, : ,: ,:]
+        elif channel_index == 1:
+            return layer.data[:, channel.index, :, :]
+        elif channel_index == 2:
+            return layer.data[:, :, channel.index, :]
+        else:
+            return layer.data[:, :, :, channel_index]

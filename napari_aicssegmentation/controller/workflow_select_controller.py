@@ -76,8 +76,10 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
         )
 
         # TODO: Make sure the channel being selected is the correct dimension (when we start using AICSIMAGEIO)
+
         self.model.active_workflow = self._workflow_engine.get_executable_workflow(
-            workflow_name, layer0.data[self.model.selected_channel.index, :, :, :]
+            workflow_name, LayerReader.get_selected_channel(LayerReader,
+                                                            self.model.selected_channel, layer0)
         )
 
         self.router.workflow_steps()
