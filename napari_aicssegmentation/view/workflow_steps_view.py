@@ -126,8 +126,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
 
         # Add a widget for all the steps in this category
         for step in filter(lambda step: step.category == category, self._workflow.workflow_definition.steps):
-            widget = WorkflowStepWidget(step)
-            self._layout.addWidget(widget)
+            self._layout.addWidget(WorkflowStepWidget(step))
 
         self._layout.addSpacing(10)
 
