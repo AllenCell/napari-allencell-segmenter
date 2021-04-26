@@ -4,7 +4,7 @@ from typing import List, Any, Union
 from aicssegmentation.workflow import WorkflowStep, FunctionParameter, WidgetType
 from magicgui.widgets import FloatSlider, Slider
 from qtpy.QtCore import Qt
-from qtpy.QtWidgets import QLabel, QVBoxLayout, QWidget
+from qtpy.QtWidgets import QComboBox, QLabel, QVBoxLayout, QWidget
 
 from napari_aicssegmentation.widgets.collapsible_box import CollapsibleBox
 from napari_aicssegmentation.widgets.form import Form, FormRow
@@ -24,7 +24,10 @@ class WorkflowStepWidget(QWidget):
         super().__init__()
         self.step_name = f"<span>{step.step_number}.&nbsp;{step.name}</span>"
         self.form_rows = []
-        self.parameter_inputs = copy.deepcopy(step.parameter_defaults)
+        self.parameter_inputs = {}
+        if step.parameter_defaults is None:
+            self.parameter_inputs is None
+        self.parameter_defaults = step.parameter_defaults
 
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
@@ -61,7 +64,7 @@ class WorkflowStepWidget(QWidget):
             elif param.widget_type == WidgetType.DROPDOWN:
                 self._add_dropdown(param_label, param_label_numbered, param, default_value)
 
-    def _add_slider(self, param_label, param_label_numbered_, param, default_value):
+    def _add_slider(self, param_label, param_label_numbered, param, default_value):
         if default_value < param.min_value or default_value > param.max_value:
             raise ValueError("Default value outside of min-max range")
 
@@ -72,17 +75,16 @@ class WorkflowStepWidget(QWidget):
         kwargs["min"] = param.min_value
         kwargs["value"] = default_value
 
-        widget = None
+        magicgui_widget = None
         if param.data_type == "float":
-            widget = FloatSlider(**kwargs)
+            magicgui_widget = FloatSlider(**kwargs)
         if param.data_type == "int":
-            widget = Slider(**kwargs)
-        widget.changed.connect(self._update_parameter_inputs)
-        widget = widget.native
-        widget.setStyleSheet("QWidget { background-color: transparent; }")
-        widget.setObjectName(param_label)
+            magicgui_widget = Slider(**kwargs)
+        magicgui_widget.changed.connect(self._update_parameter_inputs)
+        magicgui_widget.native.setStyleSheet("QWidget { background-color: transparent; }")
+        magicgui_widget.native.setObjectName(param_label)
 
-        self.form_rows.append(FormRow(param_label, widget))
+        self.form_rows.append(FormRow(param_label_numbered, magicgui_widget))
 
     def _add_dropdown(self, param_label, param_label_numbered, param, default_value):
         dropdown_row = UiUtils.dropdown_row(
@@ -93,5 +95,19 @@ class WorkflowStepWidget(QWidget):
         self.form_rows.append(dropdown_row)
 
     def _update_parameter_inputs(self, event):
-        # TODO: just need to do some dom traversal to update parameter_inputs
-        print("updating parameters")
+        # Reset parameter inputs
+        for parameter_name in self.parameter_defaults.keys():
+            self.parameter_inputs[parameter_name] = []
+
+        for param_row in self.form_rows:
+            name = ""
+            value = 0
+
+            if isinstance(param_row.widget, QWidget):
+                name = param_row.widget.objectName()
+                value = param_row.widget.currentText()
+            else:
+                name = param_row.widget.native.objectName()
+                value = param_row.widget.get_value()
+            self.parameter_inputs[name].append(value)
+        print(self.parameter_inputs)

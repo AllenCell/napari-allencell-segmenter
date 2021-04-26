@@ -1,12 +1,13 @@
 from typing import List, NamedTuple, Union
 
+from magicgui.widgets import FloatSlider, Slider
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFormLayout, QLabel, QWidget
 
 
 class FormRow(NamedTuple):
     label: Union[str, QLabel]
-    widget: QWidget
+    widget: Union[QWidget, FloatSlider, Slider]
 
 
 class Form(QFormLayout):
@@ -28,4 +29,7 @@ class Form(QFormLayout):
         self.setContentsMargins(left, top, right, bottom)
 
         for row in rows:
-            self.addRow(row.label, row.widget)
+            widget = row.widget
+            if not isinstance(row.widget, QWidget):
+                widget = row.widget.native
+            self.addRow(row.label, widget)
