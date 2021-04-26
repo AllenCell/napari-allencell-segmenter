@@ -34,19 +34,19 @@ class LayerReader:
 
     def get_channel(self, index: int):
         """
-            Get the channel at this index
+        Get the channel at this index
         """
         return self.get_channels()[index]
 
     @staticmethod
     def get_channel_data(channel: Channel, layer: Layer, channel_index: int = 0):
         """
-            Get the selected channel in the layer
+        Get the selected channel in the layer
         """
         if len(layer.data.shape) != 4:
             raise TypeError("get selected channel given Layer with < 4 dimensions")
         if channel_index == 0:
-            return layer.data[channel.index, : ,: ,:]
+            return layer.data[channel.index, :, :, :]
         elif channel_index == 1:
             return layer.data[:, channel.index, :, :]
         elif channel_index == 2:

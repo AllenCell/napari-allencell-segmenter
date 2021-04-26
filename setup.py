@@ -8,7 +8,7 @@ from setuptools import setup, find_packages
 
 def read(fname):
     file_path = os.path.join(os.path.dirname(__file__), fname)
-    return codecs.open(file_path, encoding='utf-8').read()
+    return codecs.open(file_path, encoding="utf-8").read()
 
 
 # Add your dependencies in requirements.txt
@@ -20,7 +20,7 @@ requirements = [
     "aicssegmentation @ git+https://github.com/AllenCell/aics-segmentation.git@feature/workflow-engine#egg=aicssegmentation",
     "magicgui >= 0.2.9",
     "aicsimageio>=3.3.4,<4",
-    "opencv-python-headless>=4.5.1"
+    "opencv-python-headless>=4.5.1",
 ]
 
 test_requirements = [
@@ -34,7 +34,7 @@ test_requirements = [
     "pytest-cov==2.6.1",
     "pytest-raises>=0.10",
     "pytest-qt>=3.3.0",
-    "quilt3>=3.1.12",    
+    "quilt3>=3.1.12",
 ]
 
 dev_requirements = [
@@ -81,16 +81,16 @@ extra_requirements = {
 use_scm = {"write_to": "napari_aicssegmentation/_version.py"}
 
 setup(
-    name='napari-aicssegmentation',
-    author='Jamie Sherman',
-    author_email='jamies@alleninstitute.org',
-    license='BSD-3',
-    url='https://github.com/heeler/napari-aicssegmentation',
-    description='A plugin that enables image segmentation provided by AICS',
-    long_description=read('README.md'),
-    long_description_content_type='text/markdown',
+    name="napari-aicssegmentation",
+    author="Jamie Sherman",
+    author_email="jamies@alleninstitute.org",
+    license="BSD-3",
+    url="https://github.com/heeler/napari-aicssegmentation",
+    description="A plugin that enables image segmentation provided by AICS",
+    long_description=read("README.md"),
+    long_description_content_type="text/markdown",
     packages=find_packages(),
-    python_requires='>=3.6',
+    python_requires=">=3.6",
     install_requires=requirements,
     use_scm_version=use_scm,
     setup_requires=setup_requirements,
@@ -98,21 +98,21 @@ setup(
     tests_require=test_requirements,
     extras_require=extra_requirements,
     classifiers=[
-        'Development Status :: 4 - Beta',
-        'Intended Audience :: Developers',
-        'Framework :: napari',
-        'Topic :: Software Development :: Testing',
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
-        'Programming Language :: Python :: 3.9',
-        'Operating System :: OS Independent',
-        'License :: OSI Approved :: BSD License',
+        "Development Status :: 4 - Beta",
+        "Intended Audience :: Developers",
+        "Framework :: napari",
+        "Topic :: Software Development :: Testing",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Operating System :: OS Independent",
+        "License :: OSI Approved :: BSD License",
     ],
     entry_points={
-        'napari.plugin': [
-            'napari-aicssegmentation = napari_aicssegmentation',
+        "napari.plugin": [
+            "napari-aicssegmentation = napari_aicssegmentation",
         ],
     },
     # Do not edit this string manually, always use bumpversion
