@@ -4,10 +4,6 @@ from napari_aicssegmentation.model.channel import Channel
 
 class IWorkflowSelectController(ABC):
     @abstractmethod
-    def index(self):
-        pass
-
-    @abstractmethod
     def select_layer(self, layer_name: str):
         """
         Handle user selection of a layer
@@ -50,10 +46,6 @@ class IWorkflowSelectController(ABC):
 
 
 class IWorkflowStepsController(ABC):
-    @abstractmethod
-    def index(self):
-        pass
-
     @abstractmethod
     def close_workflow(self):
         """

@@ -44,6 +44,10 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
         self.model.workflows = self._workflow_engine.workflow_definitions
         self._view.load_model(self.model)
 
+    def cleanup(self):
+        # Disconnect events so that controller instances aren't kept around
+        self.viewer.events.layers_change.disconnect(self._handle_layers_change)
+
     def select_layer(self, layer_name: str):
         self.model.selected_layer = next(filter(lambda layer: layer.name == layer_name, self.get_layers()), None)
         self.model.channels = self._layer_reader.get_channels(self.model.selected_layer)
@@ -77,7 +81,6 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
 
         # TODO: Make sure the channel being selected is the correct dimension (when we start using AICSIMAGEIO)
         channel_data = self._layer_reader.get_channel_data(self.model.selected_channel, layer0)
-        # do something with channel_data
         self.model.active_workflow = self._workflow_engine.get_executable_workflow(workflow_name, channel_data)
 
         self.router.workflow_steps()
