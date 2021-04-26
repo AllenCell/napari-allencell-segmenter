@@ -1,3 +1,5 @@
+import numpy as np
+
 from typing import List
 from aicsimageio import AICSImage
 from napari.layers import Layer
@@ -31,3 +33,21 @@ class LayerReader:
         for index in range(img.shape[index_c]):
             channels.append(Channel(index))
         return channels
+
+    def get_channel_data(self, channel: Channel, layer: Layer, channel_index: int = 0) -> np.ndarray:
+        """
+        Get the selected channel in the layer
+        TODO refactor to use AICSImage
+        TODO guess channel dimension instead of passing it in (see get_channels)
+        TODO support arrays with more than 4 dimensions
+        """
+        if len(layer.data.shape) != 4:
+            raise ValueError("Layer must have 4 dimensions")
+        if channel_index == 0:
+            return layer.data[channel.index, :, :, :]
+        elif channel_index == 1:
+            return layer.data[:, channel.index, :, :]
+        elif channel_index == 2:
+            return layer.data[:, :, channel.index, :]
+        else:
+            return layer.data[:, :, :, channel_index]

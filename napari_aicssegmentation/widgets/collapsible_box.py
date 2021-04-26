@@ -10,7 +10,7 @@ class CollapsibleBox(QWidget):
     to toggle the visibility of the content box.
 
     Params:
-        title (string):             To be displayed at the top of the box (only thing visible when 
+        title (string):             To be displayed at the top of the box (only thing visible when
                                     collapsed)
         content_layout (QLayout):   QLayout to be nested inside the content box
         isOpen (bool):              Whether the widget is open or collapsed by default
