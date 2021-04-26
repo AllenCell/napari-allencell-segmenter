@@ -1,4 +1,4 @@
-from typing import List, Any, Union
+from typing import List, Union
 
 from aicssegmentation.workflow import WorkflowStep, FunctionParameter, WidgetType
 from magicgui.widgets import FloatSlider, Slider
@@ -144,5 +144,3 @@ class WorkflowStepWidget(QWidget):
                 self.parameter_inputs[name].append(value)
             else:
                 self.parameter_inputs[name] = value
-        
-        print(self.parameter_inputs)
