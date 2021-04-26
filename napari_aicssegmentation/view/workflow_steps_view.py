@@ -190,5 +190,4 @@ class WorkflowStepsView(View):  # pragma: no-cover
             self._controller.close_workflow()
 
     def _btn_run_all_clicked(self, checked: bool):
-        # TODO implement
-        self._controller.run_all_and_add_image()
+        self._controller.run_all()

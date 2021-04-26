@@ -31,3 +31,5 @@ class LayerReader:
         for index in range(img.shape[index_c]):
             channels.append(Channel(index))
         return channels
+
+    def get_channel(self, index: int):
