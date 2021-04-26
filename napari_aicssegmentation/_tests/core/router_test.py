@@ -2,7 +2,7 @@ import pytest
 
 from unittest import mock
 from unittest.mock import MagicMock, create_autospec
-from napari_aicssegmentation.core.router import Router, IApplication
+from napari_aicssegmentation.core.router import Router, IApplication, Controller
 
 
 class TestRouter:
@@ -23,3 +23,13 @@ class TestRouter:
         self._router.workflow_steps()
         # Assert
         mock_workflow_steps_controller.return_value.index.assert_called_once()
+
+    @mock.patch("napari_aicssegmentation.core.router.WorkflowStepsController")
+    def test_navigate_cleanup_previous_controller(self, mock_workflow_steps_controller: MagicMock):
+        # Arrange
+        mock_controller = create_autospec(Controller)
+        self._router._controller = mock_controller
+        # Act
+        self._router.workflow_steps()
+        # Assert
+        mock_controller.cleanup.assert_called_once()

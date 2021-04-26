@@ -8,10 +8,15 @@ from napari_aicssegmentation.core.view_manager import ViewManager
 from napari_aicssegmentation.core.view import View
 
 
+class MockController(Controller):
+    def index():
+        pass
+
+
 class TestController:
     def setup_method(self):
         self._mock_application: MagicMock = create_autospec(IApplication)
-        self._controller = Controller(self._mock_application)
+        self._controller = MockController(self._mock_application)
 
     def test_properties(self):
         # Arrange
