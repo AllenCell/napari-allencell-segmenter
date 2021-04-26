@@ -1,6 +1,6 @@
 import napari
 
-from abc import ABC
+from abc import ABC, abstractmethod
 from napari_aicssegmentation.core.state import State
 from napari_aicssegmentation.core.view import View
 from napari_aicssegmentation.util.debug_utils import debug_class
@@ -16,6 +16,17 @@ class Controller(ABC):
         if application is None:
             raise ValueError("application")
         self._application = application
+
+    @abstractmethod
+    def index(self):
+        pass
+
+    def cleanup(self):
+        """
+        Perform cleanup operations such as disconnecting events
+        Override in child class if needed
+        """
+        pass
 
     @property
     def state(self) -> State:
