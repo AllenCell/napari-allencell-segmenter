@@ -108,13 +108,20 @@ class WorkflowStepWidget(QWidget):
             value = 0
 
             if isinstance(param_row.widget, QWidget):
+                # Dropdown
                 name = param_row.widget.objectName()
                 value = param_row.widget.currentText()
+                # Convert string back to boolean if it was originally boolean
+                if isinstance(self.parameter_defaults[name], bool):
+                    value = value.lower() == "true"
             else:
+                # Magicgui Slider or FloatSlider
                 name = param_row.widget.native.objectName()
                 value = param_row.widget.get_value()
+
             if isinstance(self.parameter_inputs[name], list):
                 self.parameter_inputs[name].append(value)
             else:
                 self.parameter_inputs[name] = value
+        
         print(self.parameter_inputs)
