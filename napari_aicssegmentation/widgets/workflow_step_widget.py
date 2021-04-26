@@ -1,10 +1,9 @@
-import copy
 from typing import List, Any, Union
 
 from aicssegmentation.workflow import WorkflowStep, FunctionParameter, WidgetType
 from magicgui.widgets import FloatSlider, Slider
 from qtpy.QtCore import Qt
-from qtpy.QtWidgets import QComboBox, QLabel, QVBoxLayout, QWidget
+from qtpy.QtWidgets import QLabel, QVBoxLayout, QWidget
 
 from napari_aicssegmentation.widgets.collapsible_box import CollapsibleBox
 from napari_aicssegmentation.widgets.form import Form, FormRow
