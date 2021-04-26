@@ -3,6 +3,7 @@ from napari_aicssegmentation.util.debug_utils import debug_class
 from napari_aicssegmentation.controller.workflow_select_controller import WorkflowSelectController
 from napari_aicssegmentation.controller.workflow_steps_controller import WorkflowStepsController
 from napari_aicssegmentation.core.layer_reader import LayerReader
+from napari_aicssegmentation.core.controller import Controller
 from ._interfaces import IApplication, IRouter
 
 
@@ -19,9 +20,15 @@ class Router(IRouter):
         self._workflow_engine = WorkflowEngine()
 
     def workflow_selection(self):
-        self._controller = WorkflowSelectController(self._application, self._layer_reader, self._workflow_engine)
-        self._controller.index()
+        controller = WorkflowSelectController(self._application, self._layer_reader, self._workflow_engine)
+        self._handle_navigation(controller)
 
     def workflow_steps(self):
-        self._controller = WorkflowStepsController(self._application, self._workflow_engine)
+        controller = WorkflowStepsController(self._application, self._workflow_engine)
+        self._handle_navigation(controller)
+
+    def _handle_navigation(self, controller: Controller):
+        if self._controller:
+            self._controller.cleanup()
+        self._controller = controller
         self._controller.index()
