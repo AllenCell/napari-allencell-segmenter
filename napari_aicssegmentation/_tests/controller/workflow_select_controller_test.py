@@ -4,6 +4,8 @@ import napari
 from napari.utils.events.event import Event
 from unittest import mock
 from unittest.mock import MagicMock, create_autospec, PropertyMock
+
+import numpy
 from napari_aicssegmentation.controller.workflow_select_controller import WorkflowSelectController
 from napari_aicssegmentation.core._interfaces import IApplication, IRouter
 from napari_aicssegmentation.core.layer_reader import LayerReader
@@ -110,11 +112,14 @@ class TestWorkflowSelectController:
 
     def test_select_workflow(self):
         # Arrange
+        layer0 = MockLayer("Layer 0", ndim=4)
         expected_workflow = create_autospec(Workflow)
         self._model.channels = [Channel(0), Channel(1), Channel(2), Channel(3)]
         self._model.selected_channel = Channel(0)
-        self._model.selected_layer = MockLayer("Layer 1", ndim=3)
+        self._model.selected_layer = MockLayer("Layer 1", ndim=4)
         self._mock_workflow_engine.get_executable_workflow.return_value = expected_workflow
+        self._mock_viewer.add_image.return_value = layer0
+        self._mock_layer_reader.get_channel_data.return_value = numpy.ones((75, 100, 100))
 
         # Act
         self._controller.select_workflow("sec61b")

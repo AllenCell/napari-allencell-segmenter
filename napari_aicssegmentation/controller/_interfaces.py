@@ -52,3 +52,7 @@ class IWorkflowStepsController(ABC):
         Handle user closing a workflow
         """
         pass
+
+    @abstractmethod
+    def run_all(self):
+        pass
