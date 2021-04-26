@@ -46,10 +46,7 @@ class WorkflowStepWidget(QWidget):
         layout.addWidget(box)
 
     def _add_param_rows(
-        self, 
-        param_name: str, 
-        param_data: List[FunctionParameter], 
-        default_values: Union[List, str, bool, int, float]
+        self, param_name: str, param_data: List[FunctionParameter], default_values: Union[List, str, bool, int, float]
     ):
         for i, param in enumerate(param_data):
             param_label = param_name
@@ -71,11 +68,7 @@ class WorkflowStepWidget(QWidget):
                 self._add_dropdown(param_name, param_label, param, default_value)
 
     def _add_slider(
-        self, 
-        param_name: str, 
-        param_label: str, 
-        param: FunctionParameter, 
-        default_value: Union[str, bool, int, float]
+        self, param_name: str, param_label: str, param: FunctionParameter, default_value: Union[str, bool, int, float]
     ):
         if default_value < param.min_value or default_value > param.max_value:
             raise ValueError("Default value outside of min-max range")
@@ -99,15 +92,9 @@ class WorkflowStepWidget(QWidget):
         self.form_rows.append(FormRow(param_label, magicgui_widget))
 
     def _add_dropdown(
-        self, 
-        param_name: str, 
-        param_label: str, 
-        param: FunctionParameter, 
-        default_value: Union[str, bool, int, float]
+        self, param_name: str, param_label: str, param: FunctionParameter, default_value: Union[str, bool, int, float]
     ):
-        dropdown_row = UiUtils.dropdown_row(
-            param_label, default=default_value, options=param.options, enabled=True
-        )
+        dropdown_row = UiUtils.dropdown_row(param_label, default=default_value, options=param.options, enabled=True)
         dropdown_row.widget.setObjectName(param_name)
         dropdown_row.widget.currentIndexChanged.connect(self._update_parameter_inputs)
         self.form_rows.append(dropdown_row)
