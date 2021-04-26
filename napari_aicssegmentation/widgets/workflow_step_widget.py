@@ -24,10 +24,10 @@ class WorkflowStepWidget(QWidget):
         super().__init__()
         self.step_name = f"<span>{step.step_number}.&nbsp;{step.name}</span>"
         self.form_rows = []
+        self.parameter_defaults = step.parameter_defaults
         self.parameter_inputs = {}
         if step.parameter_defaults is None:
             self.parameter_inputs is None
-        self.parameter_defaults = step.parameter_defaults
 
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
@@ -95,10 +95,14 @@ class WorkflowStepWidget(QWidget):
         self.form_rows.append(dropdown_row)
 
     def _update_parameter_inputs(self, event):
-        # Reset parameter inputs
+        # Reset self.parameter inputs
         for parameter_name in self.parameter_defaults.keys():
-            self.parameter_inputs[parameter_name] = []
+            if isinstance(self.parameter_defaults[parameter_name], list):
+                self.parameter_inputs[parameter_name] = []
+            else:
+                self.parameter_inputs[parameter_name] = 0
 
+        # Grab values from each form row and populate self.parameter_inputs
         for param_row in self.form_rows:
             name = ""
             value = 0
@@ -109,5 +113,8 @@ class WorkflowStepWidget(QWidget):
             else:
                 name = param_row.widget.native.objectName()
                 value = param_row.widget.get_value()
-            self.parameter_inputs[name].append(value)
+            if isinstance(self.parameter_inputs[name], list):
+                self.parameter_inputs[name].append(value)
+            else:
+                self.parameter_inputs[name] = value
         print(self.parameter_inputs)
