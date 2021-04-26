@@ -38,15 +38,11 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self._controller = controller
         self.setObjectName("workflowStepsView")
 
-    def setup_ui(self):
-        # TODO the setup_ui + load_model pattern does not work well for a complex page
-        #      like this one that relies on the model to actually build the UI
-        #      refactor into something more straightforward like a View.on_load(model) method
-        #      that combines loading of the view + an optional model to pass in
-        pass
+    def load(self, model: SegmenterModel):
+        self._workflow = model.active_workflow
+        self._setup_ui()
 
     def _setup_ui(self):
-        # Workaround for now - see TODO comment in setup_ui
         self._layout = QVBoxLayout()
         self._layout.setContentsMargins(0, 0, 0, 0)
         self._layout.setSpacing(0)
@@ -63,11 +59,6 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self._add_bottom_buttons()
         self._setup_diagram_window()
         self._setup_close_workflow_window()
-
-    def load_model(self, model: SegmenterModel):
-        # Workaround for now - see TODO comment in setup_ui
-        self._workflow = model.active_workflow
-        self._setup_ui()
 
     def _add_workflow_title(self):
         widget = QWidget()

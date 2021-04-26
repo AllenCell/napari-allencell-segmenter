@@ -15,9 +15,16 @@ from ..mocks import MockLayer
 
 class TestWorkflowSelectView:
     def setup_method(self):
+        model = SegmenterModel()
+        model.layers = ["Layer 1", "Layer 2", "Layer 3"]
+        model.workflows = [
+            self._get_mock_workflow_def("sec61b"),
+            self._get_mock_workflow_def("lmnb1"),
+            self._get_mock_workflow_def("son"),
+        ]
         self._mock_controller: MagicMock = create_autospec(IWorkflowSelectController)
         self._view = WorkflowSelectView(self._mock_controller)
-        self._view.setup_ui()
+        self._view.load(model)
 
     def _get_mock_workflow_def(self, name: str) -> MagicMock:
         mock_workflow = create_autospec(WorkflowDefinition)
@@ -27,19 +34,7 @@ class TestWorkflowSelectView:
         type(mock_workflow).thumbnail_post = PropertyMock(return_value=np.ones((50, 50)))
         return mock_workflow
 
-    def test_load_model(self):
-        # Arrange
-        model = SegmenterModel()
-        model.layers = ["Layer 1", "Layer 2", "Layer 3"]
-        model.workflows = [
-            self._get_mock_workflow_def("sec61b"),
-            self._get_mock_workflow_def("lmnb1"),
-            self._get_mock_workflow_def("son"),
-        ]
-
-        # Act
-        self._view.load_model(model)
-
+    def test_load(self):
         # Assert
         assert self._view.combo_layers.count() == 4  # 4 because of header
 
@@ -69,7 +64,7 @@ class TestWorkflowSelectView:
         # Act
         self._view.update_channels(channels)
         # Assert
-        assert not self._view.combo_layers.isEnabled()
+        assert not self._view.combo_channels.isEnabled()
 
     def test_update_channels_with_channels(self):
         selected_channel = Channel(2)

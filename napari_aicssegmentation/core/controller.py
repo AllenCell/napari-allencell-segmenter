@@ -1,3 +1,4 @@
+from typing import Any
 import napari
 
 from abc import ABC, abstractmethod
@@ -49,12 +50,12 @@ class Controller(ABC):
         """
         return self._application.viewer
 
-    def load_view(self, view: View):
+    def load_view(self, view: View, model: Any = None):
         """
         Loads the given view
         :param: view: the View to load
         """
-        return self._application.view_manager.load_view(view)
+        return self._application.view_manager.load_view(view, model)
 
     def add_layer(self, image_data, name: str):
         """

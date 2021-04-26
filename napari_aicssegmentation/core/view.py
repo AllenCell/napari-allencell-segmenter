@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Any
 from PyQt5.QtWidgets import QWidget, QFrame
 
 
@@ -35,9 +36,14 @@ class View(ABC, QWidget, metaclass=ViewMeta):
         return self.template is not None
 
     @abstractmethod
-    def setup_ui(self):
+    def load(self, model: Any = None):
         """
-        Construct the view's UI hierarchy
+        Called when the view is loaded. 
+        When implementing in child class, use to load initial model data 
+        and setup the view's UI components
+
+        inputs:
+            model - optional model to pass to the view at load time
         """
         pass
 
@@ -48,5 +54,14 @@ class ViewTemplate(View):
         """
         Get the template's container Frame
         This should be container QFrame in which the child View or ViewTemplate be displayed
+        """
+        pass
+
+    @abstractmethod
+    def load(self):
+        """
+        Called when the view template is loaded. 
+        When implementing in child class, use to load initial model data 
+        and setup the view's UI components
         """
         pass

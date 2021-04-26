@@ -39,7 +39,14 @@ class WorkflowSelectView(View):
         self._controller = controller
         self.setObjectName("workflowSelectView")
 
-    def setup_ui(self):
+    def load(self, model: SegmenterModel):
+        self._setup_ui()
+
+        self.update_layers(model.layers, model.selected_layer)
+        self.update_channels(model.channels, model.selected_channel)
+        self._load_workflows(model.workflows)
+
+    def _setup_ui(self):
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
@@ -75,16 +82,6 @@ class WorkflowSelectView(View):
 
         self.workflow_grid = WorkflowThumbnails(view=self)
         self.layout().addWidget(self.workflow_grid)
-
-    def load_model(self, model: SegmenterModel):
-        """
-        Load and display data from model
-        Inputs:
-            model: the model to load
-        """
-        self.update_layers(model.layers, model.selected_layer)
-        self.update_channels(model.channels, model.selected_channel)
-        self._load_workflows(model.workflows)
 
     def update_layers(self, layers: List[str], selected_layer: Layer = None):
         """

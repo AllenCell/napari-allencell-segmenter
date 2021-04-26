@@ -34,12 +34,13 @@ class TestController:
         view_manager: MagicMock = create_autospec(ViewManager)
         type(self._mock_application).view_manager = PropertyMock(return_value=view_manager)
         view: MagicMock = create_autospec(View)
+        model = object()
 
         # Act
-        self._controller.load_view(view)
+        self._controller.load_view(view, model)
 
         # Assert
-        view_manager.load_view.assert_called_once_with(view)
+        view_manager.load_view.assert_called_once_with(view, model)
 
     def test_add_layer(self):
         # Arrange
