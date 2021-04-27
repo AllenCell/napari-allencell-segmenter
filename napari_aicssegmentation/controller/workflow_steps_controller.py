@@ -33,24 +33,26 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self.router.workflow_selection()
 
     def run_all(self, parameter_inputs: List[Dict[str, List]]):
-        """ 
-        parameter_inputs is a list of dictionaries, one dictionary (or None if no parameters) 
-        for each step. Each dictionary has the same shape as a WorkflowStep.parameter_defaults
+        """
+        Run all steps in the active workflow.
+
+        parameter_inputs List[Dict]: Each dictionary has the same shape as a WorkflowStep.parameter_defaults
         dictionary, but with the parameter values obtained from the UI instead of default values.
         """
+        self.model.active_workflow.reset()
 
-        workflow = self.model.active_workflow
-
-        # This is equivalent to running workflow.execute_all(), but with non-default params
-        workflow.reset()
         step = 0
-        while not workflow.is_done():
-            workflow.execute_next(parameter_inputs[step])
+        while not self.model.active_workflow.is_done():
+            # Getting info about the next step that will be run
+            step_run = self.model.active_workflow.get_next_step()
+            # Run step and add result image (layer names are 1-indexed, steps are 0-indexed)
+            self.viewer.add_image(
+                self.model.active_workflow.execute_next(parameter_inputs[step]),
+                name=f"{str(step + 1)}. {step_run.name}",
+            )
             step += 1
-        result = workflow.get_most_recent_result()
-
-        self.viewer.add_image(result, name=f"Result for workflow {self.model.active_workflow.workflow_definition.name}")
-
-        # hide all layers except most recent layer
-        for layer in self.viewer.layers[:-1]:
-            layer.visible = False
+            self.view.progress_bar.setValue(step)
+            # Hide all layers except for most recent
+            for layer in self.viewer.layers[:-1]:
+                if layer.visible:
+                    layer.visible = False
