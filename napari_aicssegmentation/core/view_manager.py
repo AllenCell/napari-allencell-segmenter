@@ -1,3 +1,4 @@
+from typing import Any
 from napari_aicssegmentation.util.debug_utils import debug_class
 from napari_aicssegmentation.core.view import View
 from qtpy.QtWidgets import QLayout
@@ -15,12 +16,15 @@ class ViewManager:
     def current_view(self) -> View:
         return self._current_view
 
-    def load_view(self, view: View):
+    def load_view(self, view: View, model: Any = None):
         """
         Loads the given view
         The currently active view will be removed and garbage collected
         and the given View will become the new active view
-        :param: view: View to load
+        
+        inputs
+            view (View): View to load
+            model: optional Model to pass to the view at load time
         """
         if view is None:
             raise ValueError("View can't be None")
@@ -29,13 +33,13 @@ class ViewManager:
             self._unload_view()
 
         _view = view
-        _view.setup_ui()
+        _view.load(model)
         i = 0
         while _view.has_template():
             if i > 10:  # protect against infinite loops just in case
                 raise OverflowError("Detected more than 10 nested templates")
             tpl = _view.template
-            tpl.setup_ui()
+            tpl.load()
             tpl.get_container().layout().addWidget(_view)
             _view = tpl
             i += 1

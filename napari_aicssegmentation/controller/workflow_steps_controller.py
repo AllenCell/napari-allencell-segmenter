@@ -26,8 +26,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         return self.state.segmenter_model
 
     def index(self):
-        self.load_view(self._view)
-        self._view.load_model(self.model)
+        self.load_view(self._view, self.model)
 
     def close_workflow(self):
         self.model.reset()

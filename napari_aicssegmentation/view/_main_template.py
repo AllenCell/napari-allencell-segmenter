@@ -14,7 +14,7 @@ class MainTemplate(ViewTemplate):
     def get_container(self) -> QFrame:
         return self._container
 
-    def setup_ui(self):
+    def load(self):
         layout = QVBoxLayout()
         self.setLayout(layout)
         self.setStyleSheet(Style.get_stylesheet("main.qss"))

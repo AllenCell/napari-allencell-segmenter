@@ -33,7 +33,6 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
         return self.state.segmenter_model
 
     def index(self):
-        self.load_view(self._view)
         self.model.layers = self._get_3D_layers()
 
         # pre-selection
@@ -42,7 +41,8 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
             self.model.channels = self._layer_reader.get_channels(self.model.selected_layer)
 
         self.model.workflows = self._workflow_engine.workflow_definitions
-        self._view.load_model(self.model)
+
+        self.load_view(self._view, self.model)
 
     def cleanup(self):
         # Disconnect events so that controller instances aren't kept around

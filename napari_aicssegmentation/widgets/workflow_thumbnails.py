@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtGui import QIcon, QPixmap, QImage
 from PyQt5 import QtCore
+from PyQt5.QtCore import pyqtSignal
 
 from napari_aicssegmentation.widgets.form import Form, FormRow
 from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH, Style
@@ -27,11 +28,12 @@ class WorkflowThumbnails(QWidget):
             workflow definitions to display as buttons
     """
 
-    def __init__(self, workflow_defs: List[WorkflowDefinition] = None, view=None):
+    workflowSelected = pyqtSignal(str)  # signal: emitted when a workflow is selected
+
+    def __init__(self, workflow_defs: List[WorkflowDefinition] = None):
         super().__init__()
         if workflow_defs is not None:
             self.load_workflows(workflow_defs)
-        self.view = view
 
     def load_workflows(self, workflows: List[WorkflowDefinition]):
         """
@@ -111,8 +113,7 @@ class WorkflowThumbnails(QWidget):
 
             button.setEnabled(False)
             button.setObjectName(workflow.name)
-            # TODO: Do this without using self.view.
-            button.clicked.connect(self.view.combo_workflow_activated)
+            button.clicked.connect(self._workflow_button_clicked)
 
             self.layout().addWidget(button)
 
@@ -146,3 +147,9 @@ class WorkflowThumbnails(QWidget):
         for ui_element in self.layout().parent().children():
             if isinstance(ui_element, QPushButton):
                 ui_element.setEnabled(False)
+
+    def _workflow_button_clicked(self, checked: bool):
+        """
+        Handle click of a workflow thumbnail button
+        """
+        self.workflowSelected.emit(self.sender().objectName())

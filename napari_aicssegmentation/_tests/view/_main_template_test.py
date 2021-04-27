@@ -5,6 +5,6 @@ from PyQt5.QtWidgets import QFrame
 class TestMainTemplate:
     def test_get_container(self):
         template = MainTemplate()
-        template.setup_ui()
+        template.load()
         assert template.get_container() is not None
         assert isinstance(template.get_container(), QFrame)
