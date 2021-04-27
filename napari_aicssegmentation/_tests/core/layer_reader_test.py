@@ -1,7 +1,7 @@
 import numpy
 import pytest
 
-from napari_aicssegmentation.core.layer_reader import LayerReader
+from napari_aicssegmentation.core.layer_reader import LayerReader, Channel
 from ..mocks import MockLayer
 
 
@@ -24,3 +24,24 @@ class TestLayerReader:
         # Assert
         assert channels is not None
         assert len(channels) == 4
+
+    def test_get_channel_data_bad_dimensions_fails(self):
+        # Arrange
+        layer = MockLayer(name="Test", data=numpy.ones((1, 1, 1)))  # 3D instead of 4D
+
+        # Assert
+        with pytest.raises(ValueError):
+            self._layer_reader.get_channel_data(Channel(0), layer)
+
+    @pytest.mark.parametrize("index", range(0, 4))
+    def test_get_channel_data(self, index):
+        # Arrange
+        input = numpy.ones((4, 75, 100, 100))
+        layer = MockLayer(name="Test", data=input, ndim=4)  # 4D
+
+        # Act
+        result = self._layer_reader.get_channel_data(Channel(index), layer)
+
+        # Assert
+        assert result.shape == (75, 100, 100)
+        assert numpy.array_equal(result, input[index])

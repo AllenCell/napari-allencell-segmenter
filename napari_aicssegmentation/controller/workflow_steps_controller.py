@@ -31,7 +31,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self.model.reset()
         self.router.workflow_selection()
 
-    def run_all_and_add_image(self, parameters):
+    def run_all(self, parameters):
         """ parameters is list of dictionaries of parameters, one dictionary for each step"""
         workflow = self.model.active_workflow
         workflow.reset()
@@ -43,4 +43,8 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
 
         result = workflow.get_most_recent_result()
 
-        self.viewer.add_image(result, name="Result for workflow " + self.model.active_workflow.workflow_definition.name)
+        self.viewer.add_image(result, name=f"Result for workflow {self.model.active_workflow.name}")
+
+        # hide all layers except most recent layer
+        for layer in self.viewer.layers[:-1]:
+            layer.visible = False

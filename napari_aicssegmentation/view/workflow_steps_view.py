@@ -193,4 +193,4 @@ class WorkflowStepsView(View):  # pragma: no-cover
         workflow_step_widgets = self.findChildren(WorkflowStepWidget)
         all_parameter_inputs = [w.parameter_inputs for w in workflow_step_widgets]
 
-        self._controller.run_all_and_add_image(all_parameter_inputs)
+        self._controller.run_all(all_parameter_inputs)
