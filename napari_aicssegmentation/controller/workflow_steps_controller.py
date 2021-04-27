@@ -57,5 +57,3 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             for layer in self.viewer.layers[:-1]:
                 if layer.visible:
                     layer.visible = False
-
-
