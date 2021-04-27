@@ -95,11 +95,11 @@ class WorkflowStepsView(View):  # pragma: no-cover
         num_steps = len(self._workflow.workflow_definition.steps)
 
         # Progress bar
-        progress_bar = QProgressBar()
-        progress_bar.setRange(0, num_steps)
-        progress_bar.setValue(0)
-        progress_bar.setTextVisible(False)
-        self._layout.addWidget(progress_bar)
+        self.progress_bar = QProgressBar()
+        self.progress_bar.setRange(0, num_steps)
+        self.progress_bar.setValue(0)
+        self.progress_bar.setTextVisible(False)
+        self._layout.addWidget(self.progress_bar)
 
         # Tick marks
 
