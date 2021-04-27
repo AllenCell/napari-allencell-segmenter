@@ -52,6 +52,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 name=f"{str(step + 1)}. {step_run.name}",
             )
             step += 1
+            self.view.progress_bar.setValue(step)
             # Hide all layers except for most recent
             for layer in self.viewer.layers[:-1]:
                 if layer.visible:
