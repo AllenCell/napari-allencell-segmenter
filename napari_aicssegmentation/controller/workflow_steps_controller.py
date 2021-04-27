@@ -32,9 +32,11 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self.router.workflow_selection()
 
     def run_all(self):
-        result = self.model.active_workflow.execute_all()
-        self.viewer.add_image(result, name=f"Result for workflow {self.model.active_workflow.name}")
-
-        # hide all layers except most recent layer
-        for layer in self.viewer.layers[:-1]:
-            layer.visible = False
+        step = 1
+        while not self.model.active_workflow.is_done():
+            step_run = self.model.active_workflow.get_next_step()
+            self.viewer.add_image(self.model.active_workflow.execute_next(), name=f"{str(step)}. {step_run.name}")
+            step = step + 1
+            for layer in self.viewer.layers[:-1]:
+                if layer.visible:
+                    layer.visible = False
