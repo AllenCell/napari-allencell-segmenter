@@ -40,6 +40,8 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         parameter_inputs List[Dict]/Dict: Each dictionary has the same shape as a WorkflowStep.parameter_defaults
         dictionary, but with the parameter values obtained from the UI instead of default values.
         """
+        self.model.active_workflow.reset()
+
         step = 0
         while not self.model.active_workflow.is_done():
             # Getting info about the next step that will be run
