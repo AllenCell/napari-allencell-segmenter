@@ -5,7 +5,7 @@ from napari_aicssegmentation.core.view import View, ViewTemplate
 
 
 class FakeTemplate(ViewTemplate):
-    def setup_ui(self):
+    def load(self):
         pass
 
     def get_container(self) -> QFrame:
@@ -13,7 +13,7 @@ class FakeTemplate(ViewTemplate):
 
 
 class FakeView(View):
-    def setup_ui(self):
+    def load(self):
         pass
 
 

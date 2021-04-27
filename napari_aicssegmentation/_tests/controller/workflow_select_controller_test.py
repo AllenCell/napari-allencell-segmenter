@@ -62,8 +62,7 @@ class TestWorkflowSelectController:
         self._controller.index()
 
         # Assert
-        self._mock_view_manager.load_view.assert_called_once_with(self._controller.view)
-        self._controller.view.load_model.assert_called_once_with(self._controller.model)
+        self._mock_view_manager.load_view.assert_called_once_with(self._controller.view, self._model)
         assert self._controller.model.layers == ["Layer 1", "Layer 2", "Layer 3"]
         assert self._controller.model.selected_layer == active_layer
         assert self._controller.model.channels == channels

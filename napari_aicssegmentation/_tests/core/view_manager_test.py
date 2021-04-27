@@ -7,40 +7,40 @@ from PyQt5.QtWidgets import QFrame, QVBoxLayout
 
 # Custom Mock view implementations because QT doesn't like MagicMock widgets
 class MockViewTemplate1(ViewTemplate):
-    setup_ui_called = False
+    load_called = False
 
     def __init__(self):
         super().__init__()
         self._frame = QFrame()
         self._frame.setLayout(QVBoxLayout())
 
-    def setup_ui(self):
-        self.setup_ui_called = True
+    def load(self):
+        self.load_called = True
 
     def get_container(self) -> QFrame:
         return self._frame
 
 
 class MockViewTemplate2(ViewTemplate):
-    setup_ui_called = False
+    load_called = False
 
     def __init__(self):
         super().__init__(template_class=MockViewTemplate1)
         self._frame = QFrame()
         self._frame.setLayout(QVBoxLayout())
 
-    def setup_ui(self):
-        self.setup_ui_called = True
+    def load(self):
+        self.load_called = True
 
     def get_container(self) -> QFrame:
         return self._frame
 
 
 class MockView(View):
-    setup_ui_called = False
+    load_called = False
 
-    def setup_ui(self):
-        self.setup_ui_called = True
+    def load(self, model):
+        self.load_called = True
 
 
 class TestViewManager:
@@ -68,7 +68,7 @@ class TestViewManager:
 
         # Assert
         assert self._base_layout.itemAt(0).widget() == view
-        assert view.setup_ui_called == True
+        assert view.load_called == True
 
     def test_load_view_with_template(self):
         # Arrange
@@ -81,8 +81,8 @@ class TestViewManager:
         assert self._view_manager.current_view == view.template
         assert self._base_layout.itemAt(0).widget() == view.template
         assert view.template.get_container().layout().itemAt(0).widget() == view
-        assert view.template.setup_ui_called == True
-        assert view.setup_ui_called == True
+        assert view.template.load_called == True
+        assert view.load_called == True
 
     def test_load_view_with_nested_templates(self):
         # Arrange
@@ -94,9 +94,9 @@ class TestViewManager:
         # Assert
         assert self._view_manager.current_view == view.template.template
         assert self._base_layout.itemAt(0).widget() == view.template.template
-        assert view.template.setup_ui_called == True
-        assert view.template.template.setup_ui_called == True
-        assert view.setup_ui_called == True
+        assert view.template.load_called == True
+        assert view.template.template.load_called == True
+        assert view.load_called == True
 
     def test_load_view_null_view(self):
         # Assert

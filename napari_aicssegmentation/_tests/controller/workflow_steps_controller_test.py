@@ -32,8 +32,7 @@ class TestWorkflowStepsController:
         self._controller.index()
 
         # Assert
-        self._mock_view_manager.load_view.assert_called_once_with(self._controller.view)
-        self._controller.view.load_model.assert_called_once_with(self._controller.model)
+        self._mock_view_manager.load_view.assert_called_once_with(self._controller.view, self._model)
 
     def test_close_workflow(self):
         # Arrange

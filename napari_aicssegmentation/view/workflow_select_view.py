@@ -26,10 +26,10 @@ from ._main_template import MainTemplate
 @debug_class
 class WorkflowSelectView(View):
 
-    combo_layers: QComboBox
-    combo_channels: QComboBox
-    load_image_warning: WarningMessage
-    workflow_grid: WorkflowThumbnails
+    _combo_layers: QComboBox
+    _combo_channels: QComboBox
+    _load_image_warning: WarningMessage
+    _workflow_grid: WorkflowThumbnails
 
     def __init__(self, controller: IWorkflowSelectController):
         super().__init__(template_class=MainTemplate)
@@ -39,7 +39,14 @@ class WorkflowSelectView(View):
         self._controller = controller
         self.setObjectName("workflowSelectView")
 
-    def setup_ui(self):
+    def load(self, model: SegmenterModel):
+        self._setup_ui()
+
+        self.update_layers(model.layers, model.selected_layer)
+        self.update_channels(model.channels, model.selected_channel)
+        self._load_workflows(model.workflows)
+
+    def _setup_ui(self):
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
@@ -49,17 +56,17 @@ class WorkflowSelectView(View):
         workflow_selection_title.setObjectName("workflowSelectionTitle")
 
         # Warning
-        self.load_image_warning = WarningMessage("Open a 3D image in Napari first!")
-        self.load_image_warning.setVisible(False)
+        self._load_image_warning = WarningMessage("Open a 3D image in Napari first!")
+        self._load_image_warning.setVisible(False)
 
         # Dropdowns
         layers_dropdown = UiUtils.dropdown_row("1.", "Select a 3D Napari image layer", enabled=False)
-        self.combo_layers = layers_dropdown.widget
-        self.combo_layers.activated.connect(self._combo_layers_activated)
+        self._combo_layers = layers_dropdown.widget
+        self._combo_layers.activated.connect(self._combo_layers_activated)
 
         channels_dropdown = UiUtils.dropdown_row("2.", "Select a 3D image data channel", enabled=False)
-        self.combo_channels = channels_dropdown.widget
-        self.combo_channels.activated.connect(self._combo_channels_activated)
+        self._combo_channels = channels_dropdown.widget
+        self._combo_channels.activated.connect(self._combo_channels_activated)
 
         layer_channel_selections = QWidget()
         layer_channel_selections.setLayout(Form([layers_dropdown, channels_dropdown]))
@@ -67,24 +74,15 @@ class WorkflowSelectView(View):
         # Add all widgets
         widgets = [
             workflow_selection_title,
-            self.load_image_warning,
+            self._load_image_warning,
             layer_channel_selections,
         ]
         for widget in widgets:
             layout.addWidget(widget)
 
-        self.workflow_grid = WorkflowThumbnails(view=self)
-        self.layout().addWidget(self.workflow_grid)
-
-    def load_model(self, model: SegmenterModel):
-        """
-        Load and display data from model
-        Inputs:
-            model: the model to load
-        """
-        self.update_layers(model.layers, model.selected_layer)
-        self.update_channels(model.channels, model.selected_channel)
-        self._load_workflows(model.workflows)
+        self._workflow_grid = WorkflowThumbnails()
+        self._workflow_grid.workflowSelected.connect(self._workflow_selected)
+        self.layout().addWidget(self._workflow_grid)
 
     def update_layers(self, layers: List[str], selected_layer: Layer = None):
         """
@@ -93,17 +91,17 @@ class WorkflowSelectView(View):
             layers: List of layer names
             selected_layer_name: (optional) name of the layer to pre-select
         """
-        self._reset_combo_box(self.combo_layers)
+        self._reset_combo_box(self._combo_layers)
 
         if layers is None or len(layers) == 0:
-            self.load_image_warning.setVisible(True)
-            self.combo_layers.setEnabled(False)
+            self._load_image_warning.setVisible(True)
+            self._combo_layers.setEnabled(False)
         else:
-            self.combo_layers.addItems(layers)
+            self._combo_layers.addItems(layers)
             if selected_layer is not None:
-                self.combo_layers.setCurrentText(selected_layer.name)
-            self.combo_layers.setEnabled(True)
-            self.load_image_warning.setVisible(False)
+                self._combo_layers.setCurrentText(selected_layer.name)
+            self._combo_layers.setEnabled(True)
+            self._load_image_warning.setVisible(False)
 
     def update_channels(self, channels: List[Channel], selected_channel: Channel = None):
         """
@@ -111,20 +109,20 @@ class WorkflowSelectView(View):
         Inputs:
             channels: List of channel names
         """
-        self._reset_combo_box(self.combo_channels)
+        self._reset_combo_box(self._combo_channels)
 
         if channels is None or len(channels) == 0:
-            self.combo_channels.setEnabled(False)
+            self._combo_channels.setEnabled(False)
         else:
             model = QStandardItemModel()
-            model.appendRow(QStandardItem(self.combo_channels.itemText(0)))
+            model.appendRow(QStandardItem(self._combo_channels.itemText(0)))
 
             for channel in channels:
                 item = QStandardItem(channel.display_name)
                 item.setData(channel, QtCore.Qt.UserRole)
                 model.appendRow(item)
 
-            self.combo_channels.setModel(model)
+            self._combo_channels.setModel(model)
 
             if selected_channel is not None:
                 # TODO relying on display name isn't the best as it will probably
@@ -132,9 +130,9 @@ class WorkflowSelectView(View):
                 # TODO refactor by making Channel derive from QStandardItem and do something like this:
                 #      selected_index = model.indexFromItem(selected_channel)
                 #      self.combo_channels.setCurrentIndex(selected_index)
-                self.combo_channels.setCurrentText(selected_channel.display_name)
+                self._combo_channels.setCurrentText(selected_channel.display_name)
 
-            self.combo_channels.setEnabled(True)
+            self._combo_channels.setEnabled(True)
 
     def update_workflows(self, enabled: bool):
         """
@@ -142,13 +140,13 @@ class WorkflowSelectView(View):
         Inputs:
             enabled: True to enable the list, False to disable it
         """
-        self.workflow_grid.setEnabled(enabled)
+        self._workflow_grid.setEnabled(enabled)
 
     def _load_workflows(self, workflows: List[WorkflowDefinition]):
         """
         Load workflows into workflow grid
         """
-        self.workflow_grid.load_workflows(workflows)
+        self._workflow_grid.load_workflows(workflows)
 
     def _reset_combo_box(self, combo: QComboBox):
         """
@@ -167,13 +165,13 @@ class WorkflowSelectView(View):
         if index == 0:  # index 0 is the dropdown header
             self._controller.unselect_layer()
         else:
-            self._controller.select_layer(self.combo_layers.itemText(index))
+            self._controller.select_layer(self._combo_layers.itemText(index))
 
     def _combo_channels_activated(self, index: int):
         if index == 0:
             self._controller.unselect_channel()
         else:
-            self._controller.select_channel(self.combo_channels.itemData(index, role=QtCore.Qt.UserRole))
+            self._controller.select_channel(self._combo_channels.itemData(index, role=QtCore.Qt.UserRole))
 
-    def combo_workflow_activated(self, event):
-        self._controller.select_workflow(self.sender().objectName())
+    def _workflow_selected(self, workflow_name: str):
+        self._controller.select_workflow(workflow_name)
