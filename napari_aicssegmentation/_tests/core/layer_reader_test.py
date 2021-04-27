@@ -25,13 +25,10 @@ class TestLayerReader:
         assert channels is not None
         assert len(channels) == 4
 
-    def test_get_channel_data_bad_dimensions_fails(self):
-        # Arrange
-        layer = MockLayer(name="Test", data=numpy.ones((1, 1, 1)))  # 3D instead of 4D
-
+    def test_get_channel_data_null_layer_fails(self):
         # Assert
         with pytest.raises(ValueError):
-            self._layer_reader.get_channel_data(Channel(0), layer)
+            self._layer_reader.get_channel_data(1, None)
 
     @pytest.mark.parametrize("index", range(0, 4))
     def test_get_channel_data(self, index):
@@ -40,7 +37,7 @@ class TestLayerReader:
         layer = MockLayer(name="Test", data=input, ndim=4)  # 4D
 
         # Act
-        result = self._layer_reader.get_channel_data(Channel(index), layer)
+        result = self._layer_reader.get_channel_data(index, layer)
 
         # Assert
         assert result.shape == (75, 100, 100)
