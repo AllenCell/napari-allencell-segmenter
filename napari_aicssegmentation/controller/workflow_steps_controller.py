@@ -37,7 +37,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         """
         Run all steps in the active workflow.
 
-        parameter_inputs List[Dict]/Dict: Each dictionary has the same shape as a WorkflowStep.parameter_defaults
+        parameter_inputs List[Dict]: Each dictionary has the same shape as a WorkflowStep.parameter_defaults
         dictionary, but with the parameter values obtained from the UI instead of default values.
         """
         self.model.active_workflow.reset()
