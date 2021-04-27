@@ -1,3 +1,4 @@
+import copy
 from typing import List, Union
 
 from aicssegmentation.workflow import WorkflowStep, FunctionParameter, WidgetType
@@ -24,9 +25,7 @@ class WorkflowStepWidget(QWidget):
         self.step_name = f"<span>{step.step_number}.&nbsp;{step.name}</span>"
         self.form_rows = []
         self.parameter_defaults = step.parameter_defaults
-        self.parameter_inputs = {}
-        if self.parameter_defaults is None:
-            self.parameter_inputs is None
+        self.parameter_inputs = copy.deepcopy(self.parameter_defaults)
 
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
