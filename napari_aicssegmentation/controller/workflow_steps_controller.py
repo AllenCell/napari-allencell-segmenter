@@ -42,12 +42,15 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         """
         step = 0
         while not self.model.active_workflow.is_done():
+            # Getting info about the next step that will be run
             step_run = self.model.active_workflow.get_next_step()
+            # Run step and add result image (layer names are 1-indexed, steps are 0-indexed)
             self.viewer.add_image(
                 self.model.active_workflow.execute_next(parameter_inputs[step]),
                 name=f"{str(step + 1)}. {step_run.name}",
             )
             step += 1
+            # Hide all layers except for most recent
             for layer in self.viewer.layers[:-1]:
                 if layer.visible:
                     layer.visible = False
