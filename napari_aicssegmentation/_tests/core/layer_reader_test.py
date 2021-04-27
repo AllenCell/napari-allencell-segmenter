@@ -13,7 +13,7 @@ class TestLayerReader:
         channels = self._layer_reader.get_channels(None)
         assert channels is None
 
-    @pytest.mark.parametrize("data", [numpy.ones((75, 4, 600, 900)), numpy.ones((4, 75, 600, 900))])  # ZCYX, CZYX
+    @pytest.mark.parametrize("data", [numpy.ones((75, 4, 100, 200)), numpy.ones((4, 75, 100, 200))])  # ZCYX, CZYX
     def test_get_channels(self, data):
         # Arrange
         layer = MockLayer(name="Test", data=data)
@@ -31,7 +31,7 @@ class TestLayerReader:
             self._layer_reader.get_channel_data(1, None)
 
     @pytest.mark.parametrize("index", range(0, 4))
-    def test_get_channel_data(self, index):
+    def test_get_channel_data_czyx(self, index):
         # Arrange
         input = numpy.ones((4, 75, 100, 100))
         layer = MockLayer(name="Test", data=input, ndim=4)  # 4D
@@ -42,3 +42,16 @@ class TestLayerReader:
         # Assert
         assert result.shape == (75, 100, 100)
         assert numpy.array_equal(result, input[index])
+
+    @pytest.mark.parametrize("index", range(0, 4))
+    def test_get_channel_data_zcyx(self, index):
+        # Arrange
+        input = numpy.ones((75, 4, 100, 200))
+        layer = MockLayer(name="Test", data=input, ndim=4)  # 4D
+
+        # Act
+        result = self._layer_reader.get_channel_data(index, layer)
+
+        # Assert
+        assert result.shape == (75, 100, 200)
+        assert numpy.array_equal(result, input[:, index, :, :])
