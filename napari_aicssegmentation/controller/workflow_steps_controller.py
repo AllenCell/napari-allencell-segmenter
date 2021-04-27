@@ -1,3 +1,5 @@
+from typing import Dict, List
+
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
 from aicssegmentation.workflow import WorkflowEngine
 from napari_aicssegmentation.util.debug_utils import debug_class
@@ -31,12 +33,21 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self.model.reset()
         self.router.workflow_selection()
 
-    def run_all(self):
-        step = 1
+    def run_all(self, parameter_inputs: List[Dict[str, List]]):
+        """
+        Run all steps in the active workflow.
+
+        parameter_inputs List[Dict]/Dict: Each dictionary has the same shape as a WorkflowStep.parameter_defaults
+        dictionary, but with the parameter values obtained from the UI instead of default values.
+        """
+        step = 0
         while not self.model.active_workflow.is_done():
             step_run = self.model.active_workflow.get_next_step()
-            self.viewer.add_image(self.model.active_workflow.execute_next(), name=f"{str(step)}. {step_run.name}")
-            step = step + 1
+            self.viewer.add_image(
+                self.model.active_workflow.execute_next(parameter_inputs[step]),
+                name=f"{str(step + 1)}. {step_run.name}",
+            )
+            step += 1
             for layer in self.viewer.layers[:-1]:
                 if layer.visible:
                     layer.visible = False

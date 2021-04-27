@@ -190,4 +190,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
             self._controller.close_workflow()
 
     def _btn_run_all_clicked(self, checked: bool):
-        self._controller.run_all()
+        workflow_step_widgets = self.findChildren(WorkflowStepWidget)
+        all_parameter_inputs = [w.parameter_inputs for w in workflow_step_widgets]
+
+        self._controller.run_all(all_parameter_inputs)
