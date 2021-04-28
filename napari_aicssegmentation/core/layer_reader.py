@@ -23,6 +23,7 @@ class LayerReader:
             return None
 
         img = AICSImage(layer.data)  # gives us a 6D image
+
         # we're expecting either STCZYX or STZCYX but we don't know for sure
         # Attempt to guess based on array length. Channels array should be shorter in general.
         index_c = 2
@@ -34,20 +35,26 @@ class LayerReader:
             channels.append(Channel(index))
         return channels
 
-    def get_channel_data(self, channel: Channel, layer: Layer, channel_index: int = 0) -> np.ndarray:
+    def get_channel_data(self, channel_index: int, layer: Layer) -> np.ndarray:
         """
-        Get the selected channel in the layer
-        TODO refactor to use AICSImage
-        TODO guess channel dimension instead of passing it in (see get_channels)
-        TODO support arrays with more than 4 dimensions
+        Get the image data from the layer for a given channel
+        TODO this is a workaround for now and we just guess the Channel dimension based on its
+             location for most ome tiffs
+        TODO use aicsimageio to read image from the source file path and get channel names
+             once Napari exposes Image layer source (next release)
+
+        inputs:
+            channel_index (int): index of the channel to load
+            layer (Layer): the Napari layer to read data from
         """
-        if len(layer.data.shape) != 4:
-            raise ValueError("Layer must have 4 dimensions")
-        if channel_index == 0:
-            return layer.data[channel.index, :, :, :]
-        elif channel_index == 1:
-            return layer.data[:, channel.index, :, :]
-        elif channel_index == 2:
-            return layer.data[:, :, channel.index, :]
-        else:
-            return layer.data[:, :, :, channel_index]
+        if layer is None:
+            raise ValueError("layer cannot be None")
+
+        img = AICSImage(layer.data)  # gives us a 6D image
+
+        # we're expecting either STCZYX or STZCYX but we don't know for sure
+        # Attempt to guess based on array length. Channels array should be shorter in general.
+        if img.shape[2] > img.shape[3]:
+            return img.data[0, 0, :, channel_index, :, :]  # STZCYX
+
+        return img.data[0, 0, channel_index, :, :, :]  # STCZYX
