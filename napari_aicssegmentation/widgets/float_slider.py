@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QDoubleSpinBox
 import magicgui.widgets
 
+
 class FloatSlider(magicgui.widgets.FloatSlider):
     """
     Custom FloatSlider widget

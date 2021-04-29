@@ -75,13 +75,13 @@ class WorkflowStepWidget(QWidget):
         magicgui_slider = None
         if param.data_type == "float":
             magicgui_slider = FloatSlider()
-            magicgui_slider.setDecimals(3)             
+            magicgui_slider.setDecimals(3)
         if param.data_type == "int":
             magicgui_slider = Slider()
 
         magicgui_slider.min = param.min_value
         magicgui_slider.max = param.max_value
-        magicgui_slider.step = param.increment     
+        magicgui_slider.step = param.increment
         magicgui_slider.value = default_value
         magicgui_slider.changed.connect(self._update_parameter_inputs)
         magicgui_slider.native.setStyleSheet("QWidget { background-color: transparent; }")
