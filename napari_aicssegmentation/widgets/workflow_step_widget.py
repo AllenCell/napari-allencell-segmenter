@@ -2,13 +2,13 @@ import copy
 from typing import List, Union
 
 from aicssegmentation.workflow import WorkflowStep, FunctionParameter, WidgetType
-from magicgui.widgets import FloatSlider, Slider
+from magicgui.widgets import Slider
 from qtpy.QtCore import Qt
 from qtpy.QtWidgets import QLabel, QVBoxLayout, QWidget
-
 from napari_aicssegmentation.widgets.collapsible_box import CollapsibleBox
 from napari_aicssegmentation.widgets.form import Form, FormRow
 from napari_aicssegmentation.util.ui_utils import UiUtils
+from .float_slider import FloatSlider
 
 
 class WorkflowStepWidget(QWidget):
@@ -72,23 +72,22 @@ class WorkflowStepWidget(QWidget):
         if default_value < param.min_value or default_value > param.max_value:
             raise ValueError("Default value outside of min-max range")
 
-        # Build dictionary of keyword args for slider widgets
-        kwargs = dict()
-        kwargs["step"] = param.increment
-        kwargs["max"] = param.max_value
-        kwargs["min"] = param.min_value
-        kwargs["value"] = default_value
-
-        magicgui_widget = None
+        magicgui_slider = None
         if param.data_type == "float":
-            magicgui_widget = FloatSlider(**kwargs)
+            magicgui_slider = FloatSlider()
+            magicgui_slider.setDecimals(3)             
         if param.data_type == "int":
-            magicgui_widget = Slider(**kwargs)
-        magicgui_widget.changed.connect(self._update_parameter_inputs)
-        magicgui_widget.native.setStyleSheet("QWidget { background-color: transparent; }")
-        magicgui_widget.native.setObjectName(param_name)
+            magicgui_slider = Slider()
 
-        self.form_rows.append(FormRow(param_label, magicgui_widget))
+        magicgui_slider.min = param.min_value
+        magicgui_slider.max = param.max_value
+        magicgui_slider.step = param.increment     
+        magicgui_slider.value = default_value
+        magicgui_slider.changed.connect(self._update_parameter_inputs)
+        magicgui_slider.native.setStyleSheet("QWidget { background-color: transparent; }")
+        magicgui_slider.native.setObjectName(param_name)
+
+        self.form_rows.append(FormRow(param_label, magicgui_slider))
 
     def _add_dropdown(
         self, param_name: str, param_label: str, param: FunctionParameter, default_value: Union[str, bool, int, float]
