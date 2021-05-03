@@ -1,3 +1,4 @@
+from typing import List
 import numpy as np
 
 from aicssegmentation.workflow import WorkflowStepCategory
@@ -185,7 +186,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self._controller.close_workflow()
 
     def _btn_run_all_clicked(self, checked: bool):
-        workflow_step_widgets = self.findChildren(WorkflowStepWidget)
-        all_parameter_inputs = [w.parameter_inputs for w in workflow_step_widgets]
+        workflow_step_widgets: List[WorkflowStepWidget] = self.findChildren(WorkflowStepWidget)
+        all_parameter_inputs = [w.get_parameter_inputs() for w in workflow_step_widgets]
 
         self._controller.run_all(all_parameter_inputs)

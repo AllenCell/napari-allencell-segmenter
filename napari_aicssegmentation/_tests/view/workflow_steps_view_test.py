@@ -1,5 +1,6 @@
 import pytest
 import numpy as np
+import os
 
 from unittest.mock import MagicMock, create_autospec
 from napari_aicssegmentation.view.workflow_steps_view import WorkflowStepsView, IWorkflowStepsController, SegmenterModel
