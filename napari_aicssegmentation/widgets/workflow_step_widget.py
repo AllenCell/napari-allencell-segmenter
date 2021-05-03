@@ -9,6 +9,7 @@ from qtpy.QtWidgets import QLabel, QVBoxLayout, QWidget
 from napari_aicssegmentation.widgets.collapsible_box import CollapsibleBox
 from napari_aicssegmentation.widgets.form import Form, FormRow
 from napari_aicssegmentation.util.ui_utils import UiUtils
+from napari_aicssegmentation.util.convert import Convert
 from .float_slider import FloatSlider
 
 
@@ -25,13 +26,12 @@ class WorkflowStepWidget(QWidget):
         super().__init__()
         if step is None:
             raise ValueError("step")
-        self._step = step        
-        self._form_rows: List[FormRow] = list()             
+        self._step = step
+        self._form_rows: List[FormRow] = list()
 
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
-
         if step.function.parameters is None:
             label_no_param = QLabel("No parameters needed")
             label_no_param.setAlignment(Qt.AlignCenter)
@@ -52,7 +52,7 @@ class WorkflowStepWidget(QWidget):
         """
         if self._step.parameter_defaults is None:
             return None
-        
+
         parameter_inputs = copy.deepcopy(self._step.parameter_defaults)
 
         for parameter_name in parameter_inputs.keys():
@@ -64,17 +64,20 @@ class WorkflowStepWidget(QWidget):
                 parameter_inputs[parameter_name] = 0
 
         for param_row in self._form_rows:
-            name = ""
-            value = 0
-
             # Grab the current value from the row, along with its param name
             if isinstance(param_row.widget, QComboBox):
                 # Row contains a dropdown
                 name = param_row.widget.objectName()
                 value = param_row.widget.currentText()
-                # Convert string back to boolean if it was originally boolean                
-                if isinstance(self._step.parameter_defaults[name], bool):
-                    value = value.lower() == "true"
+
+                # Convert for each data datatype
+                data_type = self._step.function.parameters[name][0]
+                if data_type == "bool":
+                    value = Convert.to_boolean(value)
+                elif data_type == "int":
+                    value = int(value)
+                elif data_type == "float":
+                    value = float(value)
             else:
                 # Row contains a Magicgui Slider or FloatSlider
                 name = param_row.widget.native.objectName()
@@ -111,9 +114,15 @@ class WorkflowStepWidget(QWidget):
                 self._add_dropdown(param_name, param_label, param, default_value)
 
     def _add_slider(
-        self, param_name: str, param_label: str, param: FunctionParameter, default_value: Union[str, bool, int, float]
+        self, param_name: str, param_label: str, param: FunctionParameter, default_value: Union[int, float]
     ):
-        if default_value < param.min_value or default_value > param.max_value:
+        if param.data_type not in ["int", "float"]:
+            raise RuntimeError(f"Cannot create slider for non numerical parameter <{param.name}>")
+
+        if param.min_value is None or param.max_value is None or param.increment is None:
+            raise ValueError("Parameter min_value, max_value and increment cannot be None")
+
+        if default_value is not None and (default_value < param.min_value or default_value > param.max_value):
             raise ValueError("Default value outside of min-max range")
 
         magicgui_slider = None

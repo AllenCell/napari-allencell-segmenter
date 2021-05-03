@@ -1,6 +1,3 @@
-import traceback
-import sys
-
 from aicssegmentation.workflow import (
     WorkflowEngine,
     WorkflowStep,
@@ -9,9 +6,7 @@ from aicssegmentation.workflow import (
     WidgetType,
     WorkflowStepCategory,
 )
-import pytest
 from PyQt5.QtWidgets import QComboBox
-
 from napari_aicssegmentation.widgets.workflow_step_widget import WorkflowStepWidget
 
 
@@ -33,7 +28,6 @@ class TestWorkflowStepWidget:
         widget = WorkflowStepWidget(step)
 
         # Assert
-        assert widget.step_name == "<span>1.&nbsp;Gaussian blur</span>"
         assert len(widget._form_rows) == 1
         assert widget._form_rows[0].label == ""
 
@@ -75,3 +69,47 @@ class TestWorkflowStepWidget:
         assert widget._form_rows[1].label == "scaling_param 2"
         assert isinstance(widget._form_rows[0].widget, QComboBox)
         assert widget._form_rows[0].widget.currentText() == "blue"
+
+    def test_get_parameter_inputs_default_params(self):
+        # Arrange
+        parameters = {
+            "x": [FunctionParameter("x", WidgetType.SLIDER, "int", min_value=1, max_value=100, increment=1)],
+            "y": [
+                FunctionParameter("y", WidgetType.SLIDER, "int", min_value=1, max_value=100, increment=1),
+                FunctionParameter("y", WidgetType.SLIDER, "int", min_value=1, max_value=100, increment=1),
+            ],
+        }
+        function = SegmenterFunction("Test", "Test", "my_function_name", "my_module_name", parameters)
+        parameter_defaults = {"x": 5, "y": [1, 2]}
+        step = WorkflowStep(WorkflowStepCategory.PRE_PROCESSING, function, 1, [0], parameter_defaults)
+        widget = WorkflowStepWidget(step)
+
+        # Act
+        parameter_inputs = widget.get_parameter_inputs()
+
+        # Assert
+        assert parameter_inputs == parameter_defaults
+
+    def test_get_parameter_inputs_modified_params(self):
+        # Arrange
+        parameters = {
+            "x": [FunctionParameter("x", WidgetType.SLIDER, "int", min_value=1, max_value=100, increment=1)],
+            "y": [
+                FunctionParameter("y", WidgetType.SLIDER, "int", min_value=1, max_value=100, increment=1),
+                FunctionParameter("y", WidgetType.SLIDER, "int", min_value=1, max_value=100, increment=1),
+            ],
+        }
+        function = SegmenterFunction("Test", "Test", "my_function_name", "my_module_name", parameters)
+        parameter_defaults = {"x": 5, "y": [1, 2]}
+        expected_values = {"x": 50, "y": [11, 22]}
+        step = WorkflowStep(WorkflowStepCategory.PRE_PROCESSING, function, 1, [0], parameter_defaults)
+        widget = WorkflowStepWidget(step)
+
+        # Act
+        widget._form_rows[0].widget.value = 50  # x
+        widget._form_rows[1].widget.value = 11  # y 1
+        widget._form_rows[2].widget.value = 22  # y 2
+        parameter_inputs = widget.get_parameter_inputs()
+
+        # Assert
+        assert parameter_inputs == expected_values
