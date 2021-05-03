@@ -1,5 +1,6 @@
 import copy
 from typing import Any, Dict, List, Union
+from PyQt5.QtWidgets import QComboBox
 
 from aicssegmentation.workflow import WorkflowStep, FunctionParameter, WidgetType
 from magicgui.widgets import Slider
@@ -24,10 +25,8 @@ class WorkflowStepWidget(QWidget):
         super().__init__()
         if step is None:
             raise ValueError("step")
-        self._step = step
-        self.step_name = f"<span>{step.step_number}.&nbsp;{step.name}</span>"
-        self.form_rows = []
-        self._parameter_defaults = step.parameter_defaults        
+        self._step = step        
+        self._form_rows: List[FormRow] = list()             
 
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
@@ -37,42 +36,44 @@ class WorkflowStepWidget(QWidget):
             label_no_param = QLabel("No parameters needed")
             label_no_param.setAlignment(Qt.AlignCenter)
             label_no_param.setContentsMargins(0, 0, 6, 0)
-            self.form_rows.append(FormRow("", label_no_param))
+            self._form_rows.append(FormRow("", label_no_param))
         else:
             for param_name, param_data in step.function.parameters.items():
-                default_values = self._parameter_defaults[param_name]
+                default_values = step.parameter_defaults[param_name]
                 self._add_param_rows(param_name, param_data, default_values)
 
-        box = CollapsibleBox(self.step_name, Form(self.form_rows, (11, 5, 5, 5)))
+        step_name = f"<span>{step.step_number}.&nbsp;{step.name}</span>"
+        box = CollapsibleBox(step_name, Form(self._form_rows, (11, 5, 5, 5)))
         layout.addWidget(box)
 
     def get_parameter_inputs(self) -> Dict[str, Any]:
         """
         Returns all parameter input values for the as a dictionary {param_name: param_value}
         """
+        if self._step.parameter_defaults is None:
+            return None
+        
+        parameter_inputs = copy.deepcopy(self._step.parameter_defaults)
 
-        # Reset self.parameter_inputs
-        parameter_inputs = copy.deepcopy(self._parameter_defaults)
-
-        for parameter_name in self._parameter_defaults.keys():
+        for parameter_name in parameter_inputs.keys():
             # If default values for this param came in a list, we need to save values
             # from the UI in a list
-            if isinstance(self._parameter_defaults[parameter_name], list):
+            if isinstance(parameter_inputs[parameter_name], list):
                 parameter_inputs[parameter_name] = []
             else:
                 parameter_inputs[parameter_name] = 0
 
-        for param_row in self.form_rows:
+        for param_row in self._form_rows:
             name = ""
             value = 0
 
             # Grab the current value from the row, along with its param name
-            if isinstance(param_row.widget, QWidget):
+            if isinstance(param_row.widget, QComboBox):
                 # Row contains a dropdown
                 name = param_row.widget.objectName()
                 value = param_row.widget.currentText()
-                # Convert string back to boolean if it was originally boolean
-                if isinstance(self._parameter_defaults[name], bool):
+                # Convert string back to boolean if it was originally boolean                
+                if isinstance(self._step.parameter_defaults[name], bool):
                     value = value.lower() == "true"
             else:
                 # Row contains a Magicgui Slider or FloatSlider
@@ -84,6 +85,8 @@ class WorkflowStepWidget(QWidget):
                 parameter_inputs[name].append(value)
             else:
                 parameter_inputs[name] = value
+
+        return parameter_inputs
 
     def _add_param_rows(
         self, param_name: str, param_data: List[FunctionParameter], default_values: Union[List, str, bool, int, float]
@@ -127,11 +130,11 @@ class WorkflowStepWidget(QWidget):
         magicgui_slider.native.setStyleSheet("QWidget { background-color: transparent; }")
         magicgui_slider.native.setObjectName(param_name)
 
-        self.form_rows.append(FormRow(param_label, magicgui_slider))
+        self._form_rows.append(FormRow(param_label, magicgui_slider))
 
     def _add_dropdown(
         self, param_name: str, param_label: str, param: FunctionParameter, default_value: Union[str, bool, int, float]
     ):
         dropdown_row = UiUtils.dropdown_row(param_label, default=default_value, options=param.options, enabled=True)
         dropdown_row.widget.setObjectName(param_name)
-        self.form_rows.append(dropdown_row)
+        self._form_rows.append(dropdown_row)

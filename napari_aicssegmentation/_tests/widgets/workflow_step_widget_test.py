@@ -34,8 +34,8 @@ class TestWorkflowStepWidget:
 
         # Assert
         assert widget.step_name == "<span>1.&nbsp;Gaussian blur</span>"
-        assert len(widget.form_rows) == 1
-        assert widget.form_rows[0].label == ""
+        assert len(widget._form_rows) == 1
+        assert widget._form_rows[0].label == ""
 
     def test_step_with_single_value_per_param(self):
         # Arrange
@@ -50,9 +50,9 @@ class TestWorkflowStepWidget:
         widget = WorkflowStepWidget(step)
 
         # Assert
-        assert len(widget.form_rows) == 1
-        assert widget.form_rows[0].label == "scaling_param"
-        assert isinstance(widget.form_rows[0].widget, QComboBox)
+        assert len(widget._form_rows) == 1
+        assert widget._form_rows[0].label == "scaling_param"
+        assert isinstance(widget._form_rows[0].widget, QComboBox)
 
     def test_step_with_multiple_values_per_param(self):
         # Arrange
@@ -70,8 +70,8 @@ class TestWorkflowStepWidget:
         widget = WorkflowStepWidget(step)
 
         # Assert
-        assert len(widget.form_rows) == 2
-        assert widget.form_rows[0].label == "scaling_param 1"
-        assert widget.form_rows[1].label == "scaling_param 2"
-        assert isinstance(widget.form_rows[0].widget, QComboBox)
-        assert widget.form_rows[0].widget.currentText() == "blue"
+        assert len(widget._form_rows) == 2
+        assert widget._form_rows[0].label == "scaling_param 1"
+        assert widget._form_rows[1].label == "scaling_param 2"
+        assert isinstance(widget._form_rows[0].widget, QComboBox)
+        assert widget._form_rows[0].widget.currentText() == "blue"
