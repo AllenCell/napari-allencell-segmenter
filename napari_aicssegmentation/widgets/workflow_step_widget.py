@@ -27,7 +27,7 @@ class WorkflowStepWidget(QWidget):
         if step is None:
             raise ValueError("step")
         self._step = step
-        self._form_rows: List[FormRow] = list()
+        self.form_rows: List[FormRow] = list()
 
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
@@ -36,14 +36,14 @@ class WorkflowStepWidget(QWidget):
             label_no_param = QLabel("No parameters needed")
             label_no_param.setAlignment(Qt.AlignCenter)
             label_no_param.setContentsMargins(0, 0, 6, 0)
-            self._form_rows.append(FormRow("", label_no_param))
+            self.form_rows.append(FormRow("", label_no_param))
         else:
             for param_name, param_data in step.function.parameters.items():
                 default_values = step.parameter_defaults[param_name]
                 self._add_param_rows(param_name, param_data, default_values)
 
         step_name = f"<span>{step.step_number}.&nbsp;{step.name}</span>"
-        box = CollapsibleBox(step_name, Form(self._form_rows, (11, 5, 5, 5)))
+        box = CollapsibleBox(step_name, Form(self.form_rows, (11, 5, 5, 5)))
         layout.addWidget(box)
 
     def get_parameter_inputs(self) -> Dict[str, Any]:
@@ -63,7 +63,7 @@ class WorkflowStepWidget(QWidget):
             else:
                 parameter_inputs[parameter_name] = 0
 
-        for param_row in self._form_rows:
+        for param_row in self.form_rows:
             # Grab the current value from the row, along with its param name
             if isinstance(param_row.widget, QComboBox):
                 # Row contains a dropdown
@@ -139,11 +139,11 @@ class WorkflowStepWidget(QWidget):
         magicgui_slider.native.setStyleSheet("QWidget { background-color: transparent; }")
         magicgui_slider.native.setObjectName(param_name)
 
-        self._form_rows.append(FormRow(param_label, magicgui_slider))
+        self.form_rows.append(FormRow(param_label, magicgui_slider))
 
     def _add_dropdown(
         self, param_name: str, param_label: str, param: FunctionParameter, default_value: Union[str, bool, int, float]
     ):
         dropdown_row = UiUtils.dropdown_row(param_label, default=default_value, options=param.options, enabled=True)
         dropdown_row.widget.setObjectName(param_name)
-        self._form_rows.append(dropdown_row)
+        self.form_rows.append(dropdown_row)

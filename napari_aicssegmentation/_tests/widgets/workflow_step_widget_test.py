@@ -28,8 +28,8 @@ class TestWorkflowStepWidget:
         widget = WorkflowStepWidget(step)
 
         # Assert
-        assert len(widget._form_rows) == 1
-        assert widget._form_rows[0].label == ""
+        assert len(widget.form_rows) == 1
+        assert widget.form_rows[0].label == ""
 
     def test_step_with_single_value_per_param(self):
         # Arrange
@@ -44,9 +44,9 @@ class TestWorkflowStepWidget:
         widget = WorkflowStepWidget(step)
 
         # Assert
-        assert len(widget._form_rows) == 1
-        assert widget._form_rows[0].label == "scaling_param"
-        assert isinstance(widget._form_rows[0].widget, QComboBox)
+        assert len(widget.form_rows) == 1
+        assert widget.form_rows[0].label == "scaling_param"
+        assert isinstance(widget.form_rows[0].widget, QComboBox)
 
     def test_step_with_multiple_values_per_param(self):
         # Arrange
@@ -64,11 +64,11 @@ class TestWorkflowStepWidget:
         widget = WorkflowStepWidget(step)
 
         # Assert
-        assert len(widget._form_rows) == 2
-        assert widget._form_rows[0].label == "scaling_param 1"
-        assert widget._form_rows[1].label == "scaling_param 2"
-        assert isinstance(widget._form_rows[0].widget, QComboBox)
-        assert widget._form_rows[0].widget.currentText() == "blue"
+        assert len(widget.form_rows) == 2
+        assert widget.form_rows[0].label == "scaling_param 1"
+        assert widget.form_rows[1].label == "scaling_param 2"
+        assert isinstance(widget.form_rows[0].widget, QComboBox)
+        assert widget.form_rows[0].widget.currentText() == "blue"
 
     def test_get_parameter_inputs_default_params(self):
         # Arrange
@@ -106,9 +106,9 @@ class TestWorkflowStepWidget:
         widget = WorkflowStepWidget(step)
 
         # Act
-        widget._form_rows[0].widget.value = 50  # x
-        widget._form_rows[1].widget.value = 11  # y 1
-        widget._form_rows[2].widget.value = 22  # y 2
+        widget.form_rows[0].widget.value = 50  # x
+        widget.form_rows[1].widget.value = 11  # y 1
+        widget.form_rows[2].widget.value = 22  # y 2
         parameter_inputs = widget.get_parameter_inputs()
 
         # Assert
