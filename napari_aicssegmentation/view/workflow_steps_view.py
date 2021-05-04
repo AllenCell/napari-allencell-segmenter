@@ -1,3 +1,4 @@
+from typing import List
 import numpy as np
 
 from aicssegmentation.workflow import WorkflowStepCategory
@@ -26,9 +27,11 @@ from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH
 
 @debug_class
 class WorkflowStepsView(View):  # pragma: no-cover
-    _workflow_diagram_scroll: QScrollArea
-    _modal_close_workflow: QMessageBox
-    _btn_close_keep: QPushButton
+    window_workflow_diagram: QScrollArea
+    btn_workflow_info: QPushButton
+    btn_run_all: QPushButton
+    modal_close_workflow: QMessageBox
+    btn_close_keep: QPushButton
 
     def __init__(self, controller: IWorkflowStepsController):
         super().__init__(template_class=MainTemplate)
@@ -67,14 +70,14 @@ class WorkflowStepsView(View):  # pragma: no-cover
 
         # Make widgets
         workflow_name = QLabel(f"Workflow: {self._workflow.workflow_definition.name}")
-        info = QPushButton("ⓘ")
-        info.setObjectName("infoButton")
-        info.clicked.connect(self._btn_info_clicked)
+        self.btn_workflow_info = QPushButton("ⓘ")
+        self.btn_workflow_info.setObjectName("infoButton")
+        self.btn_workflow_info.clicked.connect(self._btn_info_clicked)
 
         # Add widgets and whitespace
         layout.addStretch()
         layout.addWidget(workflow_name)
-        layout.addWidget(info)
+        layout.addWidget(self.btn_workflow_info)
         layout.addStretch()
         layout.setSpacing(3)
 
@@ -129,59 +132,61 @@ class WorkflowStepsView(View):  # pragma: no-cover
         btn_close_workflow.setFixedWidth(120)
         btn_close_workflow.clicked.connect(self._btn_close_clicked)
 
-        btn_run_all = QPushButton("Run all")
-        btn_run_all.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-        btn_run_all.clicked.connect(self._btn_run_all_clicked)
+        self.btn_run_all = QPushButton("Run all")
+        self.btn_run_all.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        self.btn_run_all.clicked.connect(self._btn_run_all_clicked)
 
         layout.addWidget(btn_close_workflow)
-        layout.addWidget(btn_run_all)
+        layout.addWidget(self.btn_run_all)
 
         self._layout.addLayout(layout)
 
     def _setup_diagram_window(self):
-        self._workflow_diagram_scroll = QScrollArea()
+        self.window_workflow_diagram = QScrollArea()
         diagram = QLabel()
         img_data = np.moveaxis(self._workflow.workflow_definition.diagram_image, 0, -1)
         img = QImage(img_data, img_data.shape[1], img_data.shape[0], QImage.Format.Format_RGB888)
         diagram.setPixmap(QPixmap(img).scaledToWidth(1000, Qt.TransformationMode.SmoothTransformation))
 
-        self._workflow_diagram_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
-        self._workflow_diagram_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        self._workflow_diagram_scroll.setFixedWidth(1000)
-        self._workflow_diagram_scroll.setMinimumHeight(800)
-        self._workflow_diagram_scroll.setWidget(diagram)
+        self.window_workflow_diagram.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
+        self.window_workflow_diagram.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.window_workflow_diagram.setFixedWidth(1000)
+        self.window_workflow_diagram.setMinimumHeight(800)
+        self.window_workflow_diagram.setWidget(diagram)
 
     def _setup_close_workflow_window(self):
-        self._modal_close_workflow = QMessageBox()
+        self.modal_close_workflow = QMessageBox()
 
         prompt = (
             "<span>You are closing an in-progress Allen Cell & Structure Segmenter plugin workflow to return "
             "to the Workflow Selection screen.&nbsp;Your progress in this workflow will be lost.</span>"
         )
 
-        self._modal_close_workflow.setModal(True)
-        self._modal_close_workflow.setIcon(QMessageBox.Warning)
-        self._modal_close_workflow.setText(f"Workflow: {self._workflow.workflow_definition.name}")
-        self._modal_close_workflow.setInformativeText(prompt)
-        self._modal_close_workflow.setStandardButtons(QMessageBox.Cancel)
+        self.modal_close_workflow.setModal(True)
+        self.modal_close_workflow.setIcon(QMessageBox.Warning)
+        self.modal_close_workflow.setText(f"Workflow: {self._workflow.workflow_definition.name}")
+        self.modal_close_workflow.setInformativeText(prompt)
+        self.modal_close_workflow.setStandardButtons(QMessageBox.Cancel)
 
-        if len(self._modal_close_workflow.buttons()) < 2:
-            self._btn_close_keep = self._modal_close_workflow.addButton("Close workflow", QMessageBox.AcceptRole)
+        # Modal buttons
+        self.btn_close_keep = self.modal_close_workflow.addButton("Close workflow", QMessageBox.AcceptRole)
+        self.btn_close_keep.clicked.connect(self._btn_close_keep_clicked)
 
     #####################################################################
     # Event handlers
     #####################################################################
 
     def _btn_info_clicked(self, checked: bool):
-        self._workflow_diagram_scroll.show()
+        self.window_workflow_diagram.show()
 
     def _btn_close_clicked(self, checked: bool):
-        self._modal_close_workflow.exec()
-        if self._modal_close_workflow.clickedButton() == self._btn_close_keep:
-            self._controller.close_workflow()
+        self.modal_close_workflow.exec()
+
+    def _btn_close_keep_clicked(self, checked: bool):
+        self._controller.close_workflow()
 
     def _btn_run_all_clicked(self, checked: bool):
-        workflow_step_widgets = self.findChildren(WorkflowStepWidget)
-        all_parameter_inputs = [w.parameter_inputs for w in workflow_step_widgets]
+        workflow_step_widgets: List[WorkflowStepWidget] = self.findChildren(WorkflowStepWidget)
+        all_parameter_inputs = [w.get_parameter_inputs() for w in workflow_step_widgets]
 
         self._controller.run_all(all_parameter_inputs)

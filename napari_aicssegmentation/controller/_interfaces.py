@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Dict, List
 from napari_aicssegmentation.model.channel import Channel
 
 
@@ -54,5 +55,5 @@ class IWorkflowStepsController(ABC):
         pass
 
     @abstractmethod
-    def run_all(self):
+    def run_all(self, parameter_inputs: List[Dict[str, List]]):
         pass

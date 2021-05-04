@@ -8,5 +8,5 @@ class MockLayer(NamedTuple):
     """
 
     name: str
-    data: numpy.ndarray = numpy.ones((1, 1, 1, 1))
-    ndim: int = 0
+    data: numpy.ndarray = numpy.ones((4, 75, 100, 100))
+    ndim: int = 4
