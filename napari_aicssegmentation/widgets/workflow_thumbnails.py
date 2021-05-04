@@ -30,10 +30,16 @@ class WorkflowThumbnails(QWidget):
 
     workflowSelected = pyqtSignal(str)  # signal: emitted when a workflow is selected
 
-    def __init__(self, workflow_defs: List[WorkflowDefinition] = None):
+    def __init__(self, workflows: List[WorkflowDefinition] = None):
         super().__init__()
-        if workflow_defs is not None:
-            self.load_workflows(workflow_defs)
+        self._workflow_definitions = workflows
+
+        if workflows is not None:
+            self.load_workflows(workflows)
+
+    @property
+    def workflow_definitions(self) -> List[WorkflowDefinition]:
+        return self._workflow_definitions
 
     def load_workflows(self, workflows: List[WorkflowDefinition]):
         """
@@ -41,6 +47,8 @@ class WorkflowThumbnails(QWidget):
         """
         if workflows is None:
             raise ValueError("workflows")
+
+        self._workflow_definitions = workflows
 
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
@@ -136,17 +144,15 @@ class WorkflowThumbnails(QWidget):
         """
         Enable all buttons in the widget
         """
-        for ui_element in self.layout().parent().children():
-            if isinstance(ui_element, QPushButton):
-                ui_element.setEnabled(True)
+        for button in self.findChildren(QPushButton):
+            button.setEnabled(True)
 
     def _disable_buttons(self):
         """
         Disable all buttons in the widget
         """
-        for ui_element in self.layout().parent().children():
-            if isinstance(ui_element, QPushButton):
-                ui_element.setEnabled(False)
+        for button in self.findChildren(QPushButton):
+            button.setDisabled(True)
 
     def _workflow_button_clicked(self, checked: bool):
         """

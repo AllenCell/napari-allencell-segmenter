@@ -1,13 +1,13 @@
-from typing import List, NamedTuple, Union
+import magicgui.widgets
 
-from magicgui.widgets import FloatSlider, Slider
+from typing import List, NamedTuple, Union
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QFormLayout, QLabel, QWidget
 
 
 class FormRow(NamedTuple):
     label: Union[str, QLabel]
-    widget: Union[QWidget, FloatSlider, Slider]
+    widget: Union[QWidget, magicgui.widgets.Widget]
 
 
 class Form(QFormLayout):
