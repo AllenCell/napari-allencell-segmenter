@@ -71,7 +71,7 @@ class WorkflowStepWidget(QWidget):
                 value = param_row.widget.currentText()
 
                 # Convert for each data datatype
-                data_type = self._step.function.parameters[name][0]
+                data_type = self._step.function.parameters[name][0].data_type
                 if data_type == "bool":
                     value = Convert.to_boolean(value)
                 elif data_type == "int":
