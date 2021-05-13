@@ -4,7 +4,6 @@ from napari_aicssegmentation.core.view import View
 from qtpy.QtWidgets import QLayout
 
 
-@debug_class
 class ViewManager:
     def __init__(self, base_layout: QLayout):
         if base_layout is None:

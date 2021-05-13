@@ -11,7 +11,6 @@ from qtpy.QtWidgets import QMessageBox
 from napari_aicssegmentation.core._interfaces import IApplication, IRouter
 
 
-@debug_class
 class Controller(ABC):
     def __init__(self, application: IApplication):
         if application is None:

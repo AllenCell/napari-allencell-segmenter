@@ -11,7 +11,6 @@ from napari_aicssegmentation.core.layer_reader import LayerReader
 from aicssegmentation.workflow import WorkflowEngine
 
 
-@debug_class
 class WorkflowSelectController(Controller, IWorkflowSelectController):
     def __init__(self, application: IApplication, layer_reader: LayerReader, workflow_engine: WorkflowEngine):
         super().__init__(application)

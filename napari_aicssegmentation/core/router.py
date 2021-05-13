@@ -7,7 +7,6 @@ from napari_aicssegmentation.core.controller import Controller
 from ._interfaces import IApplication, IRouter
 
 
-@debug_class
 class Router(IRouter):
     _controller = None
 

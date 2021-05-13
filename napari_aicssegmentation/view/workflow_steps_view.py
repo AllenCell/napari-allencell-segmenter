@@ -25,7 +25,6 @@ from napari_aicssegmentation.view._main_template import MainTemplate
 from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH
 
 
-@debug_class
 class WorkflowStepsView(View):  # pragma: no-cover
     window_workflow_diagram: QScrollArea
     btn_workflow_info: QPushButton
