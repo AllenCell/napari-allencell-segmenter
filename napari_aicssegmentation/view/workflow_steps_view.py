@@ -23,7 +23,7 @@ from napari_aicssegmentation.core.view import View
 from napari_aicssegmentation.widgets.workflow_step_widget import WorkflowStepWidget
 from napari_aicssegmentation.view._main_template import MainTemplate
 from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH
-
+from napari_aicssegmentation.util.debug_utils import debug_func
 
 class WorkflowStepsView(View):  # pragma: no-cover
     window_workflow_diagram: QScrollArea
@@ -171,6 +171,18 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self.btn_close_keep = self.modal_close_workflow.addButton("Close workflow", QMessageBox.AcceptRole)
         self.btn_close_keep.clicked.connect(self._btn_close_keep_clicked)
 
+    def set_run_all_in_progress(self):
+        self.btn_run_all.setText("Cancel")
+        #self.btn_run_all.clicked.disconnect(self._btn_run_all_clicked)
+        self.btn_run_all.clicked.disconnect()
+        self.btn_run_all.clicked.connect(self._btn_run_all_cancel_clicked)
+
+    def set_run_all_available(self):
+        self.btn_run_all.setText("Run all")
+        #self.btn_run_all.clicked.disconnect(self._btn_run_all_cancel_clicked)
+        self.btn_run_all.clicked.disconnect()
+        self.btn_run_all.clicked.connect(self._btn_run_all_clicked)                
+    
     #####################################################################
     # Event handlers
     #####################################################################
@@ -184,8 +196,12 @@ class WorkflowStepsView(View):  # pragma: no-cover
     def _btn_close_keep_clicked(self, checked: bool):
         self._controller.close_workflow()
 
-    def _btn_run_all_clicked(self, checked: bool):
+    @debug_func
+    def _btn_run_all_clicked(self, checked: bool):                        
         workflow_step_widgets: List[WorkflowStepWidget] = self.findChildren(WorkflowStepWidget)
         all_parameter_inputs = [w.get_parameter_inputs() for w in workflow_step_widgets]
-
         self._controller.run_all(all_parameter_inputs)
+
+    @debug_func
+    def _btn_run_all_cancel_clicked(self, checked: bool):
+        self._controller.cancel_run_all()

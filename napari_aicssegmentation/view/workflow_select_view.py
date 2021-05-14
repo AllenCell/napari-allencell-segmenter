@@ -13,7 +13,6 @@ from PyQt5 import QtCore
 
 from napari_aicssegmentation.model.channel import Channel
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
-from napari_aicssegmentation.util.debug_utils import debug_class
 from napari_aicssegmentation.controller._interfaces import IWorkflowSelectController
 from napari_aicssegmentation.core.view import View
 from napari_aicssegmentation.widgets.form import Form
@@ -21,6 +20,7 @@ from napari_aicssegmentation.widgets.warning_message import WarningMessage
 from napari_aicssegmentation.util.ui_utils import UiUtils
 from napari_aicssegmentation.widgets.workflow_thumbnails import WorkflowThumbnails
 from ._main_template import MainTemplate
+
 
 
 class WorkflowSelectView(View):

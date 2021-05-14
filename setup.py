@@ -14,7 +14,8 @@ def read(fname):
 # Add your dependencies in requirements.txt
 # Note: you can add test-specific requirements in tox.ini
 requirements = [
-    "napari>=0.4.7",
+    #"napari>=0.4.7",
+    "napari @ git+https://github.com/napari/napari.git@master#egg=napari",
     "napari-plugin-engine>=0.1.4",
     "numpy",
     "aicssegmentation >= 0.2.0",
@@ -24,11 +25,10 @@ requirements = [
 ]
 
 test_requirements = [
-    "black==19.10b0",
+    "black>=19.10b0",
     "codecov>=2.0.22",
     "docutils>=0.10,<0.16",
     "flake8>=3.7.7",
-    "napari[pyqt5]>=0.2.10",
     "psutil>=5.7.0",
     "pytest>=4.3.0",
     "pytest-cov==2.6.1",
