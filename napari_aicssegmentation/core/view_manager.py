@@ -1,5 +1,4 @@
 from typing import Any
-from napari_aicssegmentation.util.debug_utils import debug_class
 from napari_aicssegmentation.core.view import View
 from qtpy.QtWidgets import QLayout
 

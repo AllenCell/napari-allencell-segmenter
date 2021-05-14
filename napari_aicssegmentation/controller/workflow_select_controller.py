@@ -1,6 +1,5 @@
 from typing import List
 from napari.utils.events.event import Event
-from napari_aicssegmentation.util.debug_utils import debug_class
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
 from napari_aicssegmentation.view.workflow_select_view import WorkflowSelectView
 from napari_aicssegmentation.core._interfaces import IApplication

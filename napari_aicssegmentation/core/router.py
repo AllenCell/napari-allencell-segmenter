@@ -1,5 +1,4 @@
 from aicssegmentation.workflow import WorkflowEngine
-from napari_aicssegmentation.util.debug_utils import debug_class
 from napari_aicssegmentation.controller.workflow_select_controller import WorkflowSelectController
 from napari_aicssegmentation.controller.workflow_steps_controller import WorkflowStepsController
 from napari_aicssegmentation.core.layer_reader import LayerReader

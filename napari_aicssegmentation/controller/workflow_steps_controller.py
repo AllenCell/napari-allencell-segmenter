@@ -9,7 +9,6 @@ from napari_aicssegmentation.core._interfaces import IApplication
 from napari_aicssegmentation.controller._interfaces import IWorkflowStepsController
 from napari_aicssegmentation.core.controller import Controller
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
-from napari_aicssegmentation.util.debug_utils import debug_func
 
 
 class WorkflowStepsController(Controller, IWorkflowStepsController):
@@ -39,11 +38,10 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             # disconnect worker events to avoid acting on deleted QT objects since worker operations are asynchronous
             # worker will be garbage collected
             self._disconnect_worker_events()
-            self._worker.quit()
+            self.cancel_run_all()
         self.model.reset()
         self.router.workflow_selection()
 
-    @debug_func
     def run_all(self, parameter_inputs: List[Dict[str, List]]):
         """
         Run all steps in the active workflow.
@@ -88,7 +86,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         step, result = processed_args
 
         # Update progress
-        self.view.progress_bar.setValue(self.view.progress_bar.value() + 1)
+        self.view.increment_progress_bar()
 
         # Add step result layer
         self.add_layer(result, name=f"{step.step_number}. {step.name}")
@@ -100,10 +98,6 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
     def _on_run_all_started(self):
         self._run_lock = True
         self._view.set_run_all_in_progress()
-
-    def _on_run_all_aborted(self):
-        self._view.reset_run_all()
-        self._run_lock = False
 
     def _on_run_all_finished(self):
         self._view.reset_run_all()

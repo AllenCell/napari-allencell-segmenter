@@ -2,7 +2,6 @@
 import napari
 
 from napari_aicssegmentation.core.application import Application
-from napari_aicssegmentation.util.debug_utils import debug_class
 from napari_plugin_engine import napari_hook_implementation
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QSizePolicy
 
