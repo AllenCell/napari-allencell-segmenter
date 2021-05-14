@@ -22,7 +22,6 @@ from napari_aicssegmentation.widgets.workflow_thumbnails import WorkflowThumbnai
 from ._main_template import MainTemplate
 
 
-
 class WorkflowSelectView(View):
 
     _combo_layers: QComboBox

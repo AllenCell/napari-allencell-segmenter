@@ -11,6 +11,7 @@ from napari_aicssegmentation.core.controller import Controller
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
 from napari_aicssegmentation.util.debug_utils import debug_func
 
+
 class WorkflowStepsController(Controller, IWorkflowStepsController):
     _worker: GeneratorWorker = None
 
@@ -19,7 +20,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         if workflow_engine is None:
             raise ValueError("workflow_engine")
         self._view = WorkflowStepsView(self)
-        self._run_lock = False # lock to avoid triggering multiple segmentation / step runs at the same time
+        self._run_lock = False  # lock to avoid triggering multiple segmentation / step runs at the same time
 
     @property
     def view(self):
@@ -34,15 +35,15 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
 
     def close_workflow(self):
         if self._worker is not None:
-            # we're about to load a new controller/view, 
+            # we're about to load a new controller/view,
             # disconnect worker events to avoid acting on deleted QT objects since worker operations are asynchronous
             # worker will be garbage collected
             self._disconnect_worker_events()
             self._worker.quit()
         self.model.reset()
         self.router.workflow_selection()
- 
-    @debug_func           
+
+    @debug_func
     def run_all(self, parameter_inputs: List[Dict[str, List]]):
         """
         Run all steps in the active workflow.
@@ -52,9 +53,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         if not self._run_lock:
             self._worker: GeneratorWorker = create_worker(self._run_all_async, parameter_inputs)
             self._worker.yielded.connect(self._on_step_processed)
-            self._worker.started.connect(self._on_run_all_started) 
+            self._worker.started.connect(self._on_run_all_started)
             self._worker.finished.connect(self._on_run_all_finished)
-            self._worker.start()      
+            self._worker.start()
 
     def cancel_run_all(self):
         if self._worker is not None:
@@ -65,17 +66,19 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         Disconnect all worker events
         """
         self._worker.started.disconnect()
-        self._worker.yielded.disconnect() 
-        self._worker.finished.disconnect() 
-        
-    def _run_all_async(self, parameter_inputs: List[Dict[str, List]]) -> Generator[Tuple[WorkflowStep, numpy.ndarray], None, None]:
+        self._worker.yielded.disconnect()
+        self._worker.finished.disconnect()
+
+    def _run_all_async(
+        self, parameter_inputs: List[Dict[str, List]]
+    ) -> Generator[Tuple[WorkflowStep, numpy.ndarray], None, None]:
         self.model.active_workflow.reset()
 
         with warnings.catch_warnings():
-            warnings.simplefilter("ignore") # avoid spamming the UI with warnings from segmenter
-            
+            warnings.simplefilter("ignore")  # avoid spamming the UI with warnings from segmenter
+
             i = 0
-            while not self.model.active_workflow.is_done():            
+            while not self.model.active_workflow.is_done():
                 step = self.model.active_workflow.get_next_step()
                 result = self.model.active_workflow.execute_next(parameter_inputs[i])
                 i = i + 1
@@ -93,16 +96,15 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         # Hide all layers except for most recent
         for layer in self.get_layers()[:-1]:
             layer.visible = False
-    
+
     def _on_run_all_started(self):
         self._run_lock = True
         self._view.set_run_all_in_progress()
-    
-    def _on_run_all_aborted(self):        
+
+    def _on_run_all_aborted(self):
         self._view.reset_run_all()
         self._run_lock = False
-    
+
     def _on_run_all_finished(self):
         self._view.reset_run_all()
         self._run_lock = False
-    
