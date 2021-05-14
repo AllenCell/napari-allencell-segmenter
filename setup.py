@@ -97,6 +97,7 @@ setup(
     test_suite="napari_aicssegmentation/_tests",
     tests_require=test_requirements,
     extras_require=extra_requirements,
+    include_package_data=True,
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
