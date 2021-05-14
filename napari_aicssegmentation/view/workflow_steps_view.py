@@ -172,14 +172,13 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self.btn_close_keep.clicked.connect(self._btn_close_keep_clicked)
 
     def set_run_all_in_progress(self):
-        self.btn_run_all.setText("Cancel")
-        #self.btn_run_all.clicked.disconnect(self._btn_run_all_clicked)
+        self.btn_run_all.setText("Cancel")        
         self.btn_run_all.clicked.disconnect()
         self.btn_run_all.clicked.connect(self._btn_run_all_cancel_clicked)
 
-    def set_run_all_available(self):
-        self.btn_run_all.setText("Run all")
-        #self.btn_run_all.clicked.disconnect(self._btn_run_all_cancel_clicked)
+    def reset_run_all(self):
+        self.progress_bar.reset()
+        self.btn_run_all.setText("Run all")        
         self.btn_run_all.clicked.disconnect()
         self.btn_run_all.clicked.connect(self._btn_run_all_clicked)                
     

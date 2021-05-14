@@ -33,44 +33,15 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self.load_view(self._view, self.model)
 
     def close_workflow(self):
+        if self._worker is not None:
+            # we're about to load a new controller/view, 
+            # disconnect worker events to avoid acting on deleted QT objects since worker operations are asynchronous
+            # worker will be garbage collected
+            self._disconnect_worker_events()
+            self._worker.quit()
         self.model.reset()
         self.router.workflow_selection()
-
-    # def run_all(self, parameter_inputs: List[Dict[str, List]]):
-    #     """
-    #     Run all steps in the active workflow.
-
-    #     parameter_inputs List[Dict]: Each dictionary has the same shape as a WorkflowStep.parameter_defaults
-    #     dictionary, but with the parameter values obtained from the UI instead of default values.
-    #     """
-    #     self.model.active_workflow.reset()
-
-    #     step = 0
-    #     while not self.model.active_workflow.is_done():
-    #         # Getting info about the next step that will be run
-    #         step_run = self.model.active_workflow.get_next_step()
-    #         # Run step and add result image (layer names are 1-indexed, steps are 0-indexed)
-    #         self.viewer.add_image(
-    #             self.model.active_workflow.execute_next(parameter_inputs[step]),
-    #             name=f"{str(step + 1)}. {step_run.name}",
-    #         )
-    #         step += 1
-    #         self.view.progress_bar.setValue(step)
-    #         # Hide all layers except for most recent
-    #         for layer in self.viewer.layers[:-1]:
-    #             if layer.visible:
-    #                 layer.visible = False
-
-    # @debug_func
-    # def run_all(self, parameter_inputs: List[Dict[str, List]]):
-    #     if not self._run_lock:
-    #         self._run_lock = True
-    #         self._worker = create_worker(self._run_all_async, parameter_inputs)
-    #         self._worker.started.connect(self._on_run_all_started)  
-    #         self._worker.aborted.connect(self._on_run_all_aborted)          
-    #         self._worker.finished.connect(self._on_run_all_finished)
-    #         #self._worker.yielded.connect(self._on_step_processed)
-    #         self._worker.start()     
+ 
     @debug_func           
     def run_all(self, parameter_inputs: List[Dict[str, List]]):
         """
@@ -83,13 +54,20 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             self._worker.yielded.connect(self._on_step_processed)
             self._worker.started.connect(self._on_run_all_started) 
             self._worker.finished.connect(self._on_run_all_finished)
-            self._worker.aborted.connect(self._on_run_all_aborted)
             self._worker.start()      
 
     def cancel_run_all(self):
         if self._worker is not None:
             self._worker.quit()
 
+    def _disconnect_worker_events(self):
+        """
+        Disconnect all worker events
+        """
+        self._worker.started.disconnect()
+        self._worker.yielded.disconnect() 
+        self._worker.finished.disconnect() 
+        
     def _run_all_async(self, parameter_inputs: List[Dict[str, List]]) -> Generator[Tuple[WorkflowStep, numpy.ndarray], None, None]:
         self.model.active_workflow.reset()
 
@@ -120,12 +98,11 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self._run_lock = True
         self._view.set_run_all_in_progress()
     
-    def _on_run_all_aborted(self):
-        # TODO reset progress bar?
-        self._view.set_run_all_available()
+    def _on_run_all_aborted(self):        
+        self._view.reset_run_all()
         self._run_lock = False
     
     def _on_run_all_finished(self):
-        self._view.set_run_all_available()
+        self._view.reset_run_all()
         self._run_lock = False
     
