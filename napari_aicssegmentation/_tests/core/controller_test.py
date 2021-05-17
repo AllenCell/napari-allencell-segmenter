@@ -69,16 +69,17 @@ class TestController:
         # Arrange
         viewer: MagicMock = create_autospec(napari.Viewer)
         type(self._mock_application).viewer = PropertyMock(return_value=viewer)
-        layer2 = create_autospec(Layer)
-        layers = [create_autospec(Layer), layer2, create_autospec(Layer)]
-        type(viewer).active_layer = PropertyMock(return_value=layer2)
+        expected_layer = create_autospec(Layer)
+        layers: MagicMock = create_autospec(LayerList)
+        layers.selection = MagicMock()
+        layers.selection.active = expected_layer
         viewer.layers = layers
 
         # Act
         active_layer = self._controller.get_active_layer()
 
         # Assert
-        assert active_layer == layer2
+        assert active_layer == expected_layer
 
     def test_is_image_loaded_true(self):
         # Arrange
