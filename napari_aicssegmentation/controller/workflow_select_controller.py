@@ -1,6 +1,5 @@
 from typing import List
 from napari.utils.events.event import Event
-from napari_aicssegmentation.util.debug_utils import debug_class
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
 from napari_aicssegmentation.view.workflow_select_view import WorkflowSelectView
 from napari_aicssegmentation.core._interfaces import IApplication
@@ -11,7 +10,6 @@ from napari_aicssegmentation.core.layer_reader import LayerReader
 from aicssegmentation.workflow import WorkflowEngine
 
 
-@debug_class
 class WorkflowSelectController(Controller, IWorkflowSelectController):
     def __init__(self, application: IApplication, layer_reader: LayerReader, workflow_engine: WorkflowEngine):
         super().__init__(application)
@@ -36,8 +34,9 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
         self.model.layers = self._get_3D_layers()
 
         # pre-selection
-        if self.get_active_layer() is not None and self.get_active_layer().name in self.model.layers:
-            self.model.selected_layer = self.get_active_layer()
+        active_layer = self.viewer.get_active_layer()
+        if active_layer is not None and active_layer.name in self.model.layers:
+            self.model.selected_layer = active_layer
             self.model.channels = self._layer_reader.get_channels(self.model.selected_layer)
 
         self.model.workflows = self._workflow_engine.workflow_definitions
@@ -49,7 +48,7 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
         self.viewer.events.layers_change.disconnect(self._handle_layers_change)
 
     def select_layer(self, layer_name: str):
-        self.model.selected_layer = next(filter(lambda layer: layer.name == layer_name, self.get_layers()), None)
+        self.model.selected_layer = next(filter(lambda layer: layer.name == layer_name, self.viewer.get_layers()), None)
         self.model.channels = self._layer_reader.get_channels(self.model.selected_layer)
         self._view.update_channels(self.model.channels, self.model.selected_channel)
 
@@ -69,7 +68,7 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
         self._view.update_workflows(enabled=False)
 
     def select_workflow(self, workflow_name: str):
-        layer0 = self.viewer.add_image(
+        layer0 = self.viewer.add_image_layer(
             self.model.selected_layer.data,
             name="0. "
             + self.model.selected_layer.name
@@ -88,7 +87,7 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
         """
         Get all 3D image layers currently loaded in the Napari viewer
         """
-        layers = self.get_layers()
+        layers = self.viewer.get_layers()
         return [layer.name for layer in layers if layer.ndim >= 3]
 
     def _reset_channels(self):

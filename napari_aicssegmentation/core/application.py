@@ -5,6 +5,7 @@ from napari_aicssegmentation.core.state import State
 from .router import Router
 from .view_manager import ViewManager
 from ._interfaces import IApplication
+from .viewer_abstraction import ViewerAbstraction
 
 
 class Application(IApplication):
@@ -14,9 +15,8 @@ class Application(IApplication):
         if root_layout is None:
             raise ValueError("root_layout")
 
-        self._viewer = viewer
-
         # build object tree
+        self._viewer = ViewerAbstraction(viewer)
         self._view_manager = ViewManager(root_layout)
         self._router = Router(self)
         self._state = State()
@@ -26,7 +26,7 @@ class Application(IApplication):
         return self._router
 
     @property
-    def viewer(self) -> napari.Viewer:
+    def viewer(self) -> ViewerAbstraction:
         return self._viewer
 
     @property

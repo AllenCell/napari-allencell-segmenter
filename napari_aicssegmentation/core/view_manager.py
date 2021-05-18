@@ -1,10 +1,8 @@
 from typing import Any
-from napari_aicssegmentation.util.debug_utils import debug_class
 from napari_aicssegmentation.core.view import View
 from qtpy.QtWidgets import QLayout
 
 
-@debug_class
 class ViewManager:
     def __init__(self, base_layout: QLayout):
         if base_layout is None:
@@ -21,7 +19,7 @@ class ViewManager:
         Loads the given view
         The currently active view will be removed and garbage collected
         and the given View will become the new active view
-        
+
         inputs
             view (View): View to load
             model: optional Model to pass to the view at load time

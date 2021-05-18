@@ -18,6 +18,9 @@ class LayerReader:
              location for most ome tiffs
         TODO use aicsimageio to read image from the source file path and get channel names
              once Napari exposes Image layer source (next release)
+
+        inputs:
+            layer (Layer): the Napari layer to read data from
         """
         if layer is None:
             return None

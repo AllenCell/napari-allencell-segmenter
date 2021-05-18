@@ -1,11 +1,10 @@
-from aicssegmentation.workflow.workflow import Workflow
-import napari
+import numpy
 
 from napari.utils.events.event import Event
 from unittest import mock
 from unittest.mock import MagicMock, create_autospec, PropertyMock
-
-import numpy
+from aicssegmentation.workflow.workflow import Workflow
+from aicssegmentation.workflow import WorkflowEngine, WorkflowDefinition
 from napari_aicssegmentation.controller.workflow_select_controller import WorkflowSelectController
 from napari_aicssegmentation.core._interfaces import IApplication, IRouter
 from napari_aicssegmentation.core.layer_reader import LayerReader
@@ -13,14 +12,14 @@ from napari_aicssegmentation.core.state import State
 from napari_aicssegmentation.core.view_manager import ViewManager
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
 from napari_aicssegmentation.model.channel import Channel
-from aicssegmentation.workflow import WorkflowEngine, WorkflowDefinition
+from napari_aicssegmentation.core.viewer_abstraction import ViewerAbstraction
 from ..mocks import MockLayer
 
 
 class TestWorkflowSelectController:
     def setup_method(self):
         self._mock_application: MagicMock = create_autospec(IApplication)
-        self._mock_viewer: MagicMock = create_autospec(napari.Viewer)
+        self._mock_viewer: MagicMock = create_autospec(ViewerAbstraction)
         type(self._mock_application).viewer = PropertyMock(return_value=self._mock_viewer)
         self._mock_router: MagicMock = create_autospec(IRouter)
         type(self._mock_application).router = PropertyMock(return_value=self._mock_router)
@@ -53,8 +52,8 @@ class TestWorkflowSelectController:
             create_autospec(WorkflowDefinition),
             create_autospec(WorkflowDefinition),
         ]
-        type(self._mock_viewer).layers = PropertyMock(return_value=layers)
-        type(self._mock_viewer).active_layer = PropertyMock(return_value=active_layer)
+        self._mock_viewer.get_layers.return_value = layers
+        self._mock_viewer.get_active_layer.return_value = active_layer
         type(self._mock_workflow_engine).workflow_definitions = PropertyMock(return_value=workflows)
         self._mock_layer_reader.get_channels.return_value = channels
 
@@ -73,7 +72,7 @@ class TestWorkflowSelectController:
         expected_layer = MockLayer(name="Layer 2")
         layers = [MockLayer(name="Layer 1", ndim=3), expected_layer, MockLayer(name="Layer 3", ndim=3)]
         channels = [Channel(0), Channel(1), Channel(2), Channel(3)]
-        type(self._mock_viewer).layers = PropertyMock(return_value=layers)
+        self._mock_viewer.get_layers.return_value = layers
         self._mock_layer_reader.get_channels.return_value = channels
 
         # Act
@@ -117,7 +116,7 @@ class TestWorkflowSelectController:
         self._model.selected_channel = Channel(0)
         self._model.selected_layer = MockLayer("Layer 1", ndim=4)
         self._mock_workflow_engine.get_executable_workflow.return_value = expected_workflow
-        self._mock_viewer.add_image.return_value = layer0
+        self._mock_viewer.add_image_layer.return_value = layer0
         self._mock_layer_reader.get_channel_data.return_value = numpy.ones((75, 100, 100))
 
         # Act
@@ -134,7 +133,7 @@ class TestWorkflowSelectController:
             MockLayer(name="Layer 2", ndim=3),
             MockLayer(name="Layer 3", ndim=3),
         ]
-        type(self._mock_viewer).layers = PropertyMock(return_value=layers)
+        self._mock_viewer.get_layers.return_value = layers
         self._controller.model.channels = [Channel(0), Channel(1), Channel(2), Channel(3)]
 
         # Act
@@ -157,7 +156,7 @@ class TestWorkflowSelectController:
         ]
         selected_channel = Channel(3)
         channels = [Channel(0), Channel(1), Channel(2), selected_channel]
-        type(self._mock_viewer).layers = PropertyMock(return_value=layers)
+        self._mock_viewer.get_layers.return_value = layers
         self._controller.model.channels = channels
         self._controller.model.selected_layer = selected_layer
         self._controller.model.selected_channel = selected_channel
