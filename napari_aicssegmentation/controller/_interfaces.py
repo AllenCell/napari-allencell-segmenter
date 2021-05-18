@@ -56,4 +56,18 @@ class IWorkflowStepsController(ABC):
 
     @abstractmethod
     def run_all(self, parameter_inputs: List[Dict[str, List]]):
+        """
+        Run all steps in the active workflow.
+
+        inputs
+            parameter_inputs (List[Dict]): Each dictionary has the same shape as a WorkflowStep.parameter_defaults
+            dictionary, but with the parameter values obtained from the UI instead of default values.
+        """
+        pass
+
+    @abstractmethod
+    def cancel_run_all(self):
+        """
+        Cancel any ongoing full workflow run
+        """
         pass
