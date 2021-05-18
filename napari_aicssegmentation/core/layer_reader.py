@@ -8,7 +8,7 @@ from napari_aicssegmentation.model.channel import Channel
 
 class LayerReader:
     """
-    Reader / Helper class to extract information out of Napari Layers    
+    Reader / Helper class to extract information out of Napari Layers
     """
 
     def get_channels(self, layer: Layer) -> List[Channel]:

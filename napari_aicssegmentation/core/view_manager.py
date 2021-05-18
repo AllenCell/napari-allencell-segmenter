@@ -19,7 +19,7 @@ class ViewManager:
         Loads the given view
         The currently active view will be removed and garbage collected
         and the given View will become the new active view
-        
+
         inputs
             view (View): View to load
             model: optional Model to pass to the view at load time

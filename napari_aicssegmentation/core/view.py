@@ -38,8 +38,8 @@ class View(ABC, QWidget, metaclass=ViewMeta):
     @abstractmethod
     def load(self, model: Any = None):
         """
-        Called when the view is loaded. 
-        When implementing in child class, use to load initial model data 
+        Called when the view is loaded.
+        When implementing in child class, use to load initial model data
         and setup the view's UI components
 
         inputs:
@@ -60,8 +60,8 @@ class ViewTemplate(View):
     @abstractmethod
     def load(self):
         """
-        Called when the view template is loaded. 
-        When implementing in child class, use to load initial model data 
+        Called when the view template is loaded.
+        When implementing in child class, use to load initial model data
         and setup the view's UI components
         """
         pass

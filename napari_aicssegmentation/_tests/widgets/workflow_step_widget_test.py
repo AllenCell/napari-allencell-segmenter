@@ -12,7 +12,7 @@ from napari_aicssegmentation.widgets.workflow_step_widget import WorkflowStepWid
 
 class TestWorkflowStepWidget:
     def test_all_workflows(self):
-        """ Make sure none of the workflow steps crash the widget """
+        """Make sure none of the workflow steps crash the widget"""
         engine = WorkflowEngine()
         for workflow in engine.workflow_definitions:
             for step in workflow.steps:

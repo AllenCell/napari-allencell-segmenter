@@ -23,7 +23,7 @@ class ViewerAbstraction:
         Get a list of all image layers currently loaded in the Napari viewer
 
         inputs:
-            viewer (Viewer): the Napari viewer        
+            viewer (Viewer): the Napari viewer
         """
         return self._viewer.layers
 
