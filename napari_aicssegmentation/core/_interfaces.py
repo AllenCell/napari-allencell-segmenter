@@ -1,8 +1,7 @@
-import napari
-
 from abc import ABC, abstractmethod, abstractproperty
 from napari_aicssegmentation.core.view_manager import ViewManager
 from napari_aicssegmentation.core.state import State
+from .viewer_abstraction import ViewerAbstraction
 
 
 class IRouter(ABC):
@@ -32,9 +31,9 @@ class IApplication(ABC):
     """
 
     @abstractproperty
-    def viewer(self) -> napari.Viewer:
+    def viewer(self) -> ViewerAbstraction:
         """
-        Get the main Napari viewer
+        Get the Napari viewer (abstracted)
         """
         pass
 

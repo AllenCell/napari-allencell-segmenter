@@ -89,10 +89,10 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self.view.increment_progress_bar()
 
         # Add step result layer
-        self.add_layer(result, name=f"{step.step_number}. {step.name}")
+        self.viewer.add_image_layer(result, name=f"{step.step_number}. {step.name}")
 
         # Hide all layers except for most recent
-        for layer in self.get_layers()[:-1]:
+        for layer in self.viewer.get_layers()[:-1]:
             layer.visible = False
 
     def _on_run_all_started(self):

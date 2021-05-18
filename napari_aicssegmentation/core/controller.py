@@ -1,13 +1,10 @@
 from typing import Any
-import napari
-
 from abc import ABC, abstractmethod
 from napari_aicssegmentation.core.state import State
 from napari_aicssegmentation.core.view import View
-from napari.layers import Layer
-from napari.components.layerlist import LayerList
 from qtpy.QtWidgets import QMessageBox
 from napari_aicssegmentation.core._interfaces import IApplication, IRouter
+from napari_aicssegmentation.core.viewer_abstraction import ViewerAbstraction
 
 
 class Controller(ABC):
@@ -42,9 +39,9 @@ class Controller(ABC):
         return self._application.router
 
     @property
-    def viewer(self) -> napari.Viewer:
+    def viewer(self) -> ViewerAbstraction:
         """
-        Get the Napari viewer
+        Get the Napari viewer (abstracted)
         """
         return self._application.viewer
 
@@ -54,32 +51,6 @@ class Controller(ABC):
         :param: view: the View to load
         """
         return self._application.view_manager.load_view(view, model)
-
-    def add_layer(self, image_data, name: str):
-        """
-        Add a new image layer to the Napari viewer
-        :param: image_data: image layer pixel data
-        :param: name: new layer name
-        """
-        self._application.viewer.add_image(image_data, name=name)
-
-    def get_layers(self) -> LayerList:
-        """
-        Get a list of all image layers currently loaded in the Napari viewer
-        """
-        return self._application.viewer.layers
-
-    def get_active_layer(self) -> Layer:
-        """
-        Get the layer currently active (selected) in the Napari viewer
-        """
-        return self._application.viewer.layers.selection.active
-
-    def is_image_loaded(self) -> bool:
-        """
-        True if there is already an image loaded onto napari, False otherwise
-        """
-        return len(self.get_layers()) > 0
 
     def show_message_box(self, title: str, message: str):
         """
