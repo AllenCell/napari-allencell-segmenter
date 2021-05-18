@@ -2,8 +2,7 @@ import pytest
 import napari
 
 from unittest.mock import MagicMock, create_autospec, PropertyMock
-from napari_aicssegmentation.core.controller import Layer, LayerList
-from napari_aicssegmentation.core.viewer_abstraction import ViewerAbstraction
+from napari_aicssegmentation.core.viewer_abstraction import ViewerAbstraction, Layer, LayerList
 
 
 class TestViewerAbstraction:
