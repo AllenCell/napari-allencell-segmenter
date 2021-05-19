@@ -5,6 +5,7 @@ from aicssegmentation.workflow import WorkflowStepCategory
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import (
+    QFileDialog,
     QHBoxLayout,
     QLabel,
     QMessageBox,
@@ -131,11 +132,16 @@ class WorkflowStepsView(View):  # pragma: no-cover
         btn_close_workflow.setFixedWidth(120)
         btn_close_workflow.clicked.connect(self._btn_close_clicked)
 
+        btn_save_workflow = QPushButton("Save workflow")
+        btn_save_workflow.setFixedWidth(120)
+        btn_save_workflow.clicked.connect(self._btn_save_workflow_clicked)
+
         self.btn_run_all = QPushButton("Run all")
         self.btn_run_all.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         self.btn_run_all.clicked.connect(self._btn_run_all_clicked)
 
         layout.addWidget(btn_close_workflow)
+        layout.addWidget(btn_save_workflow)
         layout.addWidget(self.btn_run_all)
 
         self._layout.addLayout(layout)
@@ -207,3 +213,14 @@ class WorkflowStepsView(View):  # pragma: no-cover
     def _btn_run_all_cancel_clicked(self, checked: bool):
         self.btn_run_all.setText("Canceling...")
         self._controller.cancel_run_all()
+
+    def _btn_save_workflow_clicked(self, checked: bool):
+        file_path, _ = QFileDialog.getSaveFileName(self, 
+                                                  caption="Save workflow as...", 
+                                                  filter="Json file (*.json)", 
+                                                  options=QFileDialog.Option.DontUseNativeDialog | QFileDialog.Option.DontUseCustomDirectoryIcons)
+        # dialog = QFileDialog(self, caption="Save workflow as...", filter="Json file (*.json)")
+        # if dialog.exec():
+        #     dialog.getSaveFileName
+        if file_path:
+            print(file_path)

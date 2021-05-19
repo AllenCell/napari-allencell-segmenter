@@ -46,6 +46,9 @@ class WorkflowStepWidget(QWidget):
         box = CollapsibleBox(step_name, Form(self.form_rows, (11, 5, 5, 5)))
         layout.addWidget(box)
 
+    def get_workflow_step_with_inputs(self) -> WorkflowStep:
+        new_step = copy.deepcopy(self._step)        
+
     def get_parameter_inputs(self) -> Dict[str, Any]:
         """
         Returns all parameter input values for the as a dictionary {param_name: param_value}
