@@ -27,11 +27,12 @@ from napari_aicssegmentation._style import PAGE_CONTENT_WIDTH
 
 class WorkflowStepsView(View):  # pragma: no-cover
     window_workflow_diagram: QScrollArea
+    modal_close_workflow: QMessageBox
+    progress_bar: QProgressBar
     btn_workflow_info: QPushButton
     btn_run_all: QPushButton
-    modal_close_workflow: QMessageBox
+    btn_save_workflow: QPushButton
     btn_close_keep: QPushButton
-    progress_bar: QProgressBar
 
     def __init__(self, controller: IWorkflowStepsController):
         super().__init__(template_class=MainTemplate)
@@ -132,16 +133,16 @@ class WorkflowStepsView(View):  # pragma: no-cover
         btn_close_workflow.setFixedWidth(120)
         btn_close_workflow.clicked.connect(self._btn_close_clicked)
 
-        btn_save_workflow = QPushButton("Save workflow")
-        btn_save_workflow.setFixedWidth(120)
-        btn_save_workflow.clicked.connect(self._btn_save_workflow_clicked)
+        self.btn_save_workflow = QPushButton("Save workflow")
+        self.btn_save_workflow.setFixedWidth(120)
+        self.btn_save_workflow.clicked.connect(self._btn_save_workflow_clicked)
 
         self.btn_run_all = QPushButton("Run all")
         self.btn_run_all.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         self.btn_run_all.clicked.connect(self._btn_run_all_clicked)
 
         layout.addWidget(btn_close_workflow)
-        layout.addWidget(btn_save_workflow)
+        layout.addWidget(self.btn_save_workflow)
         layout.addWidget(self.btn_run_all)
 
         self._layout.addLayout(layout)
@@ -192,6 +193,9 @@ class WorkflowStepsView(View):  # pragma: no-cover
         value = self.progress_bar.value()
         self.progress_bar.setValue(value + 1)
 
+    def _get_workflow_step_widgets(self) -> List[WorkflowStepWidget]:
+        return self.findChildren(WorkflowStepWidget)
+
     #####################################################################
     # Event handlers
     #####################################################################
@@ -206,8 +210,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self._controller.close_workflow()
 
     def _btn_run_all_clicked(self, checked: bool):
-        workflow_step_widgets: List[WorkflowStepWidget] = self.findChildren(WorkflowStepWidget)
-        all_parameter_inputs = [w.get_parameter_inputs() for w in workflow_step_widgets]
+        all_parameter_inputs = [w.get_parameter_inputs() for w in self._get_workflow_step_widgets()]
         self._controller.run_all(all_parameter_inputs)
 
     def _btn_run_all_cancel_clicked(self, checked: bool):
@@ -215,12 +218,13 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self._controller.cancel_run_all()
 
     def _btn_save_workflow_clicked(self, checked: bool):
-        file_path, _ = QFileDialog.getSaveFileName(self, 
-                                                  caption="Save workflow as...", 
-                                                  filter="Json file (*.json)", 
-                                                  options=QFileDialog.Option.DontUseNativeDialog | QFileDialog.Option.DontUseCustomDirectoryIcons)
-        # dialog = QFileDialog(self, caption="Save workflow as...", filter="Json file (*.json)")
-        # if dialog.exec():
-        #     dialog.getSaveFileName
+        file_path, _ = QFileDialog.getSaveFileName(
+            self,
+            caption="Save workflow as...",
+            filter="Json file (*.json)",
+            options=QFileDialog.Option.DontUseNativeDialog | QFileDialog.Option.DontUseCustomDirectoryIcons,
+        )
+
         if file_path:
-            print(file_path)
+            steps = [w.get_workflow_step_with_inputs() for w in self._get_workflow_step_widgets()]
+            self._controller.save_workflow(steps, file_path)

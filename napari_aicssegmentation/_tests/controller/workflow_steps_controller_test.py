@@ -8,7 +8,7 @@ from napari_aicssegmentation.core.state import State
 from napari_aicssegmentation.core.view_manager import ViewManager
 from napari_aicssegmentation.model.channel import Channel
 from napari_aicssegmentation.model.segmenter_model import SegmenterModel
-from aicssegmentation.workflow import WorkflowEngine
+from aicssegmentation.workflow import WorkflowEngine, WorkflowStep
 
 
 class TestWorkflowStepsController:
@@ -22,10 +22,10 @@ class TestWorkflowStepsController:
         type(self._mock_application).view_manager = PropertyMock(return_value=self._mock_view_manager)
         self._model = SegmenterModel()
         type(self._mock_state).segmenter_model = PropertyMock(return_value=self._model)
-        self._workflow_engine: MagicMock = create_autospec(WorkflowEngine)
+        self._mock_workflow_engine: MagicMock = create_autospec(WorkflowEngine)
 
         with mock.patch("napari_aicssegmentation.controller.workflow_steps_controller.WorkflowStepsView"):
-            self._controller = WorkflowStepsController(self._mock_application, self._workflow_engine)
+            self._controller = WorkflowStepsController(self._mock_application, self._mock_workflow_engine)
 
     def test_index(self):
         # Act
@@ -45,3 +45,13 @@ class TestWorkflowStepsController:
         # Assert
         self._controller.model.selected_channel == None
         self._mock_router.workflow_selection.assert_called_once()
+
+    def test_save_workflow(self):
+        # Arrange
+        steps = [create_autospec(WorkflowStep), create_autospec(WorkflowStep), create_autospec(WorkflowStep)]
+
+        # Act
+        self._controller.save_workflow(steps, "/path/to/file.json")
+
+        # Assert
+        self._mock_workflow_engine.save_workflow_definition.assert_called_once()

@@ -1,9 +1,10 @@
 import numpy
 import warnings
 
+from pathlib import Path
 from typing import Dict, Generator, List, Tuple
 from napari.qt.threading import create_worker, GeneratorWorker
-from aicssegmentation.workflow import WorkflowEngine, WorkflowStep
+from aicssegmentation.workflow import WorkflowEngine, WorkflowStep, WorkflowDefinition
 from napari_aicssegmentation.view.workflow_steps_view import WorkflowStepsView
 from napari_aicssegmentation.core._interfaces import IApplication
 from napari_aicssegmentation.controller._interfaces import IWorkflowStepsController
@@ -18,6 +19,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         super().__init__(application)
         if workflow_engine is None:
             raise ValueError("workflow_engine")
+        self._workflow_engine = workflow_engine
         self._view = WorkflowStepsView(self)
         self._run_lock = False  # lock to avoid triggering multiple segmentation / step runs at the same time
 
@@ -32,6 +34,11 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
     def index(self):
         self.load_view(self._view, self.model)
 
+    def save_workflow(self, steps: List[WorkflowStep], output_file_path: str):
+        save_path = Path(output_file_path)
+        workflow_def = WorkflowDefinition(save_path.name, steps)
+        self._workflow_engine.save_workflow_definition(workflow_def, save_path)
+
     def close_workflow(self):
         if self._worker is not None:
             # we're about to load a new controller/view,
@@ -45,7 +52,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
     def run_all(self, parameter_inputs: List[Dict[str, List]]):
         """
         Run all steps in the active workflow.
-        parameter_inputs List[Dict]: Each dictionary has the same shape as a WorkflowStep.parameter_defaults
+        parameter_inputs List[Dict]: Each dictionary has the same shape as a WorkflowStep.parameter_values
         dictionary, but with the parameter values obtained from the UI instead of default values.
         """
         if not self._run_lock:

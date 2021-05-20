@@ -39,7 +39,7 @@ class WorkflowStepWidget(QWidget):
             self.form_rows.append(FormRow("", label_no_param))
         else:
             for param_name, param_data in step.function.parameters.items():
-                default_values = step.parameter_defaults[param_name]
+                default_values = step.parameter_values[param_name]
                 self._add_param_rows(param_name, param_data, default_values)
 
         step_name = f"<span>{step.step_number}.&nbsp;{step.name}</span>"
@@ -47,16 +47,21 @@ class WorkflowStepWidget(QWidget):
         layout.addWidget(box)
 
     def get_workflow_step_with_inputs(self) -> WorkflowStep:
-        new_step = copy.deepcopy(self._step)        
+        """
+        Returns a new WorkflowStep object with updated parameter values to reflect user input
+        """
+        new_step = copy.deepcopy(self._step)
+        new_step.parameter_values = self.get_parameter_inputs()
+        return new_step
 
     def get_parameter_inputs(self) -> Dict[str, Any]:
         """
         Returns all parameter input values for the as a dictionary {param_name: param_value}
         """
-        if self._step.parameter_defaults is None:
+        if self._step.parameter_values is None:
             return None
 
-        parameter_inputs = copy.deepcopy(self._step.parameter_defaults)
+        parameter_inputs = copy.deepcopy(self._step.parameter_values)
 
         for parameter_name in parameter_inputs.keys():
             # If default values for this param came in a list, we need to save values
