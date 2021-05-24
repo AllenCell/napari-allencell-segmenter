@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, List
+
+from aicssegmentation.workflow.workflow_step import WorkflowStep
 from napari_aicssegmentation.model.channel import Channel
 
 
@@ -60,7 +62,7 @@ class IWorkflowStepsController(ABC):
         Run all steps in the active workflow.
 
         inputs
-            parameter_inputs (List[Dict]): Each dictionary has the same shape as a WorkflowStep.parameter_defaults
+            parameter_inputs (List[Dict]): Each dictionary has the same shape as a WorkflowStep.parameter_values
             dictionary, but with the parameter values obtained from the UI instead of default values.
         """
         pass
@@ -69,5 +71,16 @@ class IWorkflowStepsController(ABC):
     def cancel_run_all(self):
         """
         Cancel any ongoing full workflow run
+        """
+        pass
+
+    @abstractmethod
+    def save_workflow(self, steps: List[WorkflowStep], output_file_path: str):
+        """
+        Save the current workflow as a configuration file
+
+        inputs
+            steps (List[WorkflowStep]): List of Workflow steps to save as a Workflow
+            output_file_path (str): path to save the workflow file to
         """
         pass

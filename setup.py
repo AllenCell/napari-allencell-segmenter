@@ -14,13 +14,13 @@ def read(fname):
 # Add your dependencies in requirements.txt
 # Note: you can add test-specific requirements in tox.ini
 requirements = [
-    #"napari>=0.4.7",
-    "napari @ git+https://github.com/napari/napari.git@master#egg=napari",
+    "napari>=0.4.8",    
     "napari-plugin-engine>=0.1.4",
     "numpy",
-    "aicssegmentation >= 0.2.0",
+    #"aicssegmentation >= 0.2.0",
+    "aicssegmentation @ git+https://github.com/AllenCell/aics-segmentation.git@dev#egg=aicssegmentation",
     "magicgui >= 0.2.9",
-    "aicsimageio>=3.3.4,<4",
+    "aicsimageio>=3.3.6,<4",
     "opencv-python-headless>=4.5.1",
 ]
 
@@ -38,7 +38,7 @@ test_requirements = [
 ]
 
 dev_requirements = [
-    "black==19.10b0",
+    "black>=19.10b0",
     "bumpversion>=0.5.3",
     "coverage>=5.0a4",
     "docutils>=0.10,<0.16",
