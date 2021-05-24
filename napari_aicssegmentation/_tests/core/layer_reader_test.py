@@ -24,6 +24,12 @@ class TestLayerReader:
         # Assert
         assert channels is not None
         assert len(channels) == 4
+    
+    def test_get_channels_from_layer_source(self, resources_dir):
+        # Arrange
+        # TODO mock AICSImage
+        pass
+
 
     def test_get_channel_data_null_layer_fails(self):
         # Assert

@@ -11,4 +11,4 @@ class Channel:
         if self.name is None or self.name.strip().isspace():
             return f"Channel {self.index}"
 
-        return f"Ch{self.index}. {self.name}"
+        return f"Ch{self.index}.  {self.name}"
