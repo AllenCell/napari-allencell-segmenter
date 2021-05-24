@@ -37,8 +37,8 @@ class TestWorkflowStepWidget:
             "scaling_param": [FunctionParameter("scaling", WidgetType.DROPDOWN, "str", options=["red", "blue"])]
         }
         function = SegmenterFunction("gaussian blur", "Gaussian blur", "my_function_name", "my_module_name", parameters)
-        parameter_defaults = {"scaling_param": ["blue"]}
-        step = WorkflowStep(WorkflowStepCategory.PRE_PROCESSING, function, 1, [2], parameter_defaults)
+        parameter_values = {"scaling_param": ["blue"]}
+        step = WorkflowStep(WorkflowStepCategory.PRE_PROCESSING, function, 1, [2], parameter_values)
 
         # Act
         widget = WorkflowStepWidget(step)
@@ -57,8 +57,8 @@ class TestWorkflowStepWidget:
             ]
         }
         function = SegmenterFunction("gaussian blur", "Gaussian blur", "my_function_name", "my_module_name", parameters)
-        parameter_defaults = {"scaling_param": ["blue", "green"]}
-        step = WorkflowStep(WorkflowStepCategory.PRE_PROCESSING, function, 1, [2], parameter_defaults)
+        parameter_values = {"scaling_param": ["blue", "green"]}
+        step = WorkflowStep(WorkflowStepCategory.PRE_PROCESSING, function, 1, [2], parameter_values)
 
         # Act
         widget = WorkflowStepWidget(step)
@@ -80,15 +80,15 @@ class TestWorkflowStepWidget:
             ],
         }
         function = SegmenterFunction("Test", "Test", "my_function_name", "my_module_name", parameters)
-        parameter_defaults = {"x": 5, "y": [1, 2]}
-        step = WorkflowStep(WorkflowStepCategory.PRE_PROCESSING, function, 1, [0], parameter_defaults)
+        parameter_values = {"x": 5, "y": [1, 2]}
+        step = WorkflowStep(WorkflowStepCategory.PRE_PROCESSING, function, 1, [0], parameter_values)
         widget = WorkflowStepWidget(step)
 
         # Act
         parameter_inputs = widget.get_parameter_inputs()
 
         # Assert
-        assert parameter_inputs == parameter_defaults
+        assert parameter_inputs == parameter_values
 
     def test_get_parameter_inputs_modified_params(self):
         # Arrange
@@ -100,9 +100,9 @@ class TestWorkflowStepWidget:
             ],
         }
         function = SegmenterFunction("Test", "Test", "my_function_name", "my_module_name", parameters)
-        parameter_defaults = {"x": 5, "y": [1, 2]}
+        parameter_values = {"x": 5, "y": [1, 2]}
         expected_values = {"x": 50, "y": [11, 22]}
-        step = WorkflowStep(WorkflowStepCategory.PRE_PROCESSING, function, 1, [0], parameter_defaults)
+        step = WorkflowStep(WorkflowStepCategory.PRE_PROCESSING, function, 1, [0], parameter_values)
         widget = WorkflowStepWidget(step)
 
         # Act
