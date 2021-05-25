@@ -84,3 +84,9 @@ class IWorkflowStepsController(ABC):
             output_file_path (str): path to save the workflow file to
         """
         pass
+
+
+class IBatchProcessingController(ABC):
+    @abstractmethod
+    def run_batch(self):
+        pass
