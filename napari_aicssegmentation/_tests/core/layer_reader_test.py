@@ -1,6 +1,10 @@
 import numpy
 import pytest
 
+from aicsimageio import AICSImage
+from unittest import mock
+from unittest.mock import Mock, create_autospec
+from napari.layers._source import Source
 from napari_aicssegmentation.core.layer_reader import LayerReader, Channel
 from ..mocks import MockLayer
 
@@ -24,12 +28,26 @@ class TestLayerReader:
         # Assert
         assert channels is not None
         assert len(channels) == 4
-    
-    def test_get_channels_from_layer_source(self, resources_dir):
-        # Arrange
-        # TODO mock AICSImage
-        pass
 
+    @mock.patch("napari_aicssegmentation.core.layer_reader.AICSImage")
+    def test_get_channels_from_layer_source(self, mock_aics_image: Mock):
+        # Arrange
+        mock_image = create_autospec(AICSImage)
+        mock_aics_image.return_value = mock_image
+        img_path = "/path/to/image.tiff"
+        layer = MockLayer(name="Test", source=Source(path=img_path))
+        mock_image.get_channel_names.return_value = ["Test1", "Test2", "Test3"]
+
+        # Act
+        channels = self._layer_reader.get_channels(layer)
+
+        # Assert
+        assert channels is not None
+        assert len(channels) == 3
+        assert "Test1" == channels[0].name
+        assert "Test2" == channels[1].name
+        assert "Test3" == channels[2].name
+        mock_aics_image.assert_called_with(img_path)
 
     def test_get_channel_data_null_layer_fails(self):
         # Assert
@@ -61,3 +79,19 @@ class TestLayerReader:
         # Assert
         assert result.shape == (75, 100, 200)
         assert numpy.array_equal(result, input[:, index, :, :])
+
+    @mock.patch("napari_aicssegmentation.core.layer_reader.AICSImage")
+    def test_get_channel_data_from_layer_source(self, mock_aics_image):
+        # Arrange
+        data = numpy.ones((75, 100, 100))
+        mock_image = create_autospec(AICSImage)
+        mock_aics_image.return_value = mock_image
+        img_path = "/path/to/image.tiff"
+        layer = MockLayer(name="Test", source=Source(path=img_path))
+        mock_image.get_image_data.return_value = data
+
+        # Act
+        result = self._layer_reader.get_channel_data(1, layer)
+
+        # Assert
+        assert numpy.array_equal(result, data)

@@ -8,6 +8,7 @@ from napari_aicssegmentation.model.channel import Channel
 
 log = logging.getLogger(__name__)
 
+
 class LayerReader:
     """
     Reader / Helper class to extract information out of Napari Layers
@@ -27,13 +28,15 @@ class LayerReader:
             try:
                 return self._get_channels_from_path(layer.source.path)
             except Exception as ex:
-                log.warning("Could not read image layer from source path even though a source path was provided."
-                            "Defaulting to reading from layer data (this is less accurate). \n"
-                            f"Error message: {ex}")
+                log.warning(
+                    "Could not read image layer from source path even though a source path was provided."
+                    "Defaulting to reading from layer data (this is less accurate). \n"
+                    f"Error message: {ex}"
+                )
 
         return self._get_channels_default(layer)
-    
-    def _get_channels_default(self, layer: Layer):
+
+    def _get_channels_default(self, layer: Layer) -> List[Channel]:
         img = AICSImage(layer.data)  # gives us a 6D image
 
         # we're expecting either STCZYX or STZCYX but we don't know for sure
@@ -72,9 +75,11 @@ class LayerReader:
             try:
                 return self._get_channel_data_from_path(channel_index, layer.source.path)
             except Exception as ex:
-                log.warning("Could not read image layer from source path even though a source path was provided."
-                            "Defaulting to reading from layer data (this is less accurate). \n"
-                            f"Error message: {ex}")
+                log.warning(
+                    "Could not read image layer from source path even though a source path was provided."
+                    "Defaulting to reading from layer data (this is less accurate). \n"
+                    f"Error message: {ex}"
+                )
 
         return self._get_channel_data_default(channel_index, layer)
 
