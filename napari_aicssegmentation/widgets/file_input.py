@@ -5,7 +5,7 @@ from PyQt5.QtCore import pyqtSignal
 
 
 class FileInputMode(Enum):
-    DIRECTORY = ("dir",)
+    DIRECTORY = "dir"
     FILE = "file"
 
 
