@@ -5,6 +5,7 @@ from napari_aicssegmentation.core.application import Application
 from napari_plugin_engine import napari_hook_implementation
 from PyQt5.QtWidgets import QLabel, QWidget, QVBoxLayout, QSizePolicy
 import napari.qt
+
 """
 The class name here gets converted to title case and gets displayed as both the title 
 of the plugin window and the title displayed in the app menu dropdown.
@@ -32,6 +33,4 @@ class BatchProcessingWidget(QWidget):
 
 @napari_hook_implementation
 def napari_experimental_provide_dock_widget():  # pragma: no-cover
-    return [
-        (WorkflowEditorWidget, {"name": "Workflow editor"}),
-        (BatchProcessingWidget, {"name": "Batch processing"})]
+    return [(WorkflowEditorWidget, {"name": "Workflow editor"}), (BatchProcessingWidget, {"name": "Batch processing"})]

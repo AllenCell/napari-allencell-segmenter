@@ -11,11 +11,10 @@ class BatchProcessingController(Controller, IBatchProcessingController):
         if workflow_engine is None:
             raise ValueError("workflow_engine")
         self._workflow_engine = workflow_engine
-        self._view = BatchProcessingView(self)      
-    
+        self._view = BatchProcessingView(self)
+
     def index(self):
         self.load_view(self._view)
 
     def run_batch(self):
         return super().run_batch()
-        
