@@ -1,6 +1,7 @@
-from PyQt5.QtWidgets import QApplication
 import pytest
 import os
+
+from PyQt5.QtWidgets import QApplication
 
 
 @pytest.fixture(scope="session", autouse=True)
