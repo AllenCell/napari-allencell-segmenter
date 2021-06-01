@@ -49,7 +49,7 @@ class BatchProcessingView(View):
 
         self.submit_button = QPushButton("Run Batch")
         self.submit_button.clicked.connect(self.run_batch)
-        self.submit_button.setEnabled(False)
+        self.update_button(enabled=False)
         layout.addWidget(self.submit_button)
 
     def update_button(self, enabled: bool):
@@ -59,6 +59,8 @@ class BatchProcessingView(View):
             enabled: True to enable the button, false to disable it
         """
         self.submit_button.setEnabled(enabled)
+        if not enabled:
+            self.submit_button.setStyleSheet("QPushButton:disabled""{ color: gray }")
 
     #####################################################################
     # Event handlers
