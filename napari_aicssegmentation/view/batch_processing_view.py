@@ -65,10 +65,7 @@ class BatchProcessingView(View):
     # Event handlers
     #####################################################################
     def run_batch(self):
-        print("clicked")
-        print(self._controller.input_folder)
-        print(self._controller.output_folder)
-        print(self._controller.workflow_config)
+        self._controller.run_batch()
 
     def workflow_selected(self, selected_config):
         self._controller.select_config(selected_config)

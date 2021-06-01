@@ -1,4 +1,4 @@
-from aicssegmentation.workflow import WorkflowEngine
+from aicssegmentation.workflow import WorkflowEngine, BatchWorkflow
 from napari_aicssegmentation.core._interfaces import IApplication
 from napari_aicssegmentation.core.controller import Controller
 from napari_aicssegmentation.view.batch_processing_view import BatchProcessingView
@@ -25,7 +25,8 @@ class BatchProcessingController(Controller, IBatchProcessingController):
         self.load_view(self._view)
 
     def run_batch(self):
-        return super().run_batch()
+        workflow = self.get_batch_workflow()
+        workflow.process_all()
 
     def ready_to_process(self):
         if not self.workflow_config:
@@ -38,16 +39,31 @@ class BatchProcessingController(Controller, IBatchProcessingController):
             return True
 
     def select_config(self, selected_config):
-        self.workflow_config = selected_config
+        self.workflow_config = Path(selected_config)
         if self.ready_to_process():
             self._view.update_button(enabled=True)
 
     def select_input_folder(self, input_folder):
-        self.input_folder = input_folder
+        self.input_folder = Path(input_folder)
         if self.ready_to_process():
             self._view.update_button(enabled=True)
 
     def select_output_folder(self, output_folder):
-        self.output_folder = output_folder
+        self.output_folder = Path(output_folder)
         if self.ready_to_process():
             self._view.update_button(enabled=True)
+
+    def get_batch_workflow(self):
+        if not self.selected_index:
+            return self._workflow_engine.get_executable_batch_workflow_from_config_file(
+                self.workflow_config,
+                self.input_folder,
+                self.output_folder
+            )
+        else:
+            return self._workflow_engine.get_executable_batch_workflow_from_config_file(
+                self.workflow_config,
+                self.input_folder,
+                self.output_folder,
+                channel_index=self.selected_index
+            )
