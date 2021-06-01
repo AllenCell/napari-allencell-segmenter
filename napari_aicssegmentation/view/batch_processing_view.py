@@ -29,15 +29,18 @@ class BatchProcessingView(View):
                 mode=FileInputMode.FILE, filter="Json file (*.json)", initial_text="Load a JSON workflow file..."
             ),
         )
+        row1.widget.file_selected.connect(self.workflow_selected)
         channel_input = QLineEdit("0")
         channel_input.setValidator(QIntValidator(bottom=0))
         row2 = FormRow("2.  Structure channel index:", channel_input)
         row3 = FormRow(
             "3.  Input directory:", FileInput(mode=FileInputMode.DIRECTORY, initial_text="Select a directory...")
         )
+        row3.widget.file_selected.connect(self.input_folder_selected)
         row4 = FormRow(
             "4.  Output directory:", FileInput(mode=FileInputMode.DIRECTORY, initial_text="Select a directory...")
         )
+        row4.widget.file_selected.connect(self.output_folder_selected)
 
         # TODO figure out how to merge cells to display help line (use GridLayout instead of FormLayout?)
         form = QWidget()
@@ -46,7 +49,7 @@ class BatchProcessingView(View):
 
         self.submit_button = QPushButton("Run Batch")
         self.submit_button.clicked.connect(self.run_batch)
-        # self.submit_button.setEnabled(False)
+        self.submit_button.setEnabled(False)
         layout.addWidget(self.submit_button)
 
 
@@ -56,14 +59,22 @@ class BatchProcessingView(View):
        Inputs:
            enabled: True to enable the button, false to disable it
        """
-        self.submit_button.setEnabled(bool)
-
+        self.submit_button.setEnabled(enabled)
 
     #####################################################################
     # Event handlers
     #####################################################################
     def run_batch(self):
         print("clicked")
+        print(self._controller.input_folder)
+        print(self._controller.output_folder)
+        print(self._controller.workflow_config)
+
+    def workflow_selected(self, selected_config):
+        self._controller.select_config(selected_config)
 
     def input_folder_selected(self, input_folder):
-        self._controller.select_input_folder()
+        self._controller.select_input_folder(input_folder)
+
+    def output_folder_selected(self, output_folder):
+        self._controller.select_output_folder(output_folder)

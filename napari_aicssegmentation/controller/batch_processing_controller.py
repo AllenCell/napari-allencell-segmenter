@@ -26,3 +26,28 @@ class BatchProcessingController(Controller, IBatchProcessingController):
 
     def run_batch(self):
         return super().run_batch()
+
+    def ready_to_process(self):
+        if not self.workflow_config:
+            return False
+        elif not self.input_folder:
+            return False
+        elif not self.output_folder:
+            return False
+        else:
+            return True
+
+    def select_config(self, selected_config):
+        self.workflow_config = selected_config
+        if self.ready_to_process():
+            self._view.update_button(enabled=True)
+
+    def select_input_folder(self, input_folder):
+        self.input_folder = input_folder
+        if self.ready_to_process():
+            self._view.update_button(enabled=True)
+
+    def select_output_folder(self, output_folder):
+        self.output_folder = output_folder
+        if self.ready_to_process():
+            self._view.update_button(enabled=True)
