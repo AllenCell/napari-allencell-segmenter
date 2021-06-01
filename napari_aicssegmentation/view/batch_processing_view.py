@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QVBoxLayout, QWidget, QLineEdit
+from PyQt5.QtWidgets import QVBoxLayout, QWidget, QLineEdit, QPushButton
 from PyQt5.QtGui import QIntValidator
 from napari_aicssegmentation.core.view import View
 from napari_aicssegmentation.controller._interfaces import IBatchProcessingController
@@ -43,3 +43,27 @@ class BatchProcessingView(View):
         form = QWidget()
         form.setLayout(Form([row1, row2, row3, row4]))
         layout.addWidget(form)
+
+        self.submit_button = QPushButton("Run Batch")
+        self.submit_button.clicked.connect(self.run_batch)
+        self.submit_button.setEnabled(False)
+        layout.addWidget(self.submit_button)
+
+
+    def update_button(self, enabled: bool):
+        """
+       Update state of process button
+       Inputs:
+           enabled: True to enable the button, false to disable it
+       """
+        self.submit_button.setEnabled(bool)
+
+
+    #####################################################################
+    # Event handlers
+    #####################################################################
+    def run_batch(self):
+        print("clicked")
+
+    def input_folder_selected(self, input_folder):
+        self._controller.select_input_folder()
