@@ -51,7 +51,7 @@ class FileInput(QWidget):
 
     @property
     def selected_file(self) -> str:
-        return self._select_file
+        return self._selected_file
 
     def _select_file(self): # pragma: no-cover
         if self._mode == FileInputMode.FILE:
@@ -71,6 +71,7 @@ class FileInput(QWidget):
         if file_path:
             self._input_box.setText(file_path)
             self.file_selected.emit(file_path)
+            self._selected_file = file_path
 
     def mousePressEvent(self, event):
         if self._input_box.underMouse():

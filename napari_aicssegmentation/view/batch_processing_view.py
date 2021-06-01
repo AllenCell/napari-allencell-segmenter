@@ -46,7 +46,7 @@ class BatchProcessingView(View):
 
         self.submit_button = QPushButton("Run Batch")
         self.submit_button.clicked.connect(self.run_batch)
-        self.submit_button.setEnabled(False)
+        # self.submit_button.setEnabled(False)
         layout.addWidget(self.submit_button)
 
 
