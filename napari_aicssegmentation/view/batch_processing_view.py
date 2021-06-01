@@ -52,13 +52,12 @@ class BatchProcessingView(View):
         self.submit_button.setEnabled(False)
         layout.addWidget(self.submit_button)
 
-
     def update_button(self, enabled: bool):
         """
-       Update state of process button
-       Inputs:
-           enabled: True to enable the button, false to disable it
-       """
+        Update state of process button
+        Inputs:
+            enabled: True to enable the button, false to disable it
+        """
         self.submit_button.setEnabled(enabled)
 
     #####################################################################
