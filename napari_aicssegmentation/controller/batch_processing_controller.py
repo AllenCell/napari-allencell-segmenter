@@ -4,6 +4,9 @@ from napari_aicssegmentation.core.controller import Controller
 from napari_aicssegmentation.view.batch_processing_view import BatchProcessingView
 from ._interfaces import IBatchProcessingController
 from pathlib import Path
+from napari.qt.threading import create_worker, GeneratorWorker
+
+import warnings
 
 
 class BatchProcessingController(Controller, IBatchProcessingController):
@@ -25,8 +28,18 @@ class BatchProcessingController(Controller, IBatchProcessingController):
         self.load_view(self._view)
 
     def run_batch(self):
-        workflow = self.get_batch_workflow()
-        workflow.process_all()
+        # workflow = self.get_batch_workflow()
+        # workflow.process_all()
+        self.worker = create_worker(self.run_batch_async)
+        self.worker.start()
+
+    def run_batch_async(self):
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            workflow = self.get_batch_workflow()
+            workflow.process_all()
+
+
 
     def ready_to_process(self):
         if not self.workflow_config:
