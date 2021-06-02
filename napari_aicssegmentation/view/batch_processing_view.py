@@ -22,6 +22,9 @@ class BatchProcessingView(View):
         self._setup_ui()
 
     def _setup_ui(self):
+        """
+        Set up the UI for the BatchProcessingView
+        """
         layout = QVBoxLayout()
         self.setLayout(layout)
 
@@ -65,6 +68,11 @@ class BatchProcessingView(View):
             self.submit_button.setStyleSheet("QPushButton:disabled" "{ color: gray }")
 
     def open_completion_dialog(self, output_folder: Path):
+        """
+        Open the batch processing completion dialog box
+        Inputs:
+            output_folder (Path): output folder to open when prompted by user
+        """
         dlg = BatchCompleteDialog(output_folder)
         dlg.exec()
 
@@ -72,13 +80,25 @@ class BatchProcessingView(View):
     # Event handlers
     #####################################################################
     def run_batch(self):
+        """
+        Run the batch workflow
+        """
         self._controller.run_batch()
 
     def workflow_selected(self, selected_config):
+        """
+        Event handler when workflow config file is selected
+        """
         self._controller.select_config(selected_config)
 
     def input_folder_selected(self, input_folder):
+        """
+        Event handler when input folder is selected
+        """
         self._controller.select_input_folder(input_folder)
 
     def output_folder_selected(self, output_folder):
+        """
+        Event handler when output folder is selected
+        """
         self._controller.select_output_folder(output_folder)
