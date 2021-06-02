@@ -63,6 +63,7 @@ class BatchCompleteDialog(QDialog):
         buttons = QFrame()
         buttons.setLayout(QHBoxLayout())
         open_output_button = QPushButton("Open output directory")
+        open_output_button.clicked.connect(self.open_output_folder)
         close_button = QPushButton("Close")
         close_button.clicked.connect(self.close)
         buttons.layout().addWidget(open_output_button)
