@@ -39,9 +39,6 @@ class BatchProcessingController(Controller, IBatchProcessingController):
             workflow = self.get_batch_workflow()
             workflow.process_all()
 
-
-
-
     def ready_to_process(self):
         if not self.workflow_config:
             return False
@@ -71,4 +68,3 @@ class BatchProcessingController(Controller, IBatchProcessingController):
         return self._workflow_engine.get_executable_batch_workflow_from_config_file(
             self.workflow_config, self.input_folder, self.output_folder, channel_index=self.selected_index
         )
-

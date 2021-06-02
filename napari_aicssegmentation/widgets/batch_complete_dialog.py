@@ -6,6 +6,7 @@ from pathlib import Path
 from napari_aicssegmentation.util.directories import Directories
 from os import startfile
 
+
 class BatchCompleteDialog(QDialog):
     def __init__(self, output_folder: Path):
         super().__init__()
@@ -73,5 +74,3 @@ class BatchCompleteDialog(QDialog):
     def open_output_folder(self):
         # TODO: is there a pathlib way to do this?
         startfile(self.output_folder)
-
-

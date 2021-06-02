@@ -62,7 +62,7 @@ class BatchProcessingView(View):
         """
         self.submit_button.setEnabled(enabled)
         if not enabled:
-            self.submit_button.setStyleSheet("QPushButton:disabled""{ color: gray }")
+            self.submit_button.setStyleSheet("QPushButton:disabled" "{ color: gray }")
 
     def open_completion_dialog(self, output_folder: Path):
         dlg = BatchCompleteDialog(output_folder)
