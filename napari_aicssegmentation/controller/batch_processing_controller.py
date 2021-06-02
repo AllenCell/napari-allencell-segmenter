@@ -22,7 +22,7 @@ class BatchProcessingController(Controller, IBatchProcessingController):
         # Should these go into a model?
         self.input_folder: Path = None
         self.output_folder = None
-        self.selected_index = 0 # defaults to 0 on UI
+        self.selected_index = 0  # defaults to 0 on UI
         self.workflow_config = None
 
     def index(self):
