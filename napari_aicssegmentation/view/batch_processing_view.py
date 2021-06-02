@@ -5,6 +5,8 @@ from napari_aicssegmentation.controller._interfaces import IBatchProcessingContr
 from napari_aicssegmentation.widgets.form import Form, FormRow
 from napari_aicssegmentation.widgets.file_input import FileInput, FileInputMode
 from ._main_template import MainTemplate
+from napari_aicssegmentation.widgets.batch_complete_dialog import BatchCompleteDialog
+from pathlib import Path
 
 
 class BatchProcessingView(View):
@@ -48,8 +50,9 @@ class BatchProcessingView(View):
         layout.addWidget(form)
 
         self.submit_button = QPushButton("Run Batch")
-        self.submit_button.clicked.connect(self.run_batch)
-        self.update_button(enabled=False)
+        #self.submit_button.clicked.connect(self.run_batch)
+        self.submit_button.clicked.connect(self.open_completion_dialog)
+        self.update_button(enabled=True)
         layout.addWidget(self.submit_button)
 
     def update_button(self, enabled: bool):
@@ -61,6 +64,10 @@ class BatchProcessingView(View):
         self.submit_button.setEnabled(enabled)
         if not enabled:
             self.submit_button.setStyleSheet("QPushButton:disabled""{ color: gray }")
+
+    def open_completion_dialog(self, output_folder: Path):
+        dlg = BatchCompleteDialog(output_folder)
+        dlg.exec()
 
     #####################################################################
     # Event handlers
