@@ -39,7 +39,7 @@ class BatchProcessingController(Controller, IBatchProcessingController):
             None
         """
         workflow = self.get_batch_workflow()
-        workflow.process_all()
+        # workflow.process_all()
         self._view.open_completion_dialog(self._output_folder)
 
     # def run_batch_async(self):
@@ -52,10 +52,10 @@ class BatchProcessingController(Controller, IBatchProcessingController):
     #     Outputs:
     #         None
     #     """
-        # with warnings.catch_warnings():
-        #     warnings.simplefilter("ignore")
-        #     workflow = self.get_batch_workflow()
-        #     workflow.process_all()
+    # with warnings.catch_warnings():
+    #     warnings.simplefilter("ignore")
+    #     workflow = self.get_batch_workflow()
+    #     workflow.process_all()
 
     def ready_to_process(self) -> bool:
         """

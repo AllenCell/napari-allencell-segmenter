@@ -1,9 +1,9 @@
+import sys
+import subprocess
+
 from qtpy.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout, QDialog, QPushButton
 from PyQt5.QtCore import Qt
 from pathlib import Path
-from os import startfile
-import sys
-import subprocess
 
 
 class BatchCompleteDialog(QDialog):
@@ -18,16 +18,16 @@ class BatchCompleteDialog(QDialog):
     def __init__(self, output_folder: Path):
         super().__init__()
 
-        self.output_folder = output_folder
+        self._output_folder = output_folder
 
         # Create header
-        header = self.create_header()
+        header = self._create_header()
 
         # Create frame with messages
-        messages = self.create_messages()
+        messages = self._create_messages()
 
         # Create buttons at bottom of dialog
-        buttons = self.create_buttons()
+        buttons = self._create_buttons()
 
         # Add everything to dialog box, and format
         self.layout = QVBoxLayout()
@@ -38,11 +38,13 @@ class BatchCompleteDialog(QDialog):
         self.setLayout(self.layout)
         self.setWindowFlag(Qt.WindowStaysOnTopHint)
 
-        self._show_file_func = {'darwin': self._show_file_darwin(),
-                                'linux': self._show_file_linux(),
-                                'win32': self._show_file_windows()}
+        self._show_file_func = {
+            "darwin": self._show_file_darwin,
+            "linux": self._show_file_linux,
+            "win32": self._show_file_windows,
+        }
 
-    def create_header(self):
+    def _create_header(self):
         """
         Creates a header with the Allen Cell Structure Segmenter title and warning message.
 
@@ -63,11 +65,11 @@ class BatchCompleteDialog(QDialog):
         )
         header.setObjectName("header")
         header.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        header.setStyleSheet("background-color:white;")
+        # header.setStyleSheet("background-color:white;")
         header.setMargin(15)
         return header
 
-    def create_messages(self):
+    def _create_messages(self):
         """
         Creates messages to go within the dialog box
 
@@ -90,7 +92,7 @@ class BatchCompleteDialog(QDialog):
         frame.layout().addWidget(desc)
         return frame
 
-    def create_buttons(self):
+    def _create_buttons(self):
         """
         Creates buttons for the bottom of the dialog box, one for opening the output folder, and one for
             closing the dialog box
@@ -105,7 +107,7 @@ class BatchCompleteDialog(QDialog):
         buttons = QFrame()
         buttons.setLayout(QHBoxLayout())
         open_output_button = QPushButton("Open output directory")
-        open_output_button.clicked.connect(self.open_output_folder)
+        open_output_button.clicked.connect(self._open_output_folder)
         close_button = QPushButton("Close")
         close_button.clicked.connect(self.close)
         buttons.layout().addWidget(open_output_button)
@@ -113,15 +115,17 @@ class BatchCompleteDialog(QDialog):
         return buttons
 
     def _show_file_darwin(self):
-        subprocess.Popen(["open", self.output_folder])
+        subprocess.Popen(["open", self._output_folder])
 
     def _show_file_linux(self):
-        subprocess.Popen(["xdg-open", self.output_folder])
+        subprocess.Popen(["xdg-open", self._output_folder])
 
     def _show_file_windows(self):
-        startfile(self.output_folder)
+        from os import startfile
 
-    def open_output_folder(self):
+        startfile(self._output_folder)
+
+    def _open_output_folder(self):
         """
         Opens the output folder on the file explorer
 
@@ -133,7 +137,6 @@ class BatchCompleteDialog(QDialog):
         """
 
         try:
-            self._show_file_func[sys.platform]
+            self._show_file_func[sys.platform]()
         except KeyError:
             raise OSError(f"Your platform: {sys.platform} is not supported by our app.")
-
