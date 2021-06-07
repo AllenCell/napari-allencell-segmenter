@@ -2,6 +2,8 @@ from qtpy.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout, QDialog, QP
 from PyQt5.QtCore import Qt
 from pathlib import Path
 from os import startfile
+import sys
+import subprocess
 
 
 class BatchCompleteDialog(QDialog):
@@ -34,6 +36,11 @@ class BatchCompleteDialog(QDialog):
         self.layout.addWidget(messages)
         self.layout.addWidget(buttons)
         self.setLayout(self.layout)
+        self.setWindowFlag(Qt.WindowStaysOnTopHint)
+
+        self._show_file_func = {'darwin': self._show_file_darwin(),
+                                'linux': self._show_file_linux(),
+                                'win32': self._show_file_windows()}
 
     def create_header(self):
         """
@@ -105,6 +112,15 @@ class BatchCompleteDialog(QDialog):
         buttons.layout().addWidget(close_button)
         return buttons
 
+    def _show_file_darwin(self):
+        subprocess.Popen(["open", self.output_folder])
+
+    def _show_file_linux(self):
+        subprocess.Popen(["xdg-open", self.output_folder])
+
+    def _show_file_windows(self):
+        startfile(self.output_folder)
+
     def open_output_folder(self):
         """
         Opens the output folder on the file explorer
@@ -115,4 +131,9 @@ class BatchCompleteDialog(QDialog):
         Returns:
             None
         """
-        startfile(self.output_folder)
+
+        try:
+            self._show_file_func[sys.platform]
+        except KeyError:
+            raise OSError(f"Your platform: {sys.platform} is not supported by our app.")
+

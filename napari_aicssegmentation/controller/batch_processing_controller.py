@@ -20,10 +20,10 @@ class BatchProcessingController(Controller, IBatchProcessingController):
         self._view = BatchProcessingView(self)
 
         # Should these go into a model?
-        self.input_folder: Path = None
-        self.output_folder = None
-        self.selected_index = 0  # defaults to 0 on UI
-        self.workflow_config = None
+        self._input_folder: Path = None
+        self._output_folder = None
+        self._selected_index = 0  # defaults to 0 on UI
+        self._workflow_config = None
 
     def index(self):
         self.load_view(self._view)
@@ -38,24 +38,24 @@ class BatchProcessingController(Controller, IBatchProcessingController):
         Outputs:
             None
         """
-        self.worker = create_worker(self.run_batch_async)
-        self.worker.start()
-        self._view.open_completion_dialog(self.output_folder)
+        workflow = self.get_batch_workflow()
+        workflow.process_all()
+        self._view.open_completion_dialog(self._output_folder)
 
-    def run_batch_async(self):
-        """
-        Async call for run_batch()
-
-        Inputs:
-            None
-
-        Outputs:
-            None
-        """
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            workflow = self.get_batch_workflow()
-            workflow.process_all()
+    # def run_batch_async(self):
+    #     """
+    #     Async call for run_batch()
+    #
+    #     Inputs:
+    #         None
+    #
+    #     Outputs:
+    #         None
+    #     """
+        # with warnings.catch_warnings():
+        #     warnings.simplefilter("ignore")
+        #     workflow = self.get_batch_workflow()
+        #     workflow.process_all()
 
     def ready_to_process(self) -> bool:
         """
@@ -67,11 +67,11 @@ class BatchProcessingController(Controller, IBatchProcessingController):
         Outputs:
             (Bool): True if ready to start batch workflow, False if not
         """
-        if not self.workflow_config:
+        if not self._workflow_config:
             return False
-        elif not self.input_folder:
+        elif not self._input_folder:
             return False
-        elif not self.output_folder:
+        elif not self._output_folder:
             return False
         else:
             return True
@@ -90,7 +90,7 @@ class BatchProcessingController(Controller, IBatchProcessingController):
 
         if not selected_config.exists():
             raise ValueError("Invalid config file path received from FileDialog.")
-        self.workflow_config = selected_config
+        self._workflow_config = selected_config
 
         # check enable button
         if self.ready_to_process():
@@ -111,7 +111,7 @@ class BatchProcessingController(Controller, IBatchProcessingController):
         if not input_folder.exists():
             raise ValueError("Invalid input folder path received from FileDialog.")
 
-        self.input_folder = input_folder
+        self._input_folder = input_folder
 
         # check enable button
         if self.ready_to_process():
@@ -130,7 +130,7 @@ class BatchProcessingController(Controller, IBatchProcessingController):
         output_folder = Path(output_folder)
         if not output_folder.exists():
             raise ValueError("Invalid output folder path received from FileDialog.")
-        self.output_folder = output_folder
+        self._output_folder = output_folder
         # check enable button
         if self.ready_to_process():
             self._view.update_button(enabled=True)
@@ -150,5 +150,5 @@ class BatchProcessingController(Controller, IBatchProcessingController):
             raise ValueError("Error in getting values from UI")
 
         return self._workflow_engine.get_executable_batch_workflow_from_config_file(
-            self.workflow_config, self.input_folder, self.output_folder, channel_index=self.selected_index
+            self._workflow_config, self._input_folder, self._output_folder, channel_index=self._selected_index
         )
