@@ -39,7 +39,7 @@ class BatchProcessingController(Controller, IBatchProcessingController):
             None
         """
         workflow = self.get_batch_workflow()
-        # workflow.process_all()
+        workflow.process_all()
         self._view.open_completion_dialog(self._output_folder)
 
     # def run_batch_async(self):
