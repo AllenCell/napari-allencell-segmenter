@@ -16,9 +16,10 @@ class FileInput(QWidget):
 
     inputs:
         mode (FileInputMode): set file dialog selection type to File or Directory
-        filter (str): standard QFileDialog file filter. Ex: "JSON Files (*.json)" 
+        filter (str): standard QFileDialog file filter. Ex: "JSON Files (*.json)"
         initial_text (str): text to display in the widget before a file has been selected
     """
+
     file_selected = pyqtSignal(str)
     _selected_file: str = None
 
@@ -35,7 +36,7 @@ class FileInput(QWidget):
 
         self._input_box = QLineEdit(initial_text)
         self._input_box.setEnabled(False)
-        
+
         layout = QHBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self._input_box)
@@ -51,9 +52,9 @@ class FileInput(QWidget):
 
     @property
     def selected_file(self) -> str:
-        return self._select_file
+        return self._selected_file
 
-    def _select_file(self): # pragma: no-cover
+    def _select_file(self):  # pragma: no-cover
         if self._mode == FileInputMode.FILE:
             file_path, _ = QFileDialog.getOpenFileName(
                 self,
@@ -67,10 +68,11 @@ class FileInput(QWidget):
                 "Select a directory",
                 options=QFileDialog.Option.DontUseNativeDialog | QFileDialog.Option.DontUseCustomDirectoryIcons,
             )
-        
+
         if file_path:
             self._input_box.setText(file_path)
             self.file_selected.emit(file_path)
+            self._selected_file = file_path
 
     def mousePressEvent(self, event):
         if self._input_box.underMouse():
