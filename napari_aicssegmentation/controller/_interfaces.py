@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import Dict, List
+from pathlib import Path
+from typing import Dict, List, Union
 
 from aicssegmentation.workflow.workflow_step import WorkflowStep
 from napari_aicssegmentation.model.channel import Channel
@@ -89,4 +90,56 @@ class IWorkflowStepsController(ABC):
 class IBatchProcessingController(ABC):
     @abstractmethod
     def run_batch(self):
+        """
+        Run the batch workflow
+        """
         pass
+
+    @abstractmethod
+    def cancel_run_batch(self):
+        """
+        Cancel the ongoing batch workflow run
+        """
+        pass
+
+    @abstractmethod
+    def update_batch_parameters(self, 
+                                workflow_config: Path,
+                                channel_index: int,
+                                input_dir: Path,
+                                output_dir: Path
+                               ):
+        """
+        Set / update batch processing parameters
+        """
+        pass
+
+    @abstractmethod
+    def select_config(self, workflow_config: Union[str, Path]):
+        """
+        Select a config file
+
+        Inputs:
+            workflow_config (str|Path): path to a workflow configuration file
+        """
+        pass
+
+    @abstractmethod
+    def select_input_folder(self, input_folder: Union[str, Path]):
+        """
+        Select a input folder
+
+        Inputs:
+            input_folder (str|Path): input directory path  
+        """
+        pass
+
+    @abstractmethod
+    def select_output_folder(self, output_folder: Union[str, Path]):
+        """
+        Select a output folder
+
+        Inputs:
+            output_folder (str|Path): output directory path       
+        """
+        pass 

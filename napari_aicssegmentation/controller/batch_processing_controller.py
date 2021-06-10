@@ -1,111 +1,73 @@
-from typing import Union
+import warnings
 
+from pathlib import Path
+from napari._qt.qthreading import GeneratorWorker
+from napari.qt.threading import create_worker
+from typing import Generator, Tuple, Union
 from aicssegmentation.workflow import WorkflowEngine, BatchWorkflow
 from napari_aicssegmentation.core._interfaces import IApplication
 from napari_aicssegmentation.core.controller import Controller
 from napari_aicssegmentation.view.batch_processing_view import BatchProcessingView
 from ._interfaces import IBatchProcessingController
-from pathlib import Path
-from napari.qt.threading import create_worker
-
-import warnings
-
 
 class BatchProcessingController(Controller, IBatchProcessingController):
+    _worker: GeneratorWorker = None
+
     def __init__(self, application: IApplication, workflow_engine: WorkflowEngine):
         super().__init__(application)
         if workflow_engine is None:
             raise ValueError("workflow_engine")
         self._workflow_engine = workflow_engine
         self._view = BatchProcessingView(self)
-
-        # Should these go into a model?
-        self._input_folder: Path = None
+        
+        self._input_folder = None
         self._output_folder = None
-        self._selected_index = 0  # defaults to 0 on UI
+        self._channel_index = None
         self._workflow_config = None
+
+        self._run_lock = False  # lock to avoid triggering multiple runs at the same time
+        self._canceled = False
 
     def index(self):
         self.load_view(self._view)
 
     def run_batch(self):
-        """
-        Run the batch workflow
+        if not self._run_lock:
+            self._worker: GeneratorWorker = create_worker(self._run_batch_async)
+            self._worker.yielded.connect(self._on_step_processed)
+            self._worker.started.connect(self._on_run_batch_started)
+            self._worker.aborted.connect(self._on_run_batch_aborted)
+            self._worker.finished.connect(self._on_run_batch_finished)            
+            self._worker.start()
 
-        Inputs:
-            None
+    def cancel_run_batch(self):
+        if self._worker is not None:
+            self._worker.quit()
 
-        Outputs:
-            None
-        """
-        workflow = self.get_batch_workflow()
-        workflow.process_all()
-        self._view.open_completion_dialog(self._output_folder)
+    def update_batch_parameters(self, 
+                                workflow_config: Path, 
+                                channel_index: int, 
+                                input_dir: Path, 
+                                output_dir: Path):        
+        self._workflow_config = workflow_config
+        self._channel_index = channel_index
+        self._input_folder = input_dir
+        self._output_folder = output_dir
 
-    # def run_batch_async(self):
-    #     """
-    #     Async call for run_batch()
-    #
-    #     Inputs:
-    #         None
-    #
-    #     Outputs:
-    #         None
-    #     """
-    # with warnings.catch_warnings():
-    #     warnings.simplefilter("ignore")
-    #     workflow = self.get_batch_workflow()
-    #     workflow.process_all()
+        ready = self._ready_to_process()
+        self._view.update_button(ready)
 
-    def ready_to_process(self) -> bool:
-        """
-        Check to see if the batch processing is ready to start (user has provided all needed parameters to run a batch workflow)
+    def select_config(self, workflow_config: Union[str, Path]):
+        workflow_config = Path(workflow_config)
 
-        Inputs:
-            None
-
-        Outputs:
-            (Bool): True if ready to start batch workflow, False if not
-        """
-        if not self._workflow_config:
-            return False
-        elif not self._input_folder:
-            return False
-        elif not self._output_folder:
-            return False
-        else:
-            return True
-
-    def select_config(self, selected_config: Union[str, Path]):
-        """
-        Select a config file
-
-        Inputs:
-            None
-
-        Outputs:
-            None
-        """
-        selected_config = Path(selected_config)
-
-        if not selected_config.exists():
+        if not workflow_config.exists():
             raise ValueError("Invalid config file path received from FileDialog.")
-        self._workflow_config = selected_config
 
-        # check enable button
-        if self.ready_to_process():
-            self._view.update_button(enabled=True)
+        self._workflow_config = workflow_config
+
+        self._view.update_button(self._ready_to_process())
 
     def select_input_folder(self, input_folder: Union[str, Path]):
-        """
-        Select a input folder
-
-        Inputs:
-            None
-
-        Outputs:
-            None
-        """
         input_folder = Path(input_folder)
 
         if not input_folder.exists():
@@ -113,42 +75,72 @@ class BatchProcessingController(Controller, IBatchProcessingController):
 
         self._input_folder = input_folder
 
-        # check enable button
-        if self.ready_to_process():
-            self._view.update_button(enabled=True)
+        self._view.update_button(self._ready_to_process())
 
     def select_output_folder(self, output_folder: Union[str, Path]):
-        """
-        Select a output folder
-
-        Inputs:
-            None
-
-        Outputs:
-            None
-        """
         output_folder = Path(output_folder)
+
         if not output_folder.exists():
             raise ValueError("Invalid output folder path received from FileDialog.")
+
         self._output_folder = output_folder
-        # check enable button
-        if self.ready_to_process():
-            self._view.update_button(enabled=True)
 
-    def get_batch_workflow(self) -> BatchWorkflow:
+        self._view.update_button(self._ready_to_process())
+
+    def _ready_to_process(self) -> bool:
         """
-        Get an executable batch workflow with the UI provided parameters
-
-        Inputs:
-            None
+        Check to see if the batch processing is ready to start 
+        (user has provided all needed parameters to run a batch workflow)
 
         Outputs:
-            (BatchWorkflow): Executable batch workflow set up with UI provided parameters.
+            (Bool): True if ready to start batch workflow, False if not
         """
-        # Checking to see if values were correctly recieved from the UI
-        if not self.ready_to_process():
-            raise ValueError("Error in getting values from UI")
+        if self._workflow_config is None:
+            return False
+        if self._input_folder is None:
+            return False
+        if self._output_folder is None:
+            return False
+        if self._channel_index is None:
+            return False
+        
+        return True
 
-        return self._workflow_engine.get_executable_batch_workflow_from_config_file(
-            self._workflow_config, self._input_folder, self._output_folder, channel_index=self._selected_index
-        )
+    def _run_batch_async(self) -> Generator[Tuple[int, int], None, None]:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+
+            batch_workflow = self._workflow_engine.get_executable_batch_workflow_from_config_file(
+                self._workflow_config, 
+                self._input_folder, 
+                self._output_folder, 
+                channel_index=self._channel_index
+            )
+
+            while not batch_workflow.is_done():
+                batch_workflow.execute_next()
+                yield batch_workflow.processed_files, batch_workflow.total_files
+            
+    def _on_step_processed(self, processed_args: Tuple[int, int]):
+        processed_files, total_files = processed_args
+
+        # Update progress
+        progress = 100 * processed_files / total_files        
+        self._view.set_progress(progress)
+
+    def _on_run_batch_started(self):
+        self._run_lock = True
+        self._view.set_run_batch_in_progress()
+
+    def _on_run_batch_finished(self):
+        self._run_lock = False        
+
+        if not self._canceled:
+            self._view.open_completion_dialog(self._output_folder)
+
+        self._view.reset_run_batch()
+        self._canceled = False
+    
+    def _on_run_batch_aborted(self):
+        self._canceled = True
+        
