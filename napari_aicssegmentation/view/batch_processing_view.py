@@ -77,6 +77,7 @@ class BatchProcessingView(View):
         self._progress_bar.setRange(0, 100)
         self._progress_bar.setValue(0)
         self._progress_bar.setTextVisible(True)
+        self._progress_bar.setVisible(False)
         layout.addWidget(self._progress_bar)        
 
     def update_button(self, enabled: bool):
@@ -86,8 +87,6 @@ class BatchProcessingView(View):
             enabled: True to enable the button, false to disable it
         """
         self._btn_run_batch.setEnabled(enabled)
-        #if not enabled:
-         #   self._btn_run_batch.setStyleSheet("QPushButton:disabled" "{ color: gray }")
 
     def open_completion_dialog(self, output_folder: Path):
         """
@@ -106,6 +105,7 @@ class BatchProcessingView(View):
         self._btn_run_batch.setText("Cancel") 
         self._btn_run_batch.clicked.disconnect()
         self._btn_run_batch.clicked.connect(self._btn_run_batch_cancel_clicked)
+        self._progress_bar.setVisible(True)
 
     def reset_run_batch(self):
         """
@@ -115,6 +115,7 @@ class BatchProcessingView(View):
         self._btn_run_batch.setText("Run Batch")
         self._btn_run_batch.clicked.disconnect()
         self._btn_run_batch.clicked.connect(self._btn_run_batch_clicked)    
+        self._progress_bar.setVisible(False)
 
     def set_progress(self, progress:int):
         """
@@ -134,24 +135,6 @@ class BatchProcessingView(View):
     def _btn_run_batch_cancel_clicked(self):
         self._btn_run_batch.setText("Canceling...")
         self._controller.cancel_run_batch()
-    
-    def _workflow_selected(self, selected_config):
-        """
-        Event handler when workflow config file is selected
-        """
-        self._controller.select_config(selected_config)
-
-    def _input_folder_selected(self, input_folder):
-        """
-        Event handler when input folder is selected
-        """
-        self._controller.select_input_folder(input_folder)
-
-    def _output_folder_selected(self, output_folder):
-        """
-        Event handler when output folder is selected
-        """
-        self._controller.select_output_folder(output_folder)
 
     def _form_field_changed(self, value):
         workflow_config = self._field_workflow_config.selected_file        

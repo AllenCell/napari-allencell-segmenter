@@ -12,6 +12,7 @@ from ._interfaces import IBatchProcessingController
 
 class BatchProcessingController(Controller, IBatchProcessingController):
     _worker: GeneratorWorker = None
+    _batch_workflow: BatchWorkflow
 
     def __init__(self, application: IApplication, workflow_engine: WorkflowEngine):
         super().__init__(application)
@@ -57,36 +58,6 @@ class BatchProcessingController(Controller, IBatchProcessingController):
         ready = self._ready_to_process()
         self._view.update_button(ready)
 
-    def select_config(self, workflow_config: Union[str, Path]):
-        workflow_config = Path(workflow_config)
-
-        if not workflow_config.exists():
-            raise ValueError("Invalid config file path received from FileDialog.")
-
-        self._workflow_config = workflow_config
-
-        self._view.update_button(self._ready_to_process())
-
-    def select_input_folder(self, input_folder: Union[str, Path]):
-        input_folder = Path(input_folder)
-
-        if not input_folder.exists():
-            raise ValueError("Invalid input folder path received from FileDialog.")
-
-        self._input_folder = input_folder
-
-        self._view.update_button(self._ready_to_process())
-
-    def select_output_folder(self, output_folder: Union[str, Path]):
-        output_folder = Path(output_folder)
-
-        if not output_folder.exists():
-            raise ValueError("Invalid output folder path received from FileDialog.")
-
-        self._output_folder = output_folder
-
-        self._view.update_button(self._ready_to_process())
-
     def _ready_to_process(self) -> bool:
         """
         Check to see if the batch processing is ready to start 
@@ -109,7 +80,11 @@ class BatchProcessingController(Controller, IBatchProcessingController):
     def _run_batch_async(self) -> Generator[Tuple[int, int], None, None]:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-
+            # import time
+            # for i in range(1, 21):
+            #     time.sleep(2)
+            #     yield i, 20
+                
             batch_workflow = self._workflow_engine.get_executable_batch_workflow_from_config_file(
                 self._workflow_config, 
                 self._input_folder, 
@@ -120,12 +95,14 @@ class BatchProcessingController(Controller, IBatchProcessingController):
             while not batch_workflow.is_done():
                 batch_workflow.execute_next()
                 yield batch_workflow.processed_files, batch_workflow.total_files
+
+            batch_workflow.write_log_file_summary()
             
     def _on_step_processed(self, processed_args: Tuple[int, int]):
         processed_files, total_files = processed_args
 
         # Update progress
-        progress = 100 * processed_files / total_files        
+        progress = 100 * processed_files // total_files 
         self._view.set_progress(progress)
 
     def _on_run_batch_started(self):
@@ -135,7 +112,7 @@ class BatchProcessingController(Controller, IBatchProcessingController):
     def _on_run_batch_finished(self):
         self._run_lock = False        
 
-        if not self._canceled:
+        if not self._canceled:            
             self._view.open_completion_dialog(self._output_folder)
 
         self._view.reset_run_batch()
