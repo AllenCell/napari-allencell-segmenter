@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Dict, List, Union
+from typing import Dict, List
 
 from aicssegmentation.workflow.workflow_step import WorkflowStep
 from napari_aicssegmentation.model.channel import Channel
@@ -103,12 +103,7 @@ class IBatchProcessingController(ABC):
         pass
 
     @abstractmethod
-    def update_batch_parameters(self, 
-                                workflow_config: Path,
-                                channel_index: int,
-                                input_dir: Path,
-                                output_dir: Path
-                               ):
+    def update_batch_parameters(self, workflow_config: Path, channel_index: int, input_dir: Path, output_dir: Path):
         """
         Set / update batch processing parameters
         """

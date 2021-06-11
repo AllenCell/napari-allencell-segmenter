@@ -3,7 +3,7 @@ import napari
 
 from napari_aicssegmentation.core.application import Application
 from napari_plugin_engine import napari_hook_implementation
-from PyQt5.QtWidgets import QLabel, QWidget, QVBoxLayout, QSizePolicy
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QSizePolicy
 import napari.qt
 
 """

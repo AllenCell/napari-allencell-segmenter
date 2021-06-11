@@ -1,5 +1,4 @@
 from enum import Enum
-from pathlib import Path
 from PyQt5.QtWidgets import QHBoxLayout, QWidget, QLineEdit, QFileDialog
 from PyQt5.QtCore import pyqtSignal
 
@@ -73,7 +72,7 @@ class FileInput(QWidget):
         if file_path:
             self._selected_file = file_path
             self._input_box.setText(file_path)
-            self.file_selected.emit(file_path)            
+            self.file_selected.emit(file_path)
 
     def mousePressEvent(self, event):
         if self._input_box.underMouse():
