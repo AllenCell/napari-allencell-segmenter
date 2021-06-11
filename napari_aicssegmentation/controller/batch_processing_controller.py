@@ -80,10 +80,6 @@ class BatchProcessingController(Controller, IBatchProcessingController):
     def _run_batch_async(self) -> Generator[Tuple[int, int], None, None]:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            # import time
-            # for i in range(1, 21):
-            #     time.sleep(2)
-            #     yield i, 20
                 
             batch_workflow = self._workflow_engine.get_executable_batch_workflow_from_config_file(
                 self._workflow_config, 
