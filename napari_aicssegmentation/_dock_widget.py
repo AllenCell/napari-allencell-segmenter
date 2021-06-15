@@ -4,7 +4,6 @@ import napari
 from napari_aicssegmentation.core.application import Application
 from napari_plugin_engine import napari_hook_implementation
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QSizePolicy
-import napari.qt
 
 """
 The class name here gets converted to title case and gets displayed as both the title 
