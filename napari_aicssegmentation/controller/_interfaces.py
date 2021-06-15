@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import Dict, List
 
 from aicssegmentation.workflow.workflow_step import WorkflowStep
@@ -89,4 +90,21 @@ class IWorkflowStepsController(ABC):
 class IBatchProcessingController(ABC):
     @abstractmethod
     def run_batch(self):
+        """
+        Run the batch workflow
+        """
+        pass
+
+    @abstractmethod
+    def cancel_run_batch(self):
+        """
+        Cancel the ongoing batch workflow run
+        """
+        pass
+
+    @abstractmethod
+    def update_batch_parameters(self, workflow_config: Path, channel_index: int, input_dir: Path, output_dir: Path):
+        """
+        Set / update batch processing parameters
+        """
         pass
