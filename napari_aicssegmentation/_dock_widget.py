@@ -11,7 +11,7 @@ of the plugin window and the title displayed in the app menu dropdown.
 """
 
 
-class AllenCellStructureSegmenter(QWidget):  # pragma: no-cover
+class WorkflowEditorWidget(QWidget):  # pragma: no-cover
     def __init__(self, napari_viewer: napari.Viewer):
         super().__init__()
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
@@ -21,6 +21,15 @@ class AllenCellStructureSegmenter(QWidget):  # pragma: no-cover
         self._application.router.workflow_selection()  # Initialize first screen
 
 
+class BatchProcessingWidget(QWidget):
+    def __init__(self, napari_viewer: napari.Viewer):
+        super().__init__()
+        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
+        self.setLayout(QVBoxLayout())
+        self._application = Application(napari_viewer, self.layout())
+        self._application.router.batch_processing()  # Initialize first screen
+
+
 @napari_hook_implementation
 def napari_experimental_provide_dock_widget():  # pragma: no-cover
-    return AllenCellStructureSegmenter
+    return [(WorkflowEditorWidget, {"name": "Workflow editor"}), (BatchProcessingWidget, {"name": "Batch processing"})]

@@ -1,6 +1,7 @@
 from aicssegmentation.workflow import WorkflowEngine
 from napari_aicssegmentation.controller.workflow_select_controller import WorkflowSelectController
 from napari_aicssegmentation.controller.workflow_steps_controller import WorkflowStepsController
+from napari_aicssegmentation.controller.batch_processing_controller import BatchProcessingController
 from napari_aicssegmentation.core.layer_reader import LayerReader
 from napari_aicssegmentation.core.controller import Controller
 from ._interfaces import IApplication, IRouter
@@ -23,6 +24,10 @@ class Router(IRouter):
 
     def workflow_steps(self):
         controller = WorkflowStepsController(self._application, self._workflow_engine)
+        self._handle_navigation(controller)
+
+    def batch_processing(self):
+        controller = BatchProcessingController(self._application, self._workflow_engine)
         self._handle_navigation(controller)
 
     def _handle_navigation(self, controller: Controller):
