@@ -24,6 +24,13 @@ class IRouter(ABC):
         """
         pass
 
+    @abstractmethod
+    def batch_processing(self):
+        """
+        Navigate to batch processing screen
+        """
+        pass
+
 
 class IApplication(ABC):
     """
