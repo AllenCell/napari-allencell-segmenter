@@ -5,20 +5,20 @@ helps, and credit will always be given.
 
 ## Get Started!
 
-Ready to contribute? Here's how to set up `napari_aicssegmentation` for local development.
+Ready to contribute? Here's how to set up `napari_allencell_segmenter` for local development.
 
-1. Fork the `napari_aicssegmentation` repo on GitHub.
+1. Fork the `napari_allencell_segmenter` repo on GitHub.
 
 2. Clone your fork locally:
 
     ```bash
-    git clone git@github.com:{your_name_here}/napari_aicssegmentation.git
+    git clone git@github.com:{your_name_here}/napari_allencell_segmenter.git
     ```
 
 3. Install the project in editable mode. (It is also recommended to work in a virtualenv or anaconda environment):
 
     ```bash
-    cd napari_aicssegmentation/
+    cd napari_allencell_segmenter/
     pip install -e .[dev]
     ```
 
