@@ -71,5 +71,5 @@ jobs:
           pip install .[test]
       - name: Lint with flake8
         run: |
-          flake8 napari_aicssegmentation --count --verbose --show-source --statistics
-          black --check --exclude vendor napari_aicssegmentation
+          flake8 napari_allencell_segmenter --count --verbose --show-source --statistics
+          black --check --exclude vendor napari_allencell_segmenter

@@ -1,12 +1,12 @@
-# napari-aicssegmentation
+# napari-allencell-segmenter
 
 # This project has just started. It is not yet in a usable state.
 
-[![License](https://img.shields.io/pypi/l/napari-aicssegmentation.svg?color=green)](https://github.com/AllenCell/napari-aicssegmentation/raw/main/LICENSE)
-[![PyPI](https://img.shields.io/pypi/v/napari-aicssegmentation.svg?color=green)](https://pypi.org/project/napari-aicssegmentation)
-[![Python Version](https://img.shields.io/pypi/pyversions/napari-aicssegmentation.svg?color=green)](https://python.org)
-[![tests](https://github.com/AllenCell/napari-aicssegmentation/workflows/tests/badge.svg)](https://github.com/AllenCell/napari-aicssegmentation/actions)
-[![codecov](https://codecov.io/gh/AllenCell/napari-aicssegmentation/branch/main/graph/badge.svg)](https://codecov.io/gh/AllenCell/napari-aicssegmentation)
+[![License](https://img.shields.io/pypi/l/napari-allencell-segmenter.svg?color=green)](https://github.com/AllenCell/napari-allencell-segmenter/raw/main/LICENSE)
+[![PyPI](https://img.shields.io/pypi/v/napari-allencell-segmenter.svg?color=green)](https://pypi.org/project/napari-allencell-segmenter)
+[![Python Version](https://img.shields.io/pypi/pyversions/napari-allencell-segmenter.svg?color=green)](https://python.org)
+[![tests](https://github.com/AllenCell/napari-allencell-segmenter/workflows/tests/badge.svg)](https://github.com/AllenCell/napari-allencell-segmenter/actions)
+[![codecov](https://codecov.io/gh/AllenCell/napari-allencell-segmenter/branch/main/graph/badge.svg)](https://codecov.io/gh/AllenCell/napari-allencell-segmenter)
 
 A plugin that enables image segmentation provided by AICS
 
@@ -24,9 +24,9 @@ https://napari.org/docs/plugins/index.html
 
 ## Installation
 
-You can install `napari-aicssegmentation` via [pip]:
+You can install `napari-allencell-segmenter` via [pip]:
 
-    pip install napari-aicssegmentation
+    pip install napari-allencell-segmenter
 
 ## Contributing
 
@@ -36,7 +36,7 @@ the coverage at least stays the same before you submit a pull request.
 ## License
 
 Distributed under the terms of the [BSD-3] license,
-"napari-aicssegmentation" is free and open source software
+"napari-allencell-segmenter" is free and open source software
 
 ## Issues
 
@@ -52,7 +52,7 @@ If you encounter any problems, please [file an issue] along with a detailed desc
 [Apache Software License 2.0]: http://www.apache.org/licenses/LICENSE-2.0
 [Mozilla Public License 2.0]: https://www.mozilla.org/media/MPL/2.0/index.txt
 [cookiecutter-napari-plugin]: https://github.com/napari/cookiecutter-napari-plugin
-[file an issue]: https://github.com/AllenCell/napari-aicssegmentation/issues
+[file an issue]: https://github.com/AllenCell/napari-allencell-segmenter/issues
 [napari]: https://github.com/napari/napari
 [tox]: https://tox.readthedocs.io/en/latest/
 [pip]: https://pypi.org/project/pip/

@@ -21,11 +21,11 @@ build: ## run tox / run tests and lint
 	tox
 
 test: ## run pytest with coverage report
-	pytest --cov=napari_aicssegmentation --cov-report xml --cov-report term
+	pytest --cov=napari_allencell_segmenter --cov-report xml --cov-report term
 
 lint: ## run a lint check / report
-	flake8 napari_aicssegmentation --count --verbose --show-source --statistics
-	black --check --exclude vendor napari_aicssegmentation
+	flake8 napari_allencell_segmenter --count --verbose --show-source --statistics
+	black --check --exclude vendor napari_allencell_segmenter
 
 lint-format: ## reformat files with black
-	black --exclude vendor napari_aicssegmentation -l 120
+	black --exclude vendor napari_allencell_segmenter -l 120
