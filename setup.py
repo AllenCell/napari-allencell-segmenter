@@ -77,14 +77,14 @@ extra_requirements = {
 
 
 # https://github.com/pypa/setuptools_scm
-use_scm = {"write_to": "napari_aicssegmentation/_version.py"}
+use_scm = {"write_to": "napari_allencell_segmenter/_version.py"}
 
 setup(
-    name="napari-aicssegmentation",
+    name="napari-allencell-segmenter",
     author="Jamie Sherman",
     author_email="jamies@alleninstitute.org",
     license="BSD-3",
-    url="https://github.com/heeler/napari-aicssegmentation",
+    url="https://github.com/AllenCell/napari-allencell-segmenter",
     description="A plugin that enables image segmentation provided by AICS",
     long_description=read("README.md"),
     long_description_content_type="text/markdown",
@@ -93,7 +93,7 @@ setup(
     install_requires=requirements,
     use_scm_version=use_scm,
     setup_requires=setup_requirements,
-    test_suite="napari_aicssegmentation/_tests",
+    test_suite="napari_allencell_segmenter/_tests",
     tests_require=test_requirements,
     extras_require=extra_requirements,
     include_package_data=True,
@@ -112,7 +112,7 @@ setup(
     ],
     entry_points={
         "napari.plugin": [
-            "napari-aicssegmentation = napari_aicssegmentation",
+            "napari-allencell-segmenter = napari_allencell_segmenter",
         ],
     },
     # Do not edit this string manually, always use bumpversion

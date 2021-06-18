@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# napari-aicssegmentation documentation build configuration file, created by
+# napari-allencell-segmenter documentation build configuration file, created by
 # sphinx-quickstart on Thu Oct  1 00:43:18 2015.
 #
 # This file is execfile()d with the current directory set to its
@@ -48,7 +48,7 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"napari-aicssegmentation"
+project = u"napari-allencell-segmenter"
 copyright = u"2015, Jamie Sherman"
 author = u"Jamie Sherman"
 
@@ -256,7 +256,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "napari-cookiecutterplugin_name", u"napari-aicssegmentation Documentation", [author], 1)]
+man_pages = [(master_doc, "napari-cookiecutterplugin_name", u"napari-allencell-segmenter Documentation", [author], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
@@ -271,7 +271,7 @@ texinfo_documents = [
     (
         master_doc,
         "napari-cookiecutterplugin_name",
-        u"napari-aicssegmentation Documentation",
+        u"napari-allencell-segmenter Documentation",
         author,
         "napari-cookiecutterplugin_name",
         "One line description of project.",
