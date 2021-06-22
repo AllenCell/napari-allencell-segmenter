@@ -25,14 +25,15 @@ class LayerReader:
             return None
 
         if layer.source is not None and layer.source.path is not None:
-            try:
-                return self._get_channels_from_path(layer.source.path)
-            except Exception as ex:
-                log.warning(
-                    "Could not read image layer from source path even though a source path was provided."
-                    "Defaulting to reading from layer data (this is less accurate). \n"
-                    f"Error message: {ex}"
-                )
+            if layer.source.reader_plugin.lower() != "aicsimageio":
+                try:
+                    return self._get_channels_from_path(layer.source.path)
+                except Exception as ex:
+                    log.warning(
+                        "Could not read image layer from source path even though a source path was provided."
+                        "Defaulting to reading from layer data (this is less accurate). \n"
+                        f"Error message: {ex}"
+                    )
 
         return self._get_channels_default(layer)
 
@@ -72,14 +73,15 @@ class LayerReader:
             raise ValueError("layer is None")
 
         if layer.source is not None and layer.source.path is not None:
-            try:
-                return self._get_channel_data_from_path(channel_index, layer.source.path)
-            except Exception as ex:
-                log.warning(
-                    "Could not read image layer from source path even though a source path was provided."
-                    "Defaulting to reading from layer data (this is less accurate). \n"
-                    f"Error message: {ex}"
-                )
+            if layer.source.reader_plugin.lower() != "aicsimageio":
+                try:
+                    return self._get_channel_data_from_path(channel_index, layer.source.path)
+                except Exception as ex:
+                    log.warning(
+                        "Could not read image layer from source path even though a source path was provided."
+                        "Defaulting to reading from layer data (this is less accurate). \n"
+                        f"Error message: {ex}"
+                    )
 
         return self._get_channel_data_default(channel_index, layer)
 
@@ -96,3 +98,19 @@ class LayerReader:
     def _get_channel_data_from_path(self, channel_index: int, image_path: str):
         img = AICSImage(image_path)
         return img.get_image_data("ZYX", T=0, S=0, C=channel_index)
+
+    def _should_read_from_path(self, layer: Layer):
+        if layer.source is None:
+            return False
+        if layer.source.path is None:
+            return False
+        # Here we are making a deliberate choice to not try and load metadata from the srouce
+        # if a reader plugin other than the default built-in plugin was used. This is because
+        # plugins like napari-aicsimageio may convert channels into individual layers, which is not compatible
+        # with the current plugin User Experience. This is a workaround to allow basic compatibility
+        # with reader plugins and allow to do work with CZI files and other formats supported by napari-aicsimageio
+        # TODO - come up with a better long term solution
+        if layer.source.reader_plugin != "builtins":
+            return False
+
+        return True

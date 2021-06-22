@@ -68,18 +68,18 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
         self._view.update_workflows(enabled=False)
 
     def select_workflow(self, workflow_name: str):
-        layer0 = self.viewer.add_image_layer(
-            self.model.selected_layer.data,
+        channel_data = self._layer_reader.get_channel_data(self.model.selected_channel.index, self.model.selected_layer)
+        self.model.active_workflow = self._workflow_engine.get_executable_workflow(workflow_name, channel_data)
+
+        self.viewer.add_image_layer(
+            channel_data,
             name="0. "
             + self.model.selected_layer.name
             + ": ch["
             + str(self.model.selected_channel.index)
             + "] "
             + workflow_name,
-        )
-
-        channel_data = self._layer_reader.get_channel_data(self.model.selected_channel.index, layer0)
-        self.model.active_workflow = self._workflow_engine.get_executable_workflow(workflow_name, channel_data)
+        )  # layer 0
 
         self.router.workflow_steps()
 
