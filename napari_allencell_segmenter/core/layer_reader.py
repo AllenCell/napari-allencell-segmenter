@@ -24,16 +24,15 @@ class LayerReader:
         if layer is None:
             return None
 
-        if layer.source is not None and layer.source.path is not None:
-            if layer.source.reader_plugin.lower() != "aicsimageio":
-                try:
-                    return self._get_channels_from_path(layer.source.path)
-                except Exception as ex:
-                    log.warning(
-                        "Could not read image layer from source path even though a source path was provided."
-                        "Defaulting to reading from layer data (this is less accurate). \n"
-                        f"Error message: {ex}"
-                    )
+        if self._should_read_from_path(layer):
+            try:
+                return self._get_channels_from_path(layer.source.path)
+            except Exception as ex:
+                log.warning(
+                    "Could not read image layer from source path even though a source path was provided."
+                    "Defaulting to reading from layer data (this is less accurate). \n"
+                    f"Error message: {ex}"
+                )
 
         return self._get_channels_default(layer)
 
@@ -72,16 +71,15 @@ class LayerReader:
         if layer is None:
             raise ValueError("layer is None")
 
-        if layer.source is not None and layer.source.path is not None:
-            if layer.source.reader_plugin.lower() != "aicsimageio":
-                try:
-                    return self._get_channel_data_from_path(channel_index, layer.source.path)
-                except Exception as ex:
-                    log.warning(
-                        "Could not read image layer from source path even though a source path was provided."
-                        "Defaulting to reading from layer data (this is less accurate). \n"
-                        f"Error message: {ex}"
-                    )
+        if self._should_read_from_path(layer):
+            try:
+                return self._get_channel_data_from_path(channel_index, layer.source.path)
+            except Exception as ex:
+                log.warning(
+                    "Could not read image layer from source path even though a source path was provided."
+                    "Defaulting to reading from layer data (this is less accurate). \n"
+                    f"Error message: {ex}"
+                )
 
         return self._get_channel_data_default(channel_index, layer)
 
