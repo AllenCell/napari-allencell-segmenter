@@ -35,7 +35,7 @@ class TestLayerReader:
         mock_image = create_autospec(AICSImage)
         mock_aics_image.return_value = mock_image
         img_path = "/path/to/image.tiff"
-        layer = MockLayer(name="Test", source=Source(path=img_path))
+        layer = MockLayer(name="Test", source=Source(path=img_path, reader_plugin="builtins"))
         mock_image.get_channel_names.return_value = ["Test1", "Test2", "Test3"]
 
         # Act
@@ -87,7 +87,7 @@ class TestLayerReader:
         mock_image = create_autospec(AICSImage)
         mock_aics_image.return_value = mock_image
         img_path = "/path/to/image.tiff"
-        layer = MockLayer(name="Test", source=Source(path=img_path))
+        layer = MockLayer(name="Test", source=Source(path=img_path, reader_plugin="builtins"))
         mock_image.get_image_data.return_value = data
 
         # Act
