@@ -1,6 +1,6 @@
 import pytest
 from unittest import mock
-from unittest.mock import MagicMock, create_autospec, PropertyMock, ANY
+from unittest.mock import MagicMock, create_autospec, PropertyMock
 
 from pathlib import Path
 from napari_allencell_segmenter.controller.workflow_steps_controller import WorkflowStepsController
