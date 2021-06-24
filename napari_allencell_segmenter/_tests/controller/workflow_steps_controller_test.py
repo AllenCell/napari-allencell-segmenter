@@ -1,7 +1,8 @@
 import pytest
 from unittest import mock
-from unittest.mock import MagicMock, create_autospec, PropertyMock, patch
+from unittest.mock import MagicMock, create_autospec, PropertyMock, ANY
 
+from pathlib import Path
 from napari_allencell_segmenter.controller.workflow_steps_controller import WorkflowStepsController
 from napari_allencell_segmenter.core._interfaces import IApplication, IRouter
 from napari_allencell_segmenter.core.state import State
@@ -46,12 +47,20 @@ class TestWorkflowStepsController:
         self._controller.model.selected_channel == None
         self._mock_router.workflow_selection.assert_called_once()
 
-    def test_save_workflow(self):
+    @pytest.mark.parametrize("filepath", 
+        [
+            "/path/to/workflow.json",
+            "/path/to/workflow.xml", 
+            "/path/to/workflow"
+        ]
+    )
+    def test_save_workflow(self, filepath):
         # Arrange
-        steps = [create_autospec(WorkflowStep), create_autospec(WorkflowStep), create_autospec(WorkflowStep)]
+        steps = [create_autospec(WorkflowStep), create_autospec(WorkflowStep), create_autospec(WorkflowStep)]        
 
         # Act
-        self._controller.save_workflow(steps, "/path/to/file.json")
+        self._controller.save_workflow(steps, filepath)
 
         # Assert
         self._mock_workflow_engine.save_workflow_definition.assert_called_once()
+        assert self._mock_workflow_engine.save_workflow_definition.call_args[0][1].suffix == ".json"

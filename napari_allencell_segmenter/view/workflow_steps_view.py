@@ -222,6 +222,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
             self,
             caption="Save workflow as...",
             filter="Json file (*.json)",
+            directory="workflow.json",
             options=QFileDialog.Option.DontUseNativeDialog | QFileDialog.Option.DontUseCustomDirectoryIcons,
         )
 
