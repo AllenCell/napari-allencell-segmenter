@@ -47,16 +47,10 @@ class TestWorkflowStepsController:
         self._controller.model.selected_channel == None
         self._mock_router.workflow_selection.assert_called_once()
 
-    @pytest.mark.parametrize("filepath", 
-        [
-            "/path/to/workflow.json",
-            "/path/to/workflow.xml", 
-            "/path/to/workflow"
-        ]
-    )
+    @pytest.mark.parametrize("filepath", ["/path/to/workflow.json", "/path/to/workflow.xml", "/path/to/workflow"])
     def test_save_workflow(self, filepath):
         # Arrange
-        steps = [create_autospec(WorkflowStep), create_autospec(WorkflowStep), create_autospec(WorkflowStep)]        
+        steps = [create_autospec(WorkflowStep), create_autospec(WorkflowStep), create_autospec(WorkflowStep)]
 
         # Act
         self._controller.save_workflow(steps, filepath)

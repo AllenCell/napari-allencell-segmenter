@@ -38,7 +38,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         # add .json extension if not present
         if not output_file_path.lower().endswith(".json"):
             output_file_path += ".json"
-        save_path = Path(output_file_path)        
+        save_path = Path(output_file_path)
         workflow_def = WorkflowDefinition(save_path.name, steps)
         self._workflow_engine.save_workflow_definition(workflow_def, save_path)
 
