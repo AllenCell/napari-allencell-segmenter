@@ -81,8 +81,8 @@ use_scm = {"write_to": "napari_allencell_segmenter/_version.py"}
 
 setup(
     name="napari-allencell-segmenter",
-    author="Jamie Sherman",
-    author_email="jamies@alleninstitute.org",
+    author="Allen Institute for Cell Science",
+    #author_email="jamies@alleninstitute.org",
     license="BSD-3",
     url="https://github.com/AllenCell/napari-allencell-segmenter",
     description="A plugin that enables image segmentation provided by AICS",
