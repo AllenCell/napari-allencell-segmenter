@@ -1,14 +1,2 @@
 [tool.black]
 line-length = 120
-
-[build-system]
-requires = [
-    "setuptools>=42",
-    "wheel",
-    "pytest-runner"
-]
-
-[tool.setuptools_scm]
-write_to = "napari_allencell_segmenter/_version.py"
-
-build-backend = "setuptools.build_meta"

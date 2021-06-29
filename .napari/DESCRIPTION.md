@@ -1,28 +1,6 @@
-# napari-allencell-segmenter
-
-[![License](https://img.shields.io/pypi/l/napari-allencell-segmenter.svg?color=green)](https://github.com/AllenCell/napari-allencell-segmenter/raw/main/LICENSE)
-[![PyPI](https://img.shields.io/pypi/v/napari-allencell-segmenter.svg?color=green)](https://pypi.org/project/napari-allencell-segmenter)
-[![Python Version](https://img.shields.io/pypi/pyversions/napari-allencell-segmenter.svg?color=green)](https://python.org)
-[![tests](https://github.com/AllenCell/napari-allencell-segmenter/workflows/tests/badge.svg)](https://github.com/AllenCell/napari-allencell-segmenter/actions)
-[![codecov](https://codecov.io/gh/AllenCell/napari-allencell-segmenter/branch/main/graph/badge.svg)](https://codecov.io/gh/AllenCell/napari-allencell-segmenter)
-
-
 A plugin that enables 3D image segmentation provided by Allen Institute for Cell Science
 
 The Allen Cell Structure Segmenter plugin for napari provides an intuitive graphical user interface to access the powerful segmentation capabilities of an open source 3D segmentation software package developed and maintained by the Allen Institute for Cell Science (classic workflows only with v1.0). ​The Allen Cell Structure Segmenter is a Python-based open source toolkit developed at the Allen Institute for Cell Science for 3D segmentation of intracellular structures in fluorescence microscope images. This toolkit brings together classic image segmentation and iterative deep learning workflows first to generate initial high-quality 3D intracellular structure segmentations and then to easily curate these results to generate the ground truths for building robust and accurate deep learning models. The toolkit takes advantage of the high replicate 3D live cell image data collected at the Allen Institute for Cell Science of over 30 endogenous fluorescently tagged human induced pluripotent stem cell (hiPSC) lines. Each cell line represents a different intracellular structure with one or more distinct localization patterns within undifferentiated hiPS cells and hiPSC-derived cardiomyocytes.
-
-
-----------------------------------
-
-This [napari] plugin was generated with [Cookiecutter] using with [@napari]'s [cookiecutter-napari-plugin] template.
-
-<!--
-Don't miss the full getting started guide to set up your new package:
-https://github.com/napari/cookiecutter-napari-plugin#getting-started
-
-and review the napari docs for plugin developers:
-https://napari.org/docs/plugins/index.html
--->
 
 ## Installation
 
@@ -52,33 +30,3 @@ In the current version, there are two parts in the plugin: **workflow editor** a
 10. Load the customized workflow (or an off-the-shelf workflow) json file
 11. Load the folder with all the images to process
 12. Click "Run"
-
-## Contributing
-
-Contributions are very welcome. Tests can be run with [tox], please ensure
-the coverage at least stays the same before you submit a pull request.
-
-## License
-
-Distributed under the terms of the [BSD-3] license,
-"napari-allencell-segmenter" is free and open source software
-
-## Issues
-
-If you encounter any problems, please [file an issue] along with a detailed description.
-
-[napari]: https://github.com/napari/napari
-[Cookiecutter]: https://github.com/audreyr/cookiecutter
-[@napari]: https://github.com/napari
-[MIT]: http://opensource.org/licenses/MIT
-[BSD-3]: http://opensource.org/licenses/BSD-3-Clause
-[GNU GPL v3.0]: http://www.gnu.org/licenses/gpl-3.0.txt
-[GNU LGPL v3.0]: http://www.gnu.org/licenses/lgpl-3.0.txt
-[Apache Software License 2.0]: http://www.apache.org/licenses/LICENSE-2.0
-[Mozilla Public License 2.0]: https://www.mozilla.org/media/MPL/2.0/index.txt
-[cookiecutter-napari-plugin]: https://github.com/napari/cookiecutter-napari-plugin
-[file an issue]: https://github.com/AllenCell/napari-allencell-segmenter/issues
-[napari]: https://github.com/napari/napari
-[tox]: https://tox.readthedocs.io/en/latest/
-[pip]: https://pypi.org/project/pip/
-[PyPI]: https://pypi.org/
