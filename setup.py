@@ -58,8 +58,7 @@ dev_requirements = [
     "wheel>=0.33.1",
 ]
 
-setup_requirements = [
-    "setuptools_scm",
+setup_requirements = [    
     "pytest-runner",
 ]
 
@@ -82,14 +81,13 @@ use_scm = {"write_to": "napari_allencell_segmenter/_version.py"}
 setup(
     name="napari-allencell-segmenter",
     author="Allen Institute for Cell Science",
-    #author_email="jamies@alleninstitute.org",
     license="BSD-3",
     url="https://github.com/AllenCell/napari-allencell-segmenter",
-    description="A plugin that enables image segmentation provided by AICS",
+    description="A plugin that enables 3D image segmentation provided by Allen Institute for Cell Science",
     long_description=read("README.md"),
     long_description_content_type="text/markdown",
     packages=find_packages(),
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     install_requires=requirements,
     use_scm_version=use_scm,
     #setup_requires=setup_requirements,
@@ -98,10 +96,13 @@ setup(
     extras_require=extra_requirements,
     include_package_data=True,
     classifiers=[
-        "Development Status :: 4 - Beta",
-        "Intended Audience :: Developers",
+        "Development Status :: 5 - Production/Stable",
+        "Intended Audience :: Science/Research",
         "Framework :: napari",
-        "Topic :: Software Development :: Testing",
+        "Topic :: Scientific/Engineering",
+        "Topic :: Scientific/Engineering :: Visualization",
+        "Topic :: Scientific/Engineering :: Information Analysis",
+        "Topic :: Scientific/Engineering :: Bio-Informatics",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.7",

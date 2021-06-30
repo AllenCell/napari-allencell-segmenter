@@ -12,3 +12,4 @@ requires = [
 write_to = "napari_allencell_segmenter/_version.py"
 
 build-backend = "setuptools.build_meta"
+

@@ -35,6 +35,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self.load_view(self._view, self.model)
 
     def save_workflow(self, steps: List[WorkflowStep], output_file_path: str):
+        # add .json extension if not present
+        if not output_file_path.lower().endswith(".json"):
+            output_file_path += ".json"
         save_path = Path(output_file_path)
         workflow_def = WorkflowDefinition(save_path.name, steps)
         self._workflow_engine.save_workflow_definition(workflow_def, save_path)
