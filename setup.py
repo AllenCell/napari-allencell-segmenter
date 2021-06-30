@@ -90,7 +90,7 @@ setup(
     python_requires=">=3.7",
     install_requires=requirements,
     use_scm_version=use_scm,
-    #setup_requires=setup_requirements,
+    setup_requires=setup_requirements,
     test_suite="napari_allencell_segmenter/_tests",
     tests_require=test_requirements,
     extras_require=extra_requirements,
