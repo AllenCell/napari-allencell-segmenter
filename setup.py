@@ -80,7 +80,7 @@ use_scm = {"write_to": "napari_allencell_segmenter/_version.py"}
 
 setup(
     name="napari-allencell-segmenter",
-    author="Allen Institute for Cell Science",    
+    author="Allen Institute for Cell Science",
     license="BSD-3",
     url="https://github.com/AllenCell/napari-allencell-segmenter",
     description="A plugin that enables 3D image segmentation provided by Allen Institute for Cell Science",
@@ -118,6 +118,6 @@ setup(
     },
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.rst
-    version="0.0.1",
+    version="1.0.0",
     zip_safe=False,
 )
