@@ -101,13 +101,19 @@ class WorkflowThumbnails(QWidget):
             # TODO?: convert all images to RBGA
             pre: np.ndarray = workflow.thumbnail_pre
             post: np.ndarray = workflow.thumbnail_post
+
+            #TODO: We need a way to a) track dimension order if present in metadata and b) try to guess dimension order
+            color_channel_size: int = min(np.shape(workflow.thumbnail_pre))
+            min_index: int = np.shape(workflow.thumbnail_pre).index(color_channel_size)
+
+
             # If RGBA convert to grayscale
             if len(workflow.thumbnail_pre.shape) > 2:
                 # cv2 expects color channel dim to be last index
-                pre = cv2.cvtColor(np.moveaxis(workflow.thumbnail_pre, 0, -1), cv2.COLOR_RGBA2GRAY)
+                pre = cv2.cvtColor(np.moveaxis(workflow.thumbnail_pre, min_index, -1), cv2.COLOR_RGBA2GRAY)
             if len(workflow.thumbnail_post.shape) > 2:
                 # cv2 expects color channel dim to be last index
-                post = cv2.cvtColor(np.moveaxis(workflow.thumbnail_post, 0, -1), cv2.COLOR_RGBA2GRAY)
+                post = cv2.cvtColor(np.moveaxis(workflow.thumbnail_post, min_index, -1), cv2.COLOR_RGBA2GRAY)
             # Stitch Image
             image_stitched: np.ndarray = np.hstack([pre, post])
             button: QPushButton = QPushButton("")

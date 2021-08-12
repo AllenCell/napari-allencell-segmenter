@@ -40,10 +40,8 @@ class LayerReader:
         img = AICSImage(layer.data)  # gives us a 6D image
 
         # we're expecting either STCZYX or STZCYX but we don't know for sure
-        # Attempt to guess based on array length. Channels array should be shorter in general.
-        index_c = 2
-        if img.shape[2] > img.shape[3]:
-            index_c = 3
+        # Attempt to guess based on array length. Channels array should be shorter in general.'
+        index_c = img.dims.order.index('C')
 
         channels = list()
         for index in range(img.shape[index_c]):
@@ -88,10 +86,14 @@ class LayerReader:
 
         # we're expecting either STCZYX or STZCYX but we don't know for sure
         # Attempt to guess based on array length. Channels array should be shorter in general.
-        if img.shape[2] > img.shape[3]:
-            return img.data[0, 0, :, channel_index, :, :]  # STZCYX
-
-        return img.data[0, 0, channel_index, :, :, :]  # STCZYX
+        # if img.shape[2] > img.shape[3]:
+        #     return img.data[0, 0, :, channel_index, :, :]  # STZCYX
+        #
+        # return img.data[0, 0, channel_index, :, :, :]  # STCZYX
+        if len(img.data.shape) == 4:
+            return img.get_image_data("TZCYX")
+        else:
+            return img.get_image_data("STZCYX")
 
     def _get_channel_data_from_path(self, channel_index: int, image_path: str):
         img = AICSImage(image_path)
