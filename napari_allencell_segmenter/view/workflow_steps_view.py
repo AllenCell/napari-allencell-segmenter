@@ -150,7 +150,11 @@ class WorkflowStepsView(View):  # pragma: no-cover
     def _setup_diagram_window(self):
         self.window_workflow_diagram = QScrollArea()
         diagram = QLabel()
-        img_data = np.moveaxis(self._workflow.workflow_definition.diagram_image, 0, -1)
+        #TODO: remove this when dimension order refactor happens
+        color_channel_size: int = min(np.shape(self._workflow.workflow_definition.diagram_image))
+        min_index: int = np.shape(self._workflow.workflow_definition.diagram_image).index(color_channel_size)
+
+        img_data = np.moveaxis(self._workflow.workflow_definition.diagram_image, min_index, -1)
         img = QImage(img_data, img_data.shape[1], img_data.shape[0], QImage.Format.Format_RGB888)
         diagram.setPixmap(QPixmap(img).scaledToWidth(1000, Qt.TransformationMode.SmoothTransformation))
 
