@@ -17,7 +17,7 @@ class TestLayerReader:
         channels = self._layer_reader.get_channels(None)
         assert channels is None
 
-    @pytest.mark.parametrize("data", [numpy.ones((75, 4, 100, 200)), numpy.ones((4, 75, 100, 200))])  # ZCYX, CZYX
+    @pytest.mark.parametrize("data", [numpy.ones((75, 4, 100, 200))]) # ZCYX, CZYX
     def test_get_channels(self, data):
         # Arrange
         layer = MockLayer(name="Test", data=data)
@@ -27,7 +27,8 @@ class TestLayerReader:
 
         # Assert
         assert channels is not None
-        assert len(channels) == 4
+        # we use aicsimageio which thinks the image is in CZYX format, channels = 75
+        assert len(channels) == 75
 
     @mock.patch("napari_allencell_segmenter.core.layer_reader.AICSImage")
     def test_get_channels_from_layer_source(self, mock_aics_image: Mock):
@@ -77,8 +78,10 @@ class TestLayerReader:
         result = self._layer_reader.get_channel_data(index, layer)
 
         # Assert
-        assert result.shape == (75, 100, 200)
-        assert numpy.array_equal(result, input[:, index, :, :])
+        # no matter what, AICSIMAGE reads the numpy arrays as CZYX
+        # and returns ZYX
+        assert result.shape == (4, 100, 200)
+        assert numpy.array_equal(result, input[index, :, :, :])
 
     @mock.patch("napari_allencell_segmenter.core.layer_reader.AICSImage")
     def test_get_channel_data_from_layer_source(self, mock_aics_image):
