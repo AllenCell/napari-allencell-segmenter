@@ -58,7 +58,7 @@ dev_requirements = [
     "wheel>=0.33.1",
 ]
 
-setup_requirements = [    
+setup_requirements = [
     "pytest-runner",
 ]
 
