@@ -17,7 +17,7 @@ class TestLayerReader:
         channels = self._layer_reader.get_channels(None)
         assert channels is None
 
-    @pytest.mark.parametrize("data", [numpy.ones((75, 4, 100, 200))]) # ZCYX, CZYX
+    @pytest.mark.parametrize("data", [numpy.ones((75, 4, 100, 200))])  # ZCYX, CZYX
     def test_get_channels(self, data):
         # Arrange
         layer = MockLayer(name="Test", data=data)
@@ -34,9 +34,11 @@ class TestLayerReader:
     def test_get_channels_from_layer_source(self, mock_aics_image: Mock):
         # Arrange
         mock_image = create_autospec(AICSImage)
+
         mock_aics_image.return_value = mock_image
         img_path = "/path/to/image.tiff"
         layer = MockLayer(name="Test", source=Source(path=img_path, reader_plugin="builtins"))
+
         mock_image.get_channel_names.return_value = ["Test1", "Test2", "Test3"]
 
         # Act
