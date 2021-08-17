@@ -150,7 +150,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
     def _setup_diagram_window(self):
         self.window_workflow_diagram = QScrollArea()
         diagram = QLabel()
-        #TODO: remove this when dimension order refactor happens
+        # TODO: remove this when dimension order refactor happens
         color_channel_size: int = min(np.shape(self._workflow.workflow_definition.diagram_image))
         min_index: int = np.shape(self._workflow.workflow_definition.diagram_image).index(color_channel_size)
 

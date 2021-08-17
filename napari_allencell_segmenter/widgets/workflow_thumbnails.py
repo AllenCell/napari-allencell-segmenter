@@ -102,10 +102,9 @@ class WorkflowThumbnails(QWidget):
             pre: np.ndarray = workflow.thumbnail_pre
             post: np.ndarray = workflow.thumbnail_post
 
-            #TODO: We need a way to a) track dimension order if present in metadata and b) try to guess dimension order
+            # TODO: We need a way to a) track dimension order if present in metadata and b) try to guess dimension order
             color_channel_size: int = min(np.shape(workflow.thumbnail_pre))
             min_index: int = np.shape(workflow.thumbnail_pre).index(color_channel_size)
-
 
             # If RGBA convert to grayscale
             if len(workflow.thumbnail_pre.shape) > 2:
