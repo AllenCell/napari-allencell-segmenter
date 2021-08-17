@@ -84,16 +84,9 @@ class LayerReader:
     def _get_channel_data_default(self, channel_index: int, layer: Layer):
         img = AICSImage(layer.data)  # gives us a 6D image
 
-        # we're expecting either STCZYX or STZCYX but we don't know for sure
-        # Attempt to guess based on array length. Channels array should be shorter in general.
-        # if img.shape[2] > img.shape[3]:
-        #     return img.data[0, 0, :, channel_index, :, :]  # STZCYX
-        #
-        # return img.data[0, 0, channel_index, :, :, :]  # STCZYX
-        if len(img.data.shape) == 4:
-            return img.get_image_data("TZCYX")
-        else:
-            return img.get_image_data("STZCYX")
+        # use get_image_data() to parse out ZYX dimensions
+        # segmenter requries 3D images.
+        return img.get_image_data("ZYX", T=0, S=0, C=channel_index)
 
     def _get_channel_data_from_path(self, channel_index: int, image_path: str):
         img = AICSImage(image_path)
