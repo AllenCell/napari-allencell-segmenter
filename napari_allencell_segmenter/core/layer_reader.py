@@ -52,7 +52,7 @@ class LayerReader:
         img = AICSImage(image_path)
 
         channels = list()
-        for index, name in enumerate(img.get_channel_names()):
+        for index, name in enumerate(img.channel_names):
             channels.append(Channel(index, name))
         return channels
 

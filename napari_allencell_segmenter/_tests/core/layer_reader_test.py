@@ -39,7 +39,8 @@ class TestLayerReader:
         img_path = "/path/to/image.tiff"
         layer = MockLayer(name="Test", source=Source(path=img_path, reader_plugin="builtins"))
 
-        mock_image.get_channel_names.return_value = ["Test1", "Test2", "Test3"]
+        mock_channels = Mock(return_value=["Test1", "Test2", "Test3"])
+        mock_image.channel_names = mock_channels.return_value
 
         # Act
         channels = self._layer_reader.get_channels(layer)
