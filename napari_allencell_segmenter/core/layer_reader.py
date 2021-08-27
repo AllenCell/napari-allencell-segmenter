@@ -44,6 +44,7 @@ class LayerReader:
         else:
             image_from_layer = layer.data
         img = AICSImage(image_from_layer)  # gives us a 6D image#
+        img.set_scene(0)
 
         # we're expecting either STCZYX or STZCYX but we don't know for sure
         # Attempt to guess based on array length. Channels array should be shorter in general.'
@@ -56,6 +57,7 @@ class LayerReader:
 
     def _get_channels_from_path(self, image_path: str) -> List[Channel]:
         img = AICSImage(image_path)
+        img.set_scene(0)
 
         channels = list()
         for index, name in enumerate(img.channel_names):
