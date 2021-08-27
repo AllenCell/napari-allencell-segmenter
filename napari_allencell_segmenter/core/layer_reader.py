@@ -37,7 +37,13 @@ class LayerReader:
         return self._get_channels_default(layer)
 
     def _get_channels_default(self, layer: Layer) -> List[Channel]:
-        img = AICSImage(layer.data)  # gives us a 6D image#
+
+        if len(layer.data.shape) >= 6:
+            # Has scenes
+            image_from_layer = [layer.data[i, :, :, :, :, :] for i in range(layer.data.shape[0])]
+        else:
+            image_from_layer = layer.data
+        img = AICSImage(image_from_layer)  # gives us a 6D image#
 
         # we're expecting either STCZYX or STZCYX but we don't know for sure
         # Attempt to guess based on array length. Channels array should be shorter in general.'
@@ -49,6 +55,7 @@ class LayerReader:
         return channels
 
     def _get_channels_from_path(self, image_path: str) -> List[Channel]:
+        #TODO: test if scenes work with file path opens
         img = AICSImage(image_path)
 
         channels = list()
@@ -82,15 +89,23 @@ class LayerReader:
         return self._get_channel_data_default(channel_index, layer)
 
     def _get_channel_data_default(self, channel_index: int, layer: Layer):
-        img = AICSImage(layer.data)  # gives us a 6D image
+        if len(layer.data.shape) >= 6:
+            # Has scenes
+            image_from_layer = [layer.data[i, :, :, :, :, :] for i in range(layer.data.shape[0])]
+        else:
+            image_from_layer = layer.data
+
+        img = AICSImage(image_from_layer)  # gives us a 6D image
 
         # use get_image_data() to parse out ZYX dimensions
         # segmenter requries 3D images.
-        return img.get_image_data("ZYX", T=0, S=0, C=channel_index)
+        img.set_scene(0)
+        return img.get_image_data("ZYX", T=0, C=channel_index)
 
     def _get_channel_data_from_path(self, channel_index: int, image_path: str):
         img = AICSImage(image_path)
-        return img.get_image_data("ZYX", T=0, S=0, C=channel_index)
+        img.set_scene(0)
+        return img.get_image_data("ZYX", T=0, C=channel_index)
 
     def _should_read_from_path(self, layer: Layer):
         if layer.source is None:
