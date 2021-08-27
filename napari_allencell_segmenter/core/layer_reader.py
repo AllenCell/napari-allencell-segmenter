@@ -55,7 +55,6 @@ class LayerReader:
         return channels
 
     def _get_channels_from_path(self, image_path: str) -> List[Channel]:
-        #TODO: test if scenes work with file path opens
         img = AICSImage(image_path)
 
         channels = list()
