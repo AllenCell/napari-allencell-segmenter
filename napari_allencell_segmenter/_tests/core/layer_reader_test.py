@@ -65,7 +65,7 @@ class TestLayerReader:
         layer = MockLayer(name="Test", data=input, ndim=4)  # 4D
 
         # Act
-        result = self._layer_reader.get_channel_data(index, layer)
+        result = self._layer_reader.zget_channel_data(index, layer)
 
         # Assert
         assert result.shape == (75, 100, 100)
