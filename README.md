@@ -37,6 +37,8 @@ You can also install `napari-allencell-segmenter` via [pip]:
 
     pip install napari-allencell-segmenter
 
+⚠️ If you installed napari as a bundled app (that is, you did not `pip install` napari through the command line), and you're using Windows, you might run into an error when you try to open this plugin. If this happens, close napari and try re-opening napari as an administrator. Then try opening the plugin again. If you still run into errors, please file an issue with us on GitHub.
+
 ## Quick Start
 
 In the current version, there are two parts in the plugin: **workflow editor** and **batch processing**. The **workflow editor** allows users adjusting parameters in all the existing workflows in the lookup table, so that the workflow can be optimized on users' data. The adjusted workflow can be saved and then applied to a large batch of files using the **batch processing** part of the plugin. 
