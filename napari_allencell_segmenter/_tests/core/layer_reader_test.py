@@ -17,7 +17,7 @@ class TestLayerReader:
         channels = self._layer_reader.get_channels(None)
         assert channels is None
 
-    @pytest.mark.parametrize("data", [numpy.ones((75, 4, 100, 200))])  # ZCYX, CZYX
+    @pytest.mark.parametrize("data", [numpy.ones((75, 4, 100, 200)), numpy.ones((75, 10, 300, 200))])  # ZCYX, CZYX
     def test_get_channels(self, data):
         # Arrange
         layer = MockLayer(name="Test", data=data)
