@@ -6,7 +6,7 @@ from unittest import mock
 from unittest.mock import Mock, create_autospec
 from napari.layers._source import Source
 from napari_allencell_segmenter.core.layer_reader import LayerReader, Channel
-from ..mocks import MockLayer
+from napari_allencell_segmenter._tests.mocks import MockLayer
 
 
 class TestLayerReader:
@@ -70,6 +70,14 @@ class TestLayerReader:
         # Assert
         assert result.shape == (75, 100, 100)
         assert numpy.array_equal(result, input[index])
+
+
+        input = numpy.ones((2, 2, 4, 5, 6, 7))
+        layer = MockLayer(name="Test", data=input, ndim=6)  # 6D
+        result = self._layer_reader.get_channel_data(index, layer)
+        assert result.shape == (5, 6, 7)
+
+
 
     @pytest.mark.parametrize("index", range(0, 4))
     def test_get_channel_data_zcyx(self, index):

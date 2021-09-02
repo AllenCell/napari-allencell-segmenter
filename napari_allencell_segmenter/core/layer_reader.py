@@ -46,8 +46,6 @@ class LayerReader:
         img = AICSImage(image_from_layer)  # gives us a 6D image#
         img.set_scene(0)
 
-        # we're expecting either STCZYX or STZCYX but we don't know for sure
-        # Attempt to guess based on array length. Channels array should be shorter in general.'
         index_c = img.dims.order.index("C")
 
         channels = list()
