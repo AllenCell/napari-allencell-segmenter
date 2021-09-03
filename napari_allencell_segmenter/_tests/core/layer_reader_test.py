@@ -71,13 +71,10 @@ class TestLayerReader:
         assert result.shape == (75, 100, 100)
         assert numpy.array_equal(result, input[index])
 
-
         input = numpy.ones((2, 2, 4, 5, 6, 7))
         layer = MockLayer(name="Test", data=input, ndim=6)  # 6D
         result = self._layer_reader.get_channel_data(index, layer)
         assert result.shape == (5, 6, 7)
-
-
 
     @pytest.mark.parametrize("index", range(0, 4))
     def test_get_channel_data_zcyx(self, index):
