@@ -19,7 +19,7 @@ requirements = [
     "numpy",
     "aicssegmentation == 0.4.0",
     "magicgui >= 0.2.9",
-    "aicsimageio == 4.1.0",
+    "aicsimageio ~= 4.0.5",
     "opencv-python-headless>=4.5.1",
 ]
 
