@@ -2,7 +2,7 @@
 name: Bug Report
 about: '"Something''s wrong..."'
 title: ''
-labels: ''
+labels: bug
 assignees: ''
 
 ---
@@ -26,4 +26,4 @@ assignees: ''
 
 
 ## Environment
-*Any additional information about your environment*
+*Any additional information about your environment, such as operating system, Python version, etc.*
