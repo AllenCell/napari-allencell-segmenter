@@ -37,7 +37,6 @@ class LayerReader:
         return self._get_channels_default(layer)
 
     def _get_channels_default(self, layer: Layer) -> List[Channel]:
-
         if len(layer.data.shape) >= 6:
             # Has scenes
             image_from_layer = [layer.data[i, :, :, :, :, :] for i in range(layer.data.shape[0])]
