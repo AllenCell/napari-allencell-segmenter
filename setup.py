@@ -21,6 +21,7 @@ requirements = [
     "magicgui >= 0.2.9",
     "aicsimageio ~= 4.0.5",
     "opencv-python-headless>=4.5.1",
+    "pyqt5 >=5.12.3,!=5.15.0",
 ]
 
 test_requirements = [
@@ -118,6 +119,6 @@ setup(
     },
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.rst
-    version="1.1.0",
+    version="1.1.1",
     zip_safe=False,
 )
