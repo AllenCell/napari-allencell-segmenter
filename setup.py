@@ -21,6 +21,7 @@ requirements = [
     "magicgui >= 0.2.9",
     "aicsimageio ~= 4.0.5",
     "opencv-python-headless>=4.5.1",
+    "pyqt5"
 ]
 
 test_requirements = [
