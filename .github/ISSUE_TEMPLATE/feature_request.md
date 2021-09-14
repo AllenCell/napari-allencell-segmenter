@@ -7,17 +7,19 @@ assignees: ''
 
 ---
 
-## Use Case
-*Please provide a use case to help us understand your request in context*
+## Requested feature
+*Describe the new feature you would like to see in the napari-segmenter plugin.*
 
+## Use case
+*What will this change enable you to do?*
 
-
-
-## Solution
-*Please describe your ideal solution*
-
-
-
+## If this change is NOT made...
+Check all that apply by entering an x inside the brackets or clicking on the boxes in preview mode:
+- [ ] I will not use the napari-segmenter plugin.
+- [ ] I will be blocked from completing my current tasks.
+- [ ] I can accomplish what I need to accomplish, but it’s tedious.
+- [ ] Not a problem right this minute, but, this is going to be a problem soon.
+- [ ] Everything’s fine! But it would be cool if this work happened at some point in the future.
 
 ## Alternatives
-*Please describe any alternatives you've considered, even if you've dismissed them*
+*Are there any other plugins or software that you would use in place of this feature?*
