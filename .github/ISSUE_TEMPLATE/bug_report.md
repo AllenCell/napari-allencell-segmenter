@@ -10,6 +10,13 @@ assignees: ''
 ## Description
 *A clear description of the bug*
 
+### Error message
+```
+Paste your napari error output here. 
+* If you can't find the error message, go to Plugins > Plugin Errors > napari-allencell-segmenter
+* Most of the time, the most helpful information is at the very bottom of the error output
+```
+
 
 
 
@@ -20,10 +27,13 @@ assignees: ''
 
 
 ## Reproduction
-*A minimal example that exhibits the behavior.*
+*Please list the exact steps we can take to reproduce this bug.*
 
 
 
 
 ## Environment
-*Any additional information about your environment, such as operating system, Python version, etc.*
+
+Operating system (ex. MacOS Big Sur):
+Python version (ex. 3.8):
+How did you install napari viewer (bundled app or through command line with `pip`)?:
