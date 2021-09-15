@@ -17,11 +17,11 @@ requirements = [
     "napari>=0.4.9",
     "napari-plugin-engine>=0.1.4",
     "numpy",
-    "aicssegmentation == 0.4.0",
+    "aicssegmentation ~= 0.4.1",
     "magicgui >= 0.2.9",
     "aicsimageio ~= 4.0.5",
     "opencv-python-headless>=4.5.1",
-    "pyqt5 >=5.12.3,!=5.15.0",
+    "pyqt5 == 5.15.4",
 ]
 
 test_requirements = [
