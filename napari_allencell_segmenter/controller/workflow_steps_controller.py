@@ -66,7 +66,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             self._worker.finished.connect(self._on_run_all_finished)
             self._worker.start()
 
-    def run_step(self, parameter_inputs):
+    def run_next_step(self, parameter_inputs):
         if not self._run_lock:
             self._worker: GeneratorWorker = create_worker(self._run_step_async, parameter_inputs)
             self._worker.yielded.connect(self._on_step_processed)
