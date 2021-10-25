@@ -22,6 +22,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self._workflow_engine = workflow_engine
         self._view = WorkflowStepsView(self)
         self._run_lock = False  # lock to avoid triggering multiple segmentation / step runs at the same time
+        self._steps = 0  # need this to feed in parameter inputs step by step
 
     @property
     def view(self):
@@ -58,8 +59,18 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         parameter_inputs List[Dict]: Each dictionary has the same shape as a WorkflowStep.parameter_values
         dictionary, but with the parameter values obtained from the UI instead of default values.
         """
+        #TODO uncomment (testing)
+        # if not self._run_lock:
+        #     self._worker: GeneratorWorker = create_worker(self._run_all_async, parameter_inputs)
+        #     self._worker.yielded.connect(self._on_step_processed)
+        #     self._worker.started.connect(self._on_run_all_started)
+        #     self._worker.finished.connect(self._on_run_all_finished)
+        #     self._worker.start()
+        self.run_step(parameter_inputs)
+
+    def run_step(self, parameter_inputs):
         if not self._run_lock:
-            self._worker: GeneratorWorker = create_worker(self._run_all_async, parameter_inputs)
+            self._worker: GeneratorWorker = create_worker(self._run_step_async, parameter_inputs)
             self._worker.yielded.connect(self._on_step_processed)
             self._worker.started.connect(self._on_run_all_started)
             self._worker.finished.connect(self._on_run_all_finished)
@@ -91,6 +102,15 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 result = self.model.active_workflow.execute_next(parameter_inputs[i])
                 i = i + 1
                 yield (step, result)
+
+    def _run_step_async(self, parameter_inputs: List[Dict[str, List]]) -> Generator[Tuple[WorkflowStep, numpy.ndarray], None, None]:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            step = self.model.active_workflow.get_next_step()
+            result = self.model.active_workflow.execute_next(parameter_inputs[self._steps])
+            self._steps = self._steps + 1
+            yield(step, result)
+
 
     def _on_step_processed(self, processed_args: Tuple[WorkflowStep, numpy.ndarray]):
         step, result = processed_args
