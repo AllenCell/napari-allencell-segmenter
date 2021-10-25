@@ -59,14 +59,12 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         parameter_inputs List[Dict]: Each dictionary has the same shape as a WorkflowStep.parameter_values
         dictionary, but with the parameter values obtained from the UI instead of default values.
         """
-        #TODO uncomment (testing)
-        # if not self._run_lock:
-        #     self._worker: GeneratorWorker = create_worker(self._run_all_async, parameter_inputs)
-        #     self._worker.yielded.connect(self._on_step_processed)
-        #     self._worker.started.connect(self._on_run_all_started)
-        #     self._worker.finished.connect(self._on_run_all_finished)
-        #     self._worker.start()
-        self.run_step(parameter_inputs)
+        if not self._run_lock:
+            self._worker: GeneratorWorker = create_worker(self._run_all_async, parameter_inputs)
+            self._worker.yielded.connect(self._on_step_processed)
+            self._worker.started.connect(self._on_run_all_started)
+            self._worker.finished.connect(self._on_run_all_finished)
+            self._worker.start()
 
     def run_step(self, parameter_inputs):
         if not self._run_lock:
