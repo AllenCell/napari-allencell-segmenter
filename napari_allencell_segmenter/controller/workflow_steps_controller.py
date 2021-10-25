@@ -101,13 +101,22 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 i = i + 1
                 yield (step, result)
 
-    def _run_step_async(self, parameter_inputs: List[Dict[str, List]]) -> Generator[Tuple[WorkflowStep, numpy.ndarray], None, None]:
+    def _run_next_step_async(self, parameter_inputs: List[Dict[str, List]]) -> Generator[Tuple[WorkflowStep, numpy.ndarray], None, None]:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             step = self.model.active_workflow.get_next_step()
             result = self.model.active_workflow.execute_next(parameter_inputs[self._steps])
             self._steps = self._steps + 1
             yield(step, result)
+
+    def _run_step_async(self, index: int, parameter_inputs: List[Dict[str, List]]) -> Generator[Tuple[WorkflowStep, numpy.ndarray], None, None]:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            index = 2 # make this the selected index
+            step = self.model.active_workflow.workflow_definition.steps[index]
+            result = self.model.active_workflow.execute_step(index, parameter_inputs[index])
+            yield(step, result)
+
 
 
     def _on_step_processed(self, processed_args: Tuple[WorkflowStep, numpy.ndarray]):
