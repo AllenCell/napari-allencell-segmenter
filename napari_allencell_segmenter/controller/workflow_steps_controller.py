@@ -59,16 +59,29 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         parameter_inputs List[Dict]: Each dictionary has the same shape as a WorkflowStep.parameter_values
         dictionary, but with the parameter values obtained from the UI instead of default values.
         """
+        # if not self._run_lock:
+        #     self._worker: GeneratorWorker = create_worker(self._run_all_async, parameter_inputs)
+        #     self._worker.yielded.connect(self._on_step_processed)
+        #     self._worker.started.connect(self._on_run_all_started)
+        #     self._worker.finished.connect(self._on_run_all_finished)
+        #     self._worker.start()
+        # test step index
+        self.run_step(0,parameter_inputs)
+
+        # test step by step
+        self.run_next_step(parameter_inputs)
+
+    def run_next_step(self, parameter_inputs):
         if not self._run_lock:
-            self._worker: GeneratorWorker = create_worker(self._run_all_async, parameter_inputs)
+            self._worker: GeneratorWorker = create_worker(self._run_next_step_async, parameter_inputs)
             self._worker.yielded.connect(self._on_step_processed)
             self._worker.started.connect(self._on_run_all_started)
             self._worker.finished.connect(self._on_run_all_finished)
             self._worker.start()
 
-    def run_next_step(self, parameter_inputs):
+    def run_step(self, int, parameter_inputs):
         if not self._run_lock:
-            self._worker: GeneratorWorker = create_worker(self._run_step_async, parameter_inputs)
+            self._worker: GeneratorWorker = create_worker(self._run_step_async, int, parameter_inputs)
             self._worker.yielded.connect(self._on_step_processed)
             self._worker.started.connect(self._on_run_all_started)
             self._worker.finished.connect(self._on_run_all_finished)
@@ -112,7 +125,8 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
     def _run_step_async(self, index: int, parameter_inputs: List[Dict[str, List]]) -> Generator[Tuple[WorkflowStep, numpy.ndarray], None, None]:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            index = 2 # TODO make this the selected index
+            print("which step to run again (0 indexed)")
+            index = int(input()) # TODO make this the selected index
             step = self.model.active_workflow.workflow_definition.steps[index]
             result = self.model.active_workflow.execute_step(index, parameter_inputs[index])
             yield(step, result)
