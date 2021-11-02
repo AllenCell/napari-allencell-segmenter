@@ -1,6 +1,6 @@
 import copy
 from typing import Any, Dict, List, Union
-from PyQt5.QtWidgets import QComboBox
+from PyQt5.QtWidgets import QComboBox, QPushButton
 
 from aicssegmentation.workflow import WorkflowStep, FunctionParameter, WidgetType
 from magicgui.widgets import Slider
@@ -22,11 +22,12 @@ class WorkflowStepWidget(QWidget):
         step (WorkflowStep): WorkflowStep object for this widget
     """
 
-    def __init__(self, step: WorkflowStep):
+    def __init__(self, step: WorkflowStep, steps_view):
         super().__init__()
         if step is None:
             raise ValueError("step")
         self._step = step
+        self.name = step.name
         self.form_rows: List[FormRow] = list()
 
         layout = QVBoxLayout()
@@ -41,6 +42,10 @@ class WorkflowStepWidget(QWidget):
             for param_name, param_data in step.function.parameters.items():
                 default_values = step.parameter_values[param_name]
                 self._add_param_rows(param_name, param_data, default_values)
+
+        button = QPushButton(f"Run {step.name}")
+        button.clicked.connect(lambda: steps_view.btn_run_clicked(step.name))
+        self.form_rows.append(FormRow("", button))
 
         step_name = f"<span>{step.step_number}.&nbsp;{step.name}</span>"
         box = CollapsibleBox(step_name, Form(self.form_rows, (11, 5, 5, 5)))
@@ -73,23 +78,25 @@ class WorkflowStepWidget(QWidget):
 
         for param_row in self.form_rows:
             # Grab the current value from the row, along with its param name
-            if isinstance(param_row.widget, QComboBox):
-                # Row contains a dropdown
-                name = param_row.widget.objectName()
-                value = param_row.widget.currentText()
+            if not isinstance(param_row.widget, QPushButton):
+                # skip buttons
+                if isinstance(param_row.widget, QComboBox):
+                    # Row contains a dropdown
+                    name = param_row.widget.objectName()
+                    value = param_row.widget.currentText()
 
-                # Convert for each data datatype
-                data_type = self._step.function.parameters[name][0].data_type
-                if data_type == "bool":
-                    value = Convert.to_boolean(value)
-                elif data_type == "int":
-                    value = int(value)
-                elif data_type == "float":
-                    value = float(value)
-            else:
-                # Row contains a Magicgui Slider or FloatSlider
-                name = param_row.widget.native.objectName()
-                value = param_row.widget.get_value()
+                    # Convert for each data datatype
+                    data_type = self._step.function.parameters[name][0].data_type
+                    if data_type == "bool":
+                        value = Convert.to_boolean(value)
+                    elif data_type == "int":
+                        value = int(value)
+                    elif data_type == "float":
+                        value = float(value)
+                else:
+                    # Row contains a Magicgui Slider or FloatSlider
+                    name = param_row.widget.native.objectName()
+                    value = param_row.widget.get_value()
 
             # Populate self.parameter_inputs
             if isinstance(parameter_inputs[name], list):
