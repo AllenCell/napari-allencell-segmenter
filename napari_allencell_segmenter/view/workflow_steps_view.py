@@ -121,7 +121,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
 
         # Add a widget for all the steps in this category
         for step in filter(lambda step: step.category == category, self._workflow.workflow_definition.steps):
-            self._layout.addWidget(WorkflowStepWidget(step))
+            self._layout.addWidget(WorkflowStepWidget(step, steps_view=self))
 
         self._layout.addSpacing(10)
 
@@ -233,3 +233,15 @@ class WorkflowStepsView(View):  # pragma: no-cover
         if file_path:
             steps = [w.get_workflow_step_with_inputs() for w in self._get_workflow_step_widgets()]
             self._controller.save_workflow(steps, file_path)
+
+    def btn_run_clicked(self, workflow_name:str):
+        all_parameter_inputs = [w.get_parameter_inputs() for w in self._get_workflow_step_widgets()]
+        step_number = 0
+        for step in self._get_workflow_step_widgets():
+            if step.name == workflow_name:
+                param = step.get_parameter_inputs()
+                break
+            else:
+                step_number = step_number + 1
+        print(param)
+        self._controller.run_step(step_number, param)

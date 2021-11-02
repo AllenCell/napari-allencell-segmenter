@@ -123,13 +123,10 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             yield(step, result)
 
     def _run_step_async(self, index: int, parameter_inputs: List[Dict[str, List]]) -> Generator[Tuple[WorkflowStep, numpy.ndarray], None, None]:
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            print("which step to run again (0 indexed)")
-            index = int(input()) # TODO make this the selected index
-            step = self.model.active_workflow.workflow_definition.steps[index]
-            result = self.model.active_workflow.execute_step(index, parameter_inputs[index])
-            yield(step, result)
+
+        step = self.model.active_workflow.workflow_definition.steps[index]
+        result = self.model.active_workflow.execute_step(index, parameter_inputs)
+        yield(step, result)
 
 
 
