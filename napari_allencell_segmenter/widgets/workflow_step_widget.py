@@ -98,11 +98,11 @@ class WorkflowStepWidget(QWidget):
                     name = param_row.widget.native.objectName()
                     value = param_row.widget.get_value()
 
-            # Populate self.parameter_inputs
-            if isinstance(parameter_inputs[name], list):
-                parameter_inputs[name].append(value)
-            else:
-                parameter_inputs[name] = value
+                # Populate self.parameter_inputs
+                if isinstance(parameter_inputs[name], list):
+                    parameter_inputs[name].append(value)
+                else:
+                    parameter_inputs[name] = value
 
         return parameter_inputs
 
