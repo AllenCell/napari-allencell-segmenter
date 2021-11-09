@@ -45,7 +45,9 @@ class WorkflowStepWidget(QWidget):
 
         button = QPushButton(f"Run {step.name}")
         button.clicked.connect(lambda: steps_view.btn_run_clicked(step.name))
+        button.setDisabled(True)
         self.form_rows.append(FormRow("", button))
+
 
         step_name = f"<span>{step.step_number}.&nbsp;{step.name}</span>"
         box = CollapsibleBox(step_name, Form(self.form_rows, (11, 5, 5, 5)))
@@ -105,6 +107,12 @@ class WorkflowStepWidget(QWidget):
                     parameter_inputs[name] = value
 
         return parameter_inputs
+
+    def enable_button(self):
+        for widget in self.form_rows:
+            if isinstance(widget.widget, QPushButton):
+                widget.widget.setEnabled(True)
+
 
     def _add_param_rows(
         self, param_name: str, param_data: List[FunctionParameter], default_values: Union[List, str, bool, int, float]
