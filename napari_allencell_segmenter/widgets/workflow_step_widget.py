@@ -22,7 +22,7 @@ class WorkflowStepWidget(QWidget):
         step (WorkflowStep): WorkflowStep object for this widget
     """
 
-    def __init__(self, step: WorkflowStep, steps_view):
+    def __init__(self, step: WorkflowStep, steps_view, enable_button:bool = False):
         super().__init__()
         if step is None:
             raise ValueError("step")
@@ -45,7 +45,8 @@ class WorkflowStepWidget(QWidget):
 
         button = QPushButton(f"Run {step.name}")
         button.clicked.connect(lambda: steps_view.btn_run_clicked(step.name))
-        button.setDisabled(True)
+        if not enable_button:
+            button.setDisabled(True)
         self.form_rows.append(FormRow("", button))
 
 

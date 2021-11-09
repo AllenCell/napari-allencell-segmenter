@@ -41,6 +41,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
             raise ValueError("controller")
         self._controller = controller
         self.setObjectName("workflowStepsView")
+        self._first_button = True
 
     def load(self, model: SegmenterModel):
         self._workflow = model.active_workflow
@@ -118,10 +119,13 @@ class WorkflowStepsView(View):  # pragma: no-cover
         category_label = QLabel(category.value.upper())
         category_label.setObjectName("categoryLabel")
         self._layout.addWidget(category_label)
-
         # Add a widget for all the steps in this category
         for step in filter(lambda step: step.category == category, self._workflow.workflow_definition.steps):
-            self._layout.addWidget(WorkflowStepWidget(step, steps_view=self))
+            if self._first_button:
+                self._layout.addWidget(WorkflowStepWidget(step, steps_view=self, enable_button=True))
+                self._first_button = False
+            else:
+                self._layout.addWidget(WorkflowStepWidget(step, steps_view=self, enable_button=False))
 
         self._layout.addSpacing(10)
 
