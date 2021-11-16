@@ -197,9 +197,20 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self.btn_run_all.clicked.disconnect()
         self.btn_run_all.clicked.connect(self._btn_run_all_clicked)
 
+    def reset_run_step(self):
+        self.btn_run_all.setText("Run all")
+        self.btn_run_all.clicked.disconnect()
+        self.btn_run_all.clicked.connect(self._btn_run_all_clicked)
+
+
     def increment_progress_bar(self):
         value = self.progress_bar.value()
         self.progress_bar.setValue(value + 1)
+        print("incremented")
+
+    def set_progress_bar(self, i: int):
+        self.progress_bar.setValue(i + 1)
+        print("incremented")
 
     def _get_workflow_step_widgets(self) -> List[WorkflowStepWidget]:
         return self.findChildren(WorkflowStepWidget)
