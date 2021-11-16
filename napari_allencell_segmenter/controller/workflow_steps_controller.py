@@ -22,7 +22,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self._workflow_engine = workflow_engine
         self._view = WorkflowStepsView(self)
         self._run_lock = False  # lock to avoid triggering multiple segmentation / step runs at the same time
-        self._steps = 0  # need this to feed in parameter inputs step by step
+        self._steps = 0  # need this to count steps completed
+        self._max_step_run: int = -1
+        self.experiment = 'a'
 
     @property
     def view(self):
@@ -84,8 +86,10 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             self._worker: GeneratorWorker = create_worker(self._run_step_async, int, parameter_inputs)
             self._worker.yielded.connect(self._on_step_processed)
             self._worker.started.connect(self._on_run_all_started)
-            self._worker.finished.connect(self._on_run_all_finished)
+            self._worker.finished.connect(self._on_run_step_finished)
             self._worker.start()
+
+
 
     def cancel_run_all(self):
         if self._worker is not None:
@@ -126,11 +130,32 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
 
         step = self.model.active_workflow.workflow_definition.steps[index]
         result = self.model.active_workflow.execute_step(index, parameter_inputs)
+        self._steps = index
         yield(step, result)
 
-
-
     def _on_step_processed(self, processed_args: Tuple[WorkflowStep, numpy.ndarray]):
+        step, result = processed_args
+
+        # Update progress
+        self.view.set_progress_bar(self._steps)
+        if self._steps <= self._max_step_run:
+            self.experiment = chr(ord(self.experiment) + 1)
+
+        # Add step result layer
+        self.viewer.add_image_layer(result, name=f"{self.experiment} {step.step_number}. {step.name}")
+
+        # Hide all layers except for most recent
+        for layer in self.viewer.get_layers()[:-1]:
+            layer.visible = False
+
+        if self._steps > self._max_step_run:
+            self._max_step_run = self._steps
+            self._view._get_workflow_step_widgets()[self._steps + 1].enable_button()
+
+
+
+
+    def _on_step_processed_all(self, processed_args: Tuple[WorkflowStep, numpy.ndarray]):
         step, result = processed_args
 
         # Update progress
@@ -149,4 +174,8 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
 
     def _on_run_all_finished(self):
         self._view.reset_run_all()
+        self._run_lock = False
+
+    def _on_run_step_finished(self):
+        self._view.reset_run_step()
         self._run_lock = False
