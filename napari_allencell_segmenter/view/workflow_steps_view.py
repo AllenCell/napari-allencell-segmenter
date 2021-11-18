@@ -202,15 +202,12 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self.btn_run_all.clicked.disconnect()
         self.btn_run_all.clicked.connect(self._btn_run_all_clicked)
 
-
     def increment_progress_bar(self):
         value = self.progress_bar.value()
         self.progress_bar.setValue(value + 1)
-        print("incremented")
 
     def set_progress_bar(self, i: int):
         self.progress_bar.setValue(i + 1)
-        print("incremented")
 
     def _get_workflow_step_widgets(self) -> List[WorkflowStepWidget]:
         return self.findChildren(WorkflowStepWidget)
@@ -249,7 +246,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
             steps = [w.get_workflow_step_with_inputs() for w in self._get_workflow_step_widgets()]
             self._controller.save_workflow(steps, file_path)
 
-    def btn_run_clicked(self, workflow_name:str):
+    def btn_run_clicked(self, workflow_name: str):
         all_parameter_inputs = [w.get_parameter_inputs() for w in self._get_workflow_step_widgets()]
         step_number = 0
         for step in self._get_workflow_step_widgets():
@@ -258,5 +255,4 @@ class WorkflowStepsView(View):  # pragma: no-cover
                 break
             else:
                 step_number = step_number + 1
-        print(param)
         self._controller.run_step(step_number, param)
