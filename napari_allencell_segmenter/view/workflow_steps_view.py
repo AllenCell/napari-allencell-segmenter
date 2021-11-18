@@ -247,7 +247,6 @@ class WorkflowStepsView(View):  # pragma: no-cover
             self._controller.save_workflow(steps, file_path)
 
     def btn_run_clicked(self, workflow_name: str):
-        all_parameter_inputs = [w.get_parameter_inputs() for w in self._get_workflow_step_widgets()]
         step_number = 0
         for step in self._get_workflow_step_widgets():
             if step.name == workflow_name:
