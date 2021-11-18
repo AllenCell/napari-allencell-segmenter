@@ -27,7 +27,7 @@ class TestWorkflowStepWidget:
         widget = WorkflowStepWidget(step)
 
         # Assert
-        assert len(widget.form_rows) == 1
+        assert len(widget.form_rows) == 2
         assert widget.form_rows[0].label == ""
 
     def test_step_with_single_value_per_param(self):
@@ -43,7 +43,7 @@ class TestWorkflowStepWidget:
         widget = WorkflowStepWidget(step)
 
         # Assert
-        assert len(widget.form_rows) == 1
+        assert len(widget.form_rows) == 2
         assert widget.form_rows[0].label == "scaling_param"
         assert isinstance(widget.form_rows[0].widget, QComboBox)
 
@@ -63,7 +63,7 @@ class TestWorkflowStepWidget:
         widget = WorkflowStepWidget(step)
 
         # Assert
-        assert len(widget.form_rows) == 2
+        assert len(widget.form_rows) == 3
         assert widget.form_rows[0].label == "scaling_param 1"
         assert widget.form_rows[1].label == "scaling_param 2"
         assert isinstance(widget.form_rows[0].widget, QComboBox)

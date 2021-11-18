@@ -22,7 +22,7 @@ class WorkflowStepWidget(QWidget):
         step (WorkflowStep): WorkflowStep object for this widget
     """
 
-    def __init__(self, step: WorkflowStep, steps_view, enable_button: bool = False):
+    def __init__(self, step: WorkflowStep, steps_view = None, enable_button: bool = False):
         super().__init__()
         if step is None:
             raise ValueError("step")
