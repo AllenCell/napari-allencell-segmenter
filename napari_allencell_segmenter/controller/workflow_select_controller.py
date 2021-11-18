@@ -73,7 +73,7 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
 
         self.viewer.add_image_layer(
             channel_data,
-            name="0. "
+            name="0: "
             + self.model.selected_layer.name
             + ": ch["
             + str(self.model.selected_channel.index)

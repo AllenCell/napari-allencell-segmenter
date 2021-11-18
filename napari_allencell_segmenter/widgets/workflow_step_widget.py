@@ -22,7 +22,7 @@ class WorkflowStepWidget(QWidget):
         step (WorkflowStep): WorkflowStep object for this widget
     """
 
-    def __init__(self, step: WorkflowStep, steps_view, enable_button:bool = False):
+    def __init__(self, step: WorkflowStep, steps_view, enable_button: bool = False):
         super().__init__()
         if step is None:
             raise ValueError("step")
@@ -48,7 +48,6 @@ class WorkflowStepWidget(QWidget):
         if not enable_button:
             button.setDisabled(True)
         self.form_rows.append(FormRow("", button))
-
 
         step_name = f"<span>{step.step_number}.&nbsp;{step.name}</span>"
         box = CollapsibleBox(step_name, Form(self.form_rows, (11, 5, 5, 5)))
@@ -114,6 +113,10 @@ class WorkflowStepWidget(QWidget):
             if isinstance(widget.widget, QPushButton):
                 widget.widget.setEnabled(True)
 
+    def disable_button(self):
+        for widget in self.form_rows:
+            if isinstance(widget.widget, QPushButton):
+                widget.widget.setDisabled(True)
 
     def _add_param_rows(
         self, param_name: str, param_data: List[FunctionParameter], default_values: Union[List, str, bool, int, float]

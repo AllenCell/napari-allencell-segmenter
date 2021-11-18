@@ -16,7 +16,6 @@ class TestWorkflowStepWidget:
         engine = WorkflowEngine()
         for workflow in engine.workflow_definitions:
             for step in workflow.steps:
-                print(f"{workflow.name} - {step.name}")
                 step_widget = WorkflowStepWidget(step)
 
     def test_step_with_no_params(self):

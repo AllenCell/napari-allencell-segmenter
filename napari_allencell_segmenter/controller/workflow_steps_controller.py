@@ -24,7 +24,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self._run_lock = False  # lock to avoid triggering multiple segmentation / step runs at the same time
         self._steps = 0  # need this to count steps completed
         self._max_step_run: int = -1
-        self.experiment = 'a'
+        self._number_times_run = 0
 
     @property
     def view(self):
@@ -63,7 +63,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         """
         if not self._run_lock:
             self._worker: GeneratorWorker = create_worker(self._run_all_async, parameter_inputs)
-            self._worker.yielded.connect(self._on_step_processed)
+            self._worker.yielded.connect(self._on_step_processed_all)
             self._worker.started.connect(self._on_run_all_started)
             self._worker.finished.connect(self._on_run_all_finished)
             self._worker.start()
@@ -88,8 +88,6 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             self._worker.started.connect(self._on_run_all_started)
             self._worker.finished.connect(self._on_run_step_finished)
             self._worker.start()
-
-
 
     def cancel_run_all(self):
         if self._worker is not None:
@@ -118,42 +116,57 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 i = i + 1
                 yield (step, result)
 
-    def _run_next_step_async(self, parameter_inputs: List[Dict[str, List]]) -> Generator[Tuple[WorkflowStep, numpy.ndarray], None, None]:
+    def _run_next_step_async(
+        self, parameter_inputs: List[Dict[str, List]]
+    ) -> Generator[Tuple[WorkflowStep, numpy.ndarray], None, None]:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             step = self.model.active_workflow.get_next_step()
             result = self.model.active_workflow.execute_next(parameter_inputs[self._steps])
             self._steps = self._steps + 1
-            yield(step, result)
+            yield (step, result)
 
-    def _run_step_async(self, index: int, parameter_inputs: List[Dict[str, List]]) -> Generator[Tuple[WorkflowStep, numpy.ndarray], None, None]:
+    def _run_step_async(
+        self, index: int, parameter_inputs: List[Dict[str, List]]
+    ) -> Generator[Tuple[WorkflowStep, numpy.ndarray], None, None]:
 
         step = self.model.active_workflow.workflow_definition.steps[index]
         result = self.model.active_workflow.execute_step(index, parameter_inputs)
         self._steps = index
-        yield(step, result)
+        yield (step, result)
 
     def _on_step_processed(self, processed_args: Tuple[WorkflowStep, numpy.ndarray]):
+        if self._steps < self._max_step_run:
+            # should not be able to get here
+            raise RuntimeError("Should not be able to run steps before current step")
         step, result = processed_args
 
         # Update progress
         self.view.set_progress_bar(self._steps)
-        if self._steps <= self._max_step_run:
-            self.experiment = chr(ord(self.experiment) + 1)
-
-        # Add step result layer
-        self.viewer.add_image_layer(result, name=f"{self.experiment} {step.step_number}. {step.name}")
+        if self._steps == self._max_step_run:
+            # most recent step is being reran
+            self._number_times_run = self._number_times_run + 1
 
         # Hide all layers except for most recent
         for layer in self.viewer.get_layers()[:-1]:
             layer.visible = False
 
+        # most recent step is being ran
         if self._steps > self._max_step_run:
+            # enable button for next step
             self._max_step_run = self._steps
             self._view._get_workflow_step_widgets()[self._steps + 1].enable_button()
+            # disable button for previous step
+            if self._steps - 1 >= 0:
+                self._view._get_workflow_step_widgets()[self._steps - 1].disable_button()
+            # reset rerun counter
+            self._number_times_run = 0
 
-
-
+        # Add step result layer
+        if self._number_times_run == 0:
+            self.viewer.add_image_layer(result, name=f"{step.step_number}: {step.name}")
+        else:
+            self.viewer.add_image_layer(result, name=f"{step.step_number}.{self._number_times_run}: {step.name}")
 
     def _on_step_processed_all(self, processed_args: Tuple[WorkflowStep, numpy.ndarray]):
         step, result = processed_args
@@ -162,7 +175,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self.view.increment_progress_bar()
 
         # Add step result layer
-        self.viewer.add_image_layer(result, name=f"{step.step_number}. {step.name}")
+        self.viewer.add_image_layer(result, name=f"{step.step_number}: {step.name}")
 
         # Hide all layers except for most recent
         for layer in self.viewer.get_layers()[:-1]:
@@ -171,6 +184,11 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
     def _on_run_all_started(self):
         self._run_lock = True
         self._view.set_run_all_in_progress()
+
+    def _on_run_all_step_started(self):
+        self._run_lock = True
+        self._view.set_run_all_in_progress()
+        # disable previous step button
 
     def _on_run_all_finished(self):
         self._view.reset_run_all()
