@@ -48,12 +48,11 @@ class WorkflowStepWidget(QWidget):
         if not enable_button:
             button.setDisabled(True)
 
-        box_contents = QVBoxLayout()
-        box_contents.addLayout(Form(self.form_rows, (11, 5, 5, 5)))
-        box_contents.addWidget(button)
+        self.form_rows.append(FormRow("", button))
 
         step_name = f"<span>{step.step_number}.&nbsp;{step.name}</span>"
-        box = CollapsibleBox(step_name, box_contents)
+        box = CollapsibleBox(step_name, Form(self.form_rows, (11, 5, 5, 5)))
+
         layout.addWidget(box)
 
     def get_workflow_step_with_inputs(self) -> WorkflowStep:
