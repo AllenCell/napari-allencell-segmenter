@@ -254,4 +254,5 @@ class WorkflowStepsView(View):  # pragma: no-cover
                 break
             else:
                 step_number = step_number + 1
-        self._controller.run_step(step_number, param)
+                #TODO change back to run_step after testing
+        self._controller.run_step_sweep(step_number, param)
