@@ -31,6 +31,7 @@ This text document allows the plugin developers to gather the information they n
 3. [so on...]
 
 ## Environment
-Operating system (ex. MacOS Big Sur): [your answer here]
-Python version (ex. 3.8): [your answer here]
-How did you install the napari viewer (as a bundled app or through command line with `pip`)?: [your answer here]
+- Operating system (ex. MacOS Big Sur): [your answer here]
+- Python version (ex. 3.8): [your answer here]
+- napari version (ex. 0.4.1): [your answer here, you can find it by going to help -> napari info in napari]
+- How did you install the napari viewer (as a bundled app or through command line with `pip`)?: [your answer here]
