@@ -96,7 +96,7 @@ class BatchProcessingView(View):
             output_folder (Path): output folder to open when prompted by user
         """
         dlg = BatchCompleteDialog(output_folder)
-        dlg.exec()
+        dlg.exec_()
 
     def set_run_batch_in_progress(self):
         """
