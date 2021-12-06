@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 
-from PyQt5 import QtCore
+from qtpy import QtCore
 from unittest.mock import MagicMock, PropertyMock, create_autospec
 from napari_allencell_segmenter.view.workflow_select_view import (
     WorkflowSelectView,

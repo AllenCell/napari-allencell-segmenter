@@ -1,6 +1,6 @@
 import pytest
 
-from PyQt5.QtWidgets import QFrame
+from qtpy.QtWidgets import QFrame
 from napari_allencell_segmenter.core.view import View, ViewTemplate
 
 

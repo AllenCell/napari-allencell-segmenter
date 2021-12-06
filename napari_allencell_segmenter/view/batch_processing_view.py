@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QProgressBar, QVBoxLayout, QWidget, QLineEdit, QPushButton, QLabel
-from PyQt5.QtGui import QIntValidator
+from qtpy.QtWidgets import QProgressBar, QVBoxLayout, QWidget, QLineEdit, QPushButton, QLabel
+from qtpy.QtGui import QIntValidator
 from pathlib import Path
 from napari_allencell_segmenter.core.view import View
 from napari_allencell_segmenter.controller._interfaces import IBatchProcessingController

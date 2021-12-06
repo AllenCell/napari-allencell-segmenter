@@ -3,7 +3,7 @@ import napari
 
 from napari_allencell_segmenter.core.application import Application
 from napari_plugin_engine import napari_hook_implementation
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QSizePolicy
+from qtpy.QtWidgets import QWidget, QVBoxLayout, QSizePolicy
 
 """
 The class name here gets converted to title case and gets displayed as both the title 

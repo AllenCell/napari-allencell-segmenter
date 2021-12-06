@@ -1,6 +1,6 @@
 from enum import Enum
-from PyQt5.QtWidgets import QHBoxLayout, QWidget, QLineEdit, QFileDialog
-from PyQt5.QtCore import pyqtSignal
+from qtpy.QtWidgets import QHBoxLayout, QWidget, QLineEdit, QFileDialog
+from qtpy.QtCore import pyqtSignal
 
 
 class FileInputMode(Enum):
