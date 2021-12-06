@@ -12,7 +12,7 @@ from qtpy.QtWidgets import (
 )
 from qtpy.QtGui import QIcon, QPixmap, QImage
 from qtpy import QtCore
-from qtpy.QtCore import pyqtSignal
+from qtpy.QtCore import Signal
 
 from napari_allencell_segmenter.widgets.form import Form, FormRow
 from napari_allencell_segmenter._style import PAGE_CONTENT_WIDTH, Style
@@ -28,7 +28,7 @@ class WorkflowThumbnails(QWidget):
             workflow definitions to display as buttons
     """
 
-    workflowSelected = pyqtSignal(str)  # signal: emitted when a workflow is selected
+    workflowSelected = Signal(str)  # signal: emitted when a workflow is selected
 
     def __init__(self, workflows: List[WorkflowDefinition] = None):
         super().__init__()

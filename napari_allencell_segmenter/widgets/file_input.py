@@ -1,6 +1,6 @@
 from enum import Enum
 from qtpy.QtWidgets import QHBoxLayout, QWidget, QLineEdit, QFileDialog
-from qtpy.QtCore import pyqtSignal
+from qtpy.QtCore import Signal
 
 
 class FileInputMode(Enum):
@@ -19,7 +19,7 @@ class FileInput(QWidget):
         initial_text (str): text to display in the widget before a file has been selected
     """
 
-    file_selected = pyqtSignal(str)
+    file_selected = Signal(str)
     _selected_file: str = None
 
     def __init__(
