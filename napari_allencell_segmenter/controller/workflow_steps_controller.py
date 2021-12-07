@@ -102,6 +102,12 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 self._worker.started.connect(self._on_run_all_started)
                 self._worker.finished.connect(self._on_run_step_finished)
                 self._worker.start()
+            else:
+                self._worker: GeneratorWorker = create_worker(self._run_step_async, i, parameter_inputs)
+                self._worker.yielded.connect(self._on_step_processed)
+                self._worker.started.connect(self._on_run_all_started)
+                self._worker.finished.connect(self._on_run_step_finished)
+                self._worker.start()
 
     def _run_step_sweep(self, index, length, param_original, param_sweep):
         for i in range(length):
@@ -112,10 +118,19 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 if isinstance(v, list):
                     run_list = list()
                     if len(v) == 2:
-                        run_list.append(param_sweep[k][0][i])
-                        run_list.append(param_sweep[k][1][i])
+                        if isinstance(param_sweep[k][0], numpy.ndarray):
+                            run_list.append(param_sweep[k][0][i])
+                        else:
+                            run_list.append(param_sweep[k][0])
+                        if isinstance(param_sweep[k][1], numpy.ndarray):
+                            run_list.append(param_sweep[k][1][i])
+                        else:
+                            run_list.append(param_sweep[k][1])
                     elif len(v) == 1:
-                        run_list.append(param_sweep[k][0][i])
+                        if isinstance(param_sweep[k][0], numpy.ndarray):
+                            run_list.append(param_sweep[k][0][i])
+                        else:
+                            run_list.append(param_sweep[k][0])
                     run_dict[k] = run_list
                 else:
                     # is single entry
@@ -153,15 +168,23 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 for value in v:
                     input_text = input(f"{str(int)} param sweep range: " )
                     int = int + 1
-                    inputs = input_text.split(":")
-                    length = len(numpy.arange(float(inputs[0]), float(inputs[2])+float(inputs[1]), float(inputs[1])))
-                    single_item.append(numpy.arange(float(inputs[0]), float(inputs[2])+float(inputs[1]), float(inputs[1])))
+                    if input_text.__contains__(":"):
+                        inputs = input_text.split(":")
+                        length = len(numpy.arange(float(inputs[0]), float(inputs[2])+float(inputs[1]), float(inputs[1])))
+                        single_item.append(numpy.arange(float(inputs[0]), float(inputs[2])+float(inputs[1]), float(inputs[1])))
+                    else:
+                        length = 1
+                        single_item.append(float(input_text))
             else:
                 input_text = input(f"{str(int)} param sweep range: ")
                 int = int + 1
-                inputs = input_text.split(":")
-                single_item = numpy.arange(float(inputs[0]), float(inputs[2]) + float(inputs[1]), float(inputs[1]))
-                length = len(single_item)
+                if input_text.__contains__(":"):
+                    inputs = input_text.split(":")
+                    single_item = numpy.arange(float(inputs[0]), float(inputs[2])+float(inputs[1]), float(inputs[1]))
+                    length = len(single_item)
+                else:
+                    length = 1
+                    single_item = float(input_text)
             dict2[k] = single_item
         return dict2, length
 
