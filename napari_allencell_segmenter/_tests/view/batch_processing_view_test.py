@@ -12,6 +12,10 @@ class TestBatchProcessingView:
         self._mock_controller: MagicMock = create_autospec(IBatchProcessingController)
         self._view = BatchProcessingView(self._mock_controller)
         self._view.load()
+    
+    def open_completion_dialog(self):
+        self._view.open_completion_dialog("/some/dir")
+        assert self._view.completion_dlg.isVisible()
 
     def test_update_button(self):
         self._view.update_button(enabled=True)
