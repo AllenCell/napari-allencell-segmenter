@@ -8,6 +8,7 @@ from aicssegmentation.workflow import WorkflowEngine, BatchWorkflow
 from napari_allencell_segmenter.core._interfaces import IApplication
 from napari_allencell_segmenter.core.controller import Controller
 from napari_allencell_segmenter.view.batch_processing_view import BatchProcessingView
+from napari_allencell_segmenter.widgets.batch_complete_dialog import BatchCompleteDialog
 from ._interfaces import IBatchProcessingController
 
 
@@ -107,7 +108,8 @@ class BatchProcessingController(Controller, IBatchProcessingController):
         self._run_lock = False
 
         if not self._canceled:
-            self._view.open_completion_dialog(self._output_folder)
+            completion_dlg = BatchCompleteDialog(self._output_folder)
+            completion_dlg.exec_()
 
         self._view.reset_run_batch()
         self._canceled = False
