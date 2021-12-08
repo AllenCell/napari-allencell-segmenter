@@ -2,9 +2,9 @@ from typing import List
 import numpy as np
 
 from aicssegmentation.workflow import WorkflowStepCategory
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QImage, QPixmap
-from PyQt5.QtWidgets import (
+from qtpy.QtCore import Qt
+from qtpy.QtGui import QImage, QPixmap
+from qtpy.QtWidgets import (
     QFileDialog,
     QHBoxLayout,
     QLabel,

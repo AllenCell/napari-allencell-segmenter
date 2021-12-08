@@ -1,8 +1,8 @@
 import magicgui.widgets
 
 from typing import List, NamedTuple, Union
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QFormLayout, QLabel, QWidget
+from qtpy.QtCore import Qt
+from qtpy.QtWidgets import QFormLayout, QLabel, QWidget
 
 
 class FormRow(NamedTuple):
