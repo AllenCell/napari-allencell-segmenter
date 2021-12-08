@@ -1,5 +1,5 @@
 from napari_allencell_segmenter.view._main_template import MainTemplate
-from PyQt5.QtWidgets import QFrame
+from qtpy.QtWidgets import QFrame
 
 
 class TestMainTemplate:

@@ -1,5 +1,5 @@
 from typing import List
-from PyQt5.QtWidgets import QPushButton
+from qtpy.QtWidgets import QPushButton
 import pytest
 
 from aicssegmentation.workflow import WorkflowEngine
