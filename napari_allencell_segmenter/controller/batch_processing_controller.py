@@ -108,6 +108,9 @@ class BatchProcessingController(Controller, IBatchProcessingController):
         self._run_lock = False
 
         if not self._canceled:
+            # Open completion dialog
+            # TODO: this should be moved back to batch_processing_view, but testing QDialog.exec_()
+            # is tricky
             completion_dlg = BatchCompleteDialog(self._output_folder)
             completion_dlg.exec_()
 
