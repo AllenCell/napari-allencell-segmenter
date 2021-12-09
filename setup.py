@@ -118,6 +118,6 @@ setup(
     },
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.rst
-    version="1.1.2",
+    version="1.1.3",
     zip_safe=False,
 )
