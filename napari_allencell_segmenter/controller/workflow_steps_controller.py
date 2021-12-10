@@ -96,8 +96,12 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
     def run_step_sweep(self, i: int, parameter_inputs):
         if not self._run_lock:
             if parameter_inputs:
-                parameter_inputs_2, length = self._parse_inputs(copy.deepcopy(parameter_inputs))
-                self._worker: GeneratorWorker = create_worker(self._run_step_sweep, i, length, parameter_inputs, parameter_inputs_2)
+                parameter_inputs_2, length, type = self._parse_inputs(copy.deepcopy(parameter_inputs))
+                if type == "normal":
+                    self._worker: GeneratorWorker = create_worker(self._run_step_sweep, i, length, parameter_inputs, parameter_inputs_2)
+                elif type == "grid":
+                    self._worker: GeneratorWorker = create_worker(self._run_step_sweep_grid, i, length, parameter_inputs,
+                                                                  parameter_inputs_2)
                 self._worker.yielded.connect(self._on_step_processed)
                 self._worker.started.connect(self._on_run_all_started)
                 self._worker.finished.connect(self._on_run_step_finished)
@@ -143,6 +147,70 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             self._current_params = run_dict
             yield (step, result)
 
+    def _run_step_sweep_grid(self, index, length, param_original, param_sweep):
+        # either one param, or two params as a list
+        if len(param_original) == 1:
+            # There's only one param in this k,v pair- use run_step_sweep
+            if not isinstance(list(param_original.values())[0], list):
+                self._run_step_sweep(index, length, param_original, param_sweep)
+            else:
+            # one dict entry, multiple parameters as list
+                list1 = list(param_sweep.values())[0][0]
+                list2 = list(param_sweep.values())[0][1]
+                for x in list1:
+                    for y in list2:
+                        run_dict = {list(param_original.keys())[0]: [x, y]}
+                        step = self.model.active_workflow.workflow_definition.steps[index]
+                        print(f"running step {step.name} with parameters {run_dict}")
+                        result = self.model.active_workflow.execute_step(index, run_dict)
+                        self._steps = index
+                        self._current_params = run_dict
+                        yield (step, result)
+        else:
+            # two separate params with different keys
+            list1 = list(param_sweep.values())[0]
+            list2 = list(param_sweep.values())[1]
+            for x in list1:
+                for y in list2:
+                    run_dict = dict()
+                    run_dict[list(param_original.keys())[0]] = x
+                    run_dict[list(param_original.keys())[1]] = y
+                    step = self.model.active_workflow.workflow_definition.steps[index]
+                    print(f"running step {step.name} with parameters {run_dict}")
+                    result = self.model.active_workflow.execute_step(index, run_dict)
+                    self._steps = index
+                    self._current_params = run_dict
+                    yield (step, result)
+
+    def _sweep_grid(self, index, list1, list2, param_original):
+        if len(param_original) == 1:
+            # one k-v pair for two params
+            for x in list1:
+                run_list = list()
+                run_list.append(x)
+                for y in list2:
+                    run_list.append(y)
+                    run_dict = dict()
+                    run_dict[param_original.keys()[0]] = run_list
+                    step = self.model.active_workflow.workflow_definition.steps[index]
+                    print(f"running step {step.name} with parameters {run_dict}")
+                    result = self.model.active_workflow.execute_step(index, run_dict)
+                    self._steps = index
+                    self._current_params = run_dict
+                    yield (step, result)
+        elif len(param_original) == 2:
+            # two key value pairs for two params
+            for x in list1:
+                for y in list2:
+                    run_dict = dict()
+                    run_dict[param_original.keys()[0]] = x
+                    run_dict[param_original.keys()[1]] = y
+                    step = self.model.active_workflow.workflow_definition.steps[index]
+                    print(f"running step {step.name} with parameters {run_dict}")
+                    result = self.model.active_workflow.execute_step(index, run_dict)
+                    self._steps = index
+                    self._current_params = run_dict
+                    yield (step, result)
 
     def cancel_run_all(self):
         if self._worker is not None:
@@ -162,6 +230,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             dict2 = dict(parameter_inputs)
         int = 1
         length = 0
+        sweep_type = input("sweep type? (normal or grid)")
         for k, v in parameter_inputs.items():
             if isinstance(v, list):
                 single_item = list()
@@ -186,7 +255,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                     length = 1
                     single_item = float(input_text)
             dict2[k] = single_item
-        return dict2, length
+        return dict2, length, sweep_type
 
 
     def _run_all_async(
