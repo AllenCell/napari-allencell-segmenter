@@ -10,6 +10,7 @@ from napari_allencell_segmenter.core._interfaces import IApplication
 from napari_allencell_segmenter.controller._interfaces import IWorkflowStepsController
 from napari_allencell_segmenter.core.controller import Controller
 from napari_allencell_segmenter.model.segmenter_model import SegmenterModel
+from napari_allencell_segmenter.widgets.param_sweep_widget import ParamSweepWidget
 
 import copy
 
@@ -93,10 +94,10 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             self._worker.finished.connect(self._on_run_step_finished)
             self._worker.start()
 
-    def run_step_sweep(self, i: int, parameter_inputs):
+    def run_step_sweep(self, i: int, parameter_inputs, ui_inputs, type):
         if not self._run_lock:
             if parameter_inputs:
-                parameter_inputs_2, length, type = self._parse_inputs(copy.deepcopy(parameter_inputs))
+                parameter_inputs_2, length = self._parse_inputs(copy.deepcopy(parameter_inputs), ui_inputs)
                 if type == "normal":
                     self._worker: GeneratorWorker = create_worker(self._run_step_sweep, i, length, parameter_inputs, parameter_inputs_2)
                 elif type == "grid":
@@ -224,19 +225,18 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self._worker.yielded.disconnect()
         self._worker.finished.disconnect()
 
-    def _parse_inputs(self, parameter_inputs):
+    def _parse_inputs(self, parameter_inputs, ui_input):
         # test function, get sweep values from ui somehow
         if parameter_inputs:
             dict2 = dict(parameter_inputs)
-        int = 1
+        i = 0
         length = 0
-        sweep_type = input("sweep type? (normal or grid)")
         for k, v in parameter_inputs.items():
             if isinstance(v, list):
                 single_item = list()
                 for value in v:
-                    input_text = input(f"{str(int)} param sweep range: " )
-                    int = int + 1
+                    input_text = ui_input[i]
+                    i = i + 1
                     if input_text.__contains__(":"):
                         inputs = input_text.split(":")
                         length = len(numpy.arange(float(inputs[0]), float(inputs[2])+float(inputs[1]), float(inputs[1])))
@@ -245,8 +245,8 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                         length = 1
                         single_item.append(float(input_text))
             else:
-                input_text = input(f"{str(int)} param sweep range: ")
-                int = int + 1
+                input_text = ui_input[i]
+                i = i + 1
                 if input_text.__contains__(":"):
                     inputs = input_text.split(":")
                     single_item = numpy.arange(float(inputs[0]), float(inputs[2])+float(inputs[1]), float(inputs[1]))
@@ -255,7 +255,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                     length = 1
                     single_item = float(input_text)
             dict2[k] = single_item
-        return dict2, length, sweep_type
+        return dict2, length
 
 
     def _run_all_async(
@@ -367,3 +367,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
     def _on_run_step_finished(self):
         self._view.reset_run_step()
         self._run_lock = False
+
+    def open_sweep_ui(self, params, step_number):
+        dlg = ParamSweepWidget(params, step_number, self)
+        dlg.exec()
