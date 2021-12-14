@@ -9,7 +9,6 @@ class FormRow(NamedTuple):
     label: Union[str, QLabel]
     widget: Union[QWidget, magicgui.widgets.Widget]
 
-
 class Form(QFormLayout):
     """
     A nicely formatted form layout.

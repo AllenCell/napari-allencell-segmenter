@@ -1,6 +1,6 @@
 import copy
 from typing import Any, Dict, List, Union
-from PyQt5.QtWidgets import QComboBox, QPushButton
+from PyQt5.QtWidgets import QComboBox, QPushButton, QFrame, QHBoxLayout
 
 from aicssegmentation.workflow import WorkflowStep, FunctionParameter, WidgetType
 from magicgui.widgets import Slider
@@ -43,12 +43,22 @@ class WorkflowStepWidget(QWidget):
                 default_values = step.parameter_values[param_name]
                 self._add_param_rows(param_name, param_data, default_values)
 
+        buttons = QFrame()
+        buttons.setStyleSheet("border: none;")
+        buttons.setLayout(QHBoxLayout())
+
+        buttonsweep = QPushButton("Sweep")
+        buttonsweep.clicked.connect(lambda: steps_view.btn_sweep_clicked(step.name))
+
         button = QPushButton(f"Run {step.name}")
         button.clicked.connect(lambda: steps_view.btn_run_clicked(step.name))
+        buttons.layout().addWidget(buttonsweep)
+        buttons.layout().addWidget(button)
+
         if not enable_button:
             button.setDisabled(True)
 
-        self.form_rows.append(FormRow("", button))
+        self.form_rows.append(FormRow("", buttons))
 
         step_name = f"<span>{step.step_number}.&nbsp;{step.name}</span>"
         box = CollapsibleBox(step_name, Form(self.form_rows, (11, 5, 5, 5)))
@@ -82,7 +92,7 @@ class WorkflowStepWidget(QWidget):
 
         for param_row in self.form_rows:
             # Grab the current value from the row, along with its param name
-            if not isinstance(param_row.widget, QPushButton):
+            if not isinstance(param_row.widget, QFrame):
                 # skip buttons
                 if isinstance(param_row.widget, QComboBox):
                     # Row contains a dropdown
@@ -112,13 +122,19 @@ class WorkflowStepWidget(QWidget):
 
     def enable_button(self):
         for widget in self.form_rows:
-            if isinstance(widget.widget, QPushButton):
-                widget.widget.setEnabled(True)
+            if isinstance(widget.widget, QFrame):
+                try:
+                    widget.widget.children()[2].setEnabled(True)
+                except:
+                    print("is label")
 
     def disable_button(self):
         for widget in self.form_rows:
-            if isinstance(widget.widget, QPushButton):
-                widget.widget.setDisabled(True)
+            if isinstance(widget.widget, QFrame):
+                try:
+                    widget.widget.children()[2].setEnabled(True)
+                except:
+                    print("is label")
 
     def _add_param_rows(
         self, param_name: str, param_data: List[FunctionParameter], default_values: Union[List, str, bool, int, float]

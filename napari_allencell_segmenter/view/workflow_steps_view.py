@@ -255,4 +255,15 @@ class WorkflowStepsView(View):  # pragma: no-cover
             else:
                 step_number = step_number + 1
                 #TODO change back to run_step after testing
-        self._controller.run_step_sweep(step_number, param)
+        self._controller.run_step(step_number, param)
+
+    def btn_sweep_clicked(self, workflow_name: str):
+        step_number = 0
+        for step in self._get_workflow_step_widgets():
+            if step.name == workflow_name:
+                param = step.get_parameter_inputs()
+                break
+            else:
+                step_number = step_number + 1
+                # TODO change back to run_step after testing
+        self._controller.open_sweep_ui(param, step_number)
