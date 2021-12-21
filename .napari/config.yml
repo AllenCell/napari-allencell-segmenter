@@ -2,4 +2,12 @@ project_urls:
   Bug Tracker: https://github.com/AllenCell/napari-allencell-segmenter/issues
   Documentation: https://github.com/AllenCell/napari-allencell-segmenter#README.md
   Source Code: https://github.com/AllenCell/napari-allencell-segmenter
-  User Support: https://github.com/AllenCell/napari-allencell-segmenter/issues
+  User Support: https://github.com/AllenCell/napari-allencell-segmenter/issues# Add labels from the EDAM Bioimaging ontology
+labels:
+  ontology: EDAM-BIOIMAGING:alpha06
+  terms:
+  - 3D image
+  - Cell segmentation
+  - Model-based segmentation
+  - Fluorescence microscopy
+  - Image visualisation
