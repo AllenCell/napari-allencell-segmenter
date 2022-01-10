@@ -11,6 +11,7 @@ from napari_allencell_segmenter.controller._interfaces import IWorkflowStepsCont
 from napari_allencell_segmenter.core.controller import Controller
 from napari_allencell_segmenter.model.segmenter_model import SegmenterModel
 from napari_allencell_segmenter.widgets.param_sweep_widget import ParamSweepWidget
+from decimal import *
 
 import copy
 
@@ -124,22 +125,22 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                     run_list = list()
                     if len(v) == 2:
                         if isinstance(param_sweep[k][0], numpy.ndarray):
-                            run_list.append(param_sweep[k][0][i])
+                            run_list.append(round(param_sweep[k][0][i], 3))
                         else:
-                            run_list.append(param_sweep[k][0])
+                            run_list.append(round(param_sweep[k][0], 3))
                         if isinstance(param_sweep[k][1], numpy.ndarray):
-                            run_list.append(param_sweep[k][1][i])
+                            run_list.append(round(param_sweep[k][1][i],3))
                         else:
-                            run_list.append(param_sweep[k][1])
+                            run_list.append(round(param_sweep[k][1] ,3))
                     elif len(v) == 1:
                         if isinstance(param_sweep[k][0], numpy.ndarray):
-                            run_list.append(param_sweep[k][0][i])
+                            run_list.append(round(param_sweep[k][0][i], 3))
                         else:
-                            run_list.append(param_sweep[k][0])
+                            run_list.append(round(param_sweep[k][0], 3))
                     run_dict[k] = run_list
                 else:
                     # is single entry
-                    run_dict[k] = param_sweep[k][0]
+                    run_dict[k] = round(param_sweep[k][0],3)
             # run iteration
             step = self.model.active_workflow.workflow_definition.steps[index]
             print(f"running step {step.name} with parameters {run_dict}")

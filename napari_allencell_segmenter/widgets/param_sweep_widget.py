@@ -2,7 +2,7 @@
 from qtpy.QtWidgets import QDialog, QLineEdit, QVBoxLayout, QFrame, QHBoxLayout, QPushButton, QCheckBox
 
 from typing import Dict, Any, List
-from widgets.form import FormRow, Form
+from napari_allencell_segmenter.widgets.form import Form, FormRow
 
 
 class ParamSweepWidget(QDialog):
@@ -31,8 +31,10 @@ class ParamSweepWidget(QDialog):
         if self._param_set:
             for key, value in self._param_set.items():
                 if isinstance(value, list):
-                    rows.append(FormRow(label=f"{key} 1", widget= QLineEdit()))
-                    rows.append(FormRow(label=f"{key} 2", widget=QLineEdit()))
+                    i = 1
+                    for _ in value:
+                        rows.append(FormRow(label=f"{key} {i}", widget=QLineEdit()))
+                        i = i + 1
                 else:
                     rows.append(FormRow(label=key, widget=QLineEdit()))
 
