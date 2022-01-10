@@ -125,9 +125,9 @@ class WorkflowStepWidget(QWidget):
 
     def enable_button(self):
         for widget in self.form_rows:
-            if isinstance(widget.widget, QFrame):
+            if isinstance(widget.widget.parent(), QFrame):
                 try:
-                    widget.widget.children()[2].setEnabled(True)
+                    widget.widget.parent().children()[2].children()[2].setEnabled(True)
                 except:
                     print("is label")
 
