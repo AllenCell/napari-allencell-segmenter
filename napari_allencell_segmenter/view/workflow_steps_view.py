@@ -41,7 +41,6 @@ class WorkflowStepsView(View):  # pragma: no-cover
             raise ValueError("controller")
         self._controller = controller
         self.setObjectName("workflowStepsView")
-        self._first_button = True
 
     def load(self, model: SegmenterModel):
         self._workflow = model.active_workflow
@@ -120,12 +119,13 @@ class WorkflowStepsView(View):  # pragma: no-cover
         category_label.setObjectName("categoryLabel")
         self._layout.addWidget(category_label)
         # Add a widget for all the steps in this category
+        i = 0
         for step in filter(lambda step: step.category == category, self._workflow.workflow_definition.steps):
-            if self._first_button:
-                self._layout.addWidget(WorkflowStepWidget(step, steps_view=self, enable_button=True))
-                self._first_button = False
+            if i == 0:
+                self._layout.addWidget(WorkflowStepWidget(step, i, steps_view=self, enable_button=True))
             else:
-                self._layout.addWidget(WorkflowStepWidget(step, steps_view=self, enable_button=False))
+                self._layout.addWidget(WorkflowStepWidget(step, i, steps_view=self, enable_button=False))
+            i = i + 1
 
         self._layout.addSpacing(10)
 
@@ -246,16 +246,9 @@ class WorkflowStepsView(View):  # pragma: no-cover
             steps = [w.get_workflow_step_with_inputs() for w in self._get_workflow_step_widgets()]
             self._controller.save_workflow(steps, file_path)
 
-    def btn_run_clicked(self, workflow_name: str):
-        step_number = 0
-        for step in self._get_workflow_step_widgets():
-            if step.name == workflow_name:
-                param = step.get_parameter_inputs()
-                break
-            else:
-                step_number = step_number + 1
-                #TODO change back to run_step after testing
-        self._controller.run_step(step_number, param)
+    def btn_run_clicked(self, index: int):
+        parameters_for_step = self._get_workflow_step_widgets()[index].get_parameter_inputs()
+        self._controller.run_step(index, parameters_for_step)
 
     def btn_sweep_clicked(self, workflow_name: str):
         step_number = 0
