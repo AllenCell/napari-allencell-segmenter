@@ -1,4 +1,3 @@
-
 from qtpy.QtWidgets import QDialog, QLineEdit, QVBoxLayout, QFrame, QHBoxLayout, QPushButton, QCheckBox
 
 from typing import Dict, Any, List
@@ -25,7 +24,6 @@ class ParamSweepWidget(QDialog):
         self.layout.addWidget(self._create_buttons())
         self.setLayout(Form(rows))
 
-
     def _param_set_to_form_rows(self) -> List[FormRow]:
         rows = list()
         if self._param_set:
@@ -37,9 +35,6 @@ class ParamSweepWidget(QDialog):
                         i = i + 1
                 else:
                     rows.append(FormRow(label=key, widget=QLineEdit()))
-
-
-
 
             checks = QFrame()
             checks.setLayout(QHBoxLayout())
@@ -85,13 +80,7 @@ class ParamSweepWidget(QDialog):
             if isinstance(widget, QFrame):
                 try:
                     if widget.children()[2].isChecked():
-                        type="grid"
+                        type = "grid"
                 except:
                     print("is label")
         self.controller.run_step_sweep(self.step_number, self._param_set, inputs, type)
-
-
-
-
-
-
