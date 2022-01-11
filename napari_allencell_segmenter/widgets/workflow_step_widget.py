@@ -29,6 +29,8 @@ class WorkflowStepWidget(QWidget):
         self._step = step
         self.name = step.name
         self.form_rows: List[FormRow] = list()
+        self.button = QPushButton(f"Run {step.name}")
+        self.button.clicked.connect(lambda: steps_view.btn_run_clicked(step.name))
 
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
@@ -50,13 +52,11 @@ class WorkflowStepWidget(QWidget):
         buttonsweep = QPushButton("Sweep")
         buttonsweep.clicked.connect(lambda: steps_view.btn_sweep_clicked(step.name))
 
-        button = QPushButton(f"Run {step.name}")
-        button.clicked.connect(lambda: steps_view.btn_run_clicked(step.name))
         buttons.layout().addWidget(buttonsweep)
-        buttons.layout().addWidget(button)
+        buttons.layout().addWidget(self.button)
 
         if not enable_button:
-            button.setDisabled(True)
+            self.button.setDisabled(True)
 
         box_contents = QVBoxLayout()
         box_contents.addLayout(Form(self.form_rows, (11, 5, 5, 5)))
@@ -124,20 +124,10 @@ class WorkflowStepWidget(QWidget):
         return parameter_inputs
 
     def enable_button(self):
-        for widget in self.form_rows:
-            if isinstance(widget.widget.parent(), QFrame):
-                try:
-                    widget.widget.parent().children()[2].children()[2].setEnabled(True)
-                except:
-                    print("is label")
+        self.button.setEnabled(True)
 
     def disable_button(self):
-        for widget in self.form_rows:
-            if isinstance(widget.widget, QFrame):
-                try:
-                    widget.widget.children()[2].setEnabled(True)
-                except:
-                    print("is label")
+        self.button.setDisabled(True)
 
     def _add_param_rows(
         self, param_name: str, param_data: List[FunctionParameter], default_values: Union[List, str, bool, int, float]
