@@ -22,15 +22,17 @@ class WorkflowStepWidget(QWidget):
         step (WorkflowStep): WorkflowStep object for this widget
     """
 
-    def __init__(self, step: WorkflowStep, steps_view=None, enable_button: bool = False):
+    def __init__(self, step: WorkflowStep, index: int, steps_view=None, enable_button: bool = False):
         super().__init__()
         if step is None:
             raise ValueError("step")
         self._step = step
         self.name = step.name
+        self.index = index
         self.form_rows: List[FormRow] = list()
         self.button = QPushButton(f"Run {step.name}")
-        self.button.clicked.connect(lambda: steps_view.btn_run_clicked(step.name))
+        self.button.clicked.connect(lambda: steps_view.btn_run_clicked(self.index))
+
 
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
