@@ -18,11 +18,14 @@ class ParamSweepWidget(QDialog):
         self.controller = controller
         self.step_number = step_number
         self._param_set = param_set
+        self.normal_check = QCheckBox("Normal")
+        self.grid_check = QCheckBox("Grid")
         rows = self._param_set_to_form_rows()
         self.layout = QVBoxLayout()
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.addWidget(self._create_buttons())
         self.setLayout(Form(rows))
+
 
     def _param_set_to_form_rows(self) -> List[FormRow]:
         rows = list()
@@ -38,10 +41,8 @@ class ParamSweepWidget(QDialog):
 
             checks = QFrame()
             checks.setLayout(QHBoxLayout())
-            normal = QCheckBox("Normal")
-            grid = QCheckBox("Grid")
-            checks.layout().addWidget(normal)
-            checks.layout().addWidget(grid)
+            checks.layout().addWidget(self.normal_check)
+            checks.layout().addWidget(self.grid_check)
             rows.append(FormRow("", widget=checks))
 
         button = QPushButton("start sweep")
@@ -73,14 +74,11 @@ class ParamSweepWidget(QDialog):
 
     def _run_sweep(self):
         inputs = list()
-        type = "normal"
         for widget in self.children():
             if isinstance(widget, QLineEdit):
                 inputs.append(widget.text())
-            if isinstance(widget, QFrame):
-                try:
-                    if widget.children()[2].isChecked():
-                        type = "grid"
-                except:
-                    print("is label")
-        self.controller.run_step_sweep(self.step_number, self._param_set, inputs, type)
+        if self.grid_check.isChecked():
+            self.controller.run_step_sweep(self.step_number, self._param_set, inputs, "grid")
+        elif self.normal_check.isChecked():
+            self.controller.run_step_sweep(self.step_number, self._param_set, inputs, "normal")
+
