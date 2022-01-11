@@ -246,17 +246,10 @@ class WorkflowStepsView(View):  # pragma: no-cover
             steps = [w.get_workflow_step_with_inputs() for w in self._get_workflow_step_widgets()]
             self._controller.save_workflow(steps, file_path)
 
-    def btn_run_clicked(self, index: int):
-        parameters_for_step = self._get_workflow_step_widgets()[index].get_parameter_inputs()
-        self._controller.run_step(index, parameters_for_step)
+    def btn_run_clicked(self, step_index: int):
+        parameters_for_step = self._get_workflow_step_widgets()[step_index].get_parameter_inputs()
+        self._controller.run_step(step_index, parameters_for_step)
 
-    def btn_sweep_clicked(self, workflow_name: str):
-        step_number = 0
-        for step in self._get_workflow_step_widgets():
-            if step.name == workflow_name:
-                param = step.get_parameter_inputs()
-                break
-            else:
-                step_number = step_number + 1
-                # TODO change back to run_step after testing
-        self._controller.open_sweep_ui(param, step_number)
+    def btn_sweep_clicked(self, step_index: int):
+        params_for_step = self._get_workflow_step_widgets()[step_index].get_parameter_inputs()
+        self._controller.open_sweep_ui(params_for_step, step_index)

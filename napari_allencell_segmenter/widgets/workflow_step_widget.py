@@ -52,7 +52,7 @@ class WorkflowStepWidget(QWidget):
         buttons.setLayout(QHBoxLayout())
 
         buttonsweep = QPushButton("Sweep")
-        buttonsweep.clicked.connect(lambda: steps_view.btn_sweep_clicked(step.name))
+        buttonsweep.clicked.connect(lambda: steps_view.btn_sweep_clicked(self.index))
 
         buttons.layout().addWidget(buttonsweep)
         buttons.layout().addWidget(self.button)
