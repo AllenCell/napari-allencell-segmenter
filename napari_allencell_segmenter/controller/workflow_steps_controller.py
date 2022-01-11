@@ -29,7 +29,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self._steps = 0  # need this to count steps completed
         self._max_step_run: int = -1
         self._number_times_run = 0
-        #TODO package this differently
+        # TODO package this differently
         self._current_params = None
 
     @property
@@ -100,10 +100,13 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             if parameter_inputs:
                 parameter_inputs_2, length = self._parse_inputs(copy.deepcopy(parameter_inputs), ui_inputs)
                 if type == "normal":
-                    self._worker: GeneratorWorker = create_worker(self._run_step_sweep, i, length, parameter_inputs, parameter_inputs_2)
+                    self._worker: GeneratorWorker = create_worker(
+                        self._run_step_sweep, i, length, parameter_inputs, parameter_inputs_2
+                    )
                 elif type == "grid":
-                    self._worker: GeneratorWorker = create_worker(self._run_step_sweep_grid, i, length, parameter_inputs,
-                                                                  parameter_inputs_2)
+                    self._worker: GeneratorWorker = create_worker(
+                        self._run_step_sweep_grid, i, length, parameter_inputs, parameter_inputs_2
+                    )
                 self._worker.yielded.connect(self._on_step_processed)
                 self._worker.started.connect(self._on_run_all_started)
                 self._worker.finished.connect(self._on_run_step_finished)
@@ -118,7 +121,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
     def _run_step_sweep(self, index, length, param_original, param_sweep):
         for i in range(length):
             run_dict = dict()
-            #loop over sweeps
+            # loop over sweeps
             for k, v in param_original.items():
                 # loop over parameters to build dict for this iteration
                 if isinstance(v, list):
@@ -129,9 +132,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                         else:
                             run_list.append(round(param_sweep[k][0], 3))
                         if isinstance(param_sweep[k][1], numpy.ndarray):
-                            run_list.append(round(param_sweep[k][1][i],3))
+                            run_list.append(round(param_sweep[k][1][i], 3))
                         else:
-                            run_list.append(round(param_sweep[k][1] ,3))
+                            run_list.append(round(param_sweep[k][1], 3))
                     elif len(v) == 1:
                         if isinstance(param_sweep[k][0], numpy.ndarray):
                             run_list.append(round(param_sweep[k][0][i], 3))
@@ -140,7 +143,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                     run_dict[k] = run_list
                 else:
                     # is single entry
-                    run_dict[k] = round(param_sweep[k][0],3)
+                    run_dict[k] = round(param_sweep[k][0], 3)
             # run iteration
             step = self.model.active_workflow.workflow_definition.steps[index]
             print(f"running step {step.name} with parameters {run_dict}")
@@ -156,7 +159,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             if not isinstance(list(param_original.values())[0], list):
                 self._run_step_sweep(index, length, param_original, param_sweep)
             else:
-            # one dict entry, multiple parameters as list
+                # one dict entry, multiple parameters as list
                 list1 = list(param_sweep.values())[0][0]
                 list2 = list(param_sweep.values())[0][1]
                 for x in list1:
@@ -240,8 +243,12 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                     i = i + 1
                     if input_text.__contains__(":"):
                         inputs = input_text.split(":")
-                        length = len(numpy.arange(float(inputs[0]), float(inputs[2])+float(inputs[1]), float(inputs[1])))
-                        single_item.append(numpy.arange(float(inputs[0]), float(inputs[2])+float(inputs[1]), float(inputs[1])))
+                        length = len(
+                            numpy.arange(float(inputs[0]), float(inputs[2]) + float(inputs[1]), float(inputs[1]))
+                        )
+                        single_item.append(
+                            numpy.arange(float(inputs[0]), float(inputs[2]) + float(inputs[1]), float(inputs[1]))
+                        )
                     else:
                         length = 1
                         single_item.append(float(input_text))
@@ -250,14 +257,13 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 i = i + 1
                 if input_text.__contains__(":"):
                     inputs = input_text.split(":")
-                    single_item = numpy.arange(float(inputs[0]), float(inputs[2])+float(inputs[1]), float(inputs[1]))
+                    single_item = numpy.arange(float(inputs[0]), float(inputs[2]) + float(inputs[1]), float(inputs[1]))
                     length = len(single_item)
                 else:
                     length = 1
                     single_item = float(input_text)
             dict2[k] = single_item
         return dict2, length
-
 
     def _run_all_async(
         self, parameter_inputs: List[Dict[str, List]]
@@ -293,11 +299,11 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self._steps = index
         yield (step, result)
 
-    def _run_sweep(self, index: int, parameter_inputs: List[Dict[str, List]]
+    def _run_sweep(
+        self, index: int, parameter_inputs: List[Dict[str, List]]
     ) -> Generator[Tuple[WorkflowStep, numpy.ndarray], None, None]:
         step = self.model.active_workflow.workflow_definition.steps[index]
         result = self.model.active_workflow.execute_step(index, parameter_inputs)
-
 
     def _on_step_processed(self, processed_args: Tuple[WorkflowStep, numpy.ndarray]):
         if self._steps < self._max_step_run:
@@ -326,12 +332,13 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             # reset rerun counter
             self._number_times_run = 0
 
-
         if self._current_params:
             if self._number_times_run == 0:
                 self.viewer.add_image_layer(result, name=f"{step.step_number}: {step.name} | {self._current_params}")
             else:
-                self.viewer.add_image_layer(result, name=f"{step.step_number}.{self._number_times_run}: {step.name} | {self._current_params}")
+                self.viewer.add_image_layer(
+                    result, name=f"{step.step_number}.{self._number_times_run}: {step.name} | {self._current_params}"
+                )
         else:
             # Add step result layer
             if self._number_times_run == 0:

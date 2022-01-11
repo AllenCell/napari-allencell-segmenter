@@ -33,7 +33,6 @@ class WorkflowStepWidget(QWidget):
         self.button = QPushButton(f"Run {step.name}")
         self.button.clicked.connect(lambda: steps_view.btn_run_clicked(self.index))
 
-
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
@@ -63,7 +62,6 @@ class WorkflowStepWidget(QWidget):
         box_contents = QVBoxLayout()
         box_contents.addLayout(Form(self.form_rows, (11, 5, 5, 5)))
         box_contents.addWidget(buttons)
-
 
         step_name = f"<span>{step.step_number}.&nbsp;{step.name}</span>"
         box = CollapsibleBox(step_name, box_contents)
