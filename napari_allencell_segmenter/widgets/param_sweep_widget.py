@@ -26,7 +26,6 @@ class ParamSweepWidget(QDialog):
         self.layout.addWidget(self._create_buttons())
         self.setLayout(Form(rows))
 
-
     def _param_set_to_form_rows(self) -> List[FormRow]:
         rows = list()
         if self._param_set:
@@ -81,4 +80,3 @@ class ParamSweepWidget(QDialog):
             self.controller.run_step_sweep(self.step_number, self._param_set, inputs, "grid")
         elif self.normal_check.isChecked():
             self.controller.run_step_sweep(self.step_number, self._param_set, inputs, "normal")
-
