@@ -11,7 +11,6 @@ from napari_allencell_segmenter.controller._interfaces import IWorkflowStepsCont
 from napari_allencell_segmenter.core.controller import Controller
 from napari_allencell_segmenter.model.segmenter_model import SegmenterModel
 from napari_allencell_segmenter.widgets.param_sweep_widget import ParamSweepWidget
-from decimal import *
 
 import copy
 
@@ -298,12 +297,6 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         result = self.model.active_workflow.execute_step(index, parameter_inputs)
         self._steps = index
         yield (step, result)
-
-    def _run_sweep(
-        self, index: int, parameter_inputs: List[Dict[str, List]]
-    ) -> Generator[Tuple[WorkflowStep, numpy.ndarray], None, None]:
-        step = self.model.active_workflow.workflow_definition.steps[index]
-        result = self.model.active_workflow.execute_step(index, parameter_inputs)
 
     def _on_step_processed(self, processed_args: Tuple[WorkflowStep, numpy.ndarray]):
         if self._steps < self._max_step_run:
