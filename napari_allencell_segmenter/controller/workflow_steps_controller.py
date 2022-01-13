@@ -43,6 +43,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self.load_view(self._view, self.model)
 
     def save_workflow(self, steps: List[WorkflowStep], output_file_path: str):
+        """
+        Save the current workflow as a .json file for future use
+        """
         # add .json extension if not present
         if not output_file_path.lower().endswith(".json"):
             output_file_path += ".json"
@@ -51,6 +54,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self._workflow_engine.save_workflow_definition(workflow_def, save_path)
 
     def close_workflow(self):
+        """
+        Close the active workflow
+        """
         if self._worker is not None:
             # we're about to load a new controller/view,
             # disconnect worker events to avoid acting on deleted QT objects since worker operations are asynchronous
@@ -79,6 +85,11 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         # self.run_next_step(parameter_inputs)
 
     def run_next_step(self, parameter_inputs):
+        """
+        Run the next step in the active workflow
+        parameter_inputs: Each dictionary has the same shape as a WorkflowStep.parameter_values
+        dictionary, but with the parameter values obtained from the UI instead of default values.
+        """
         if not self._run_lock:
             self._worker: GeneratorWorker = create_worker(self._run_next_step_async, parameter_inputs)
             self._worker.yielded.connect(self._on_step_processed)
@@ -87,6 +98,12 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             self._worker.start()
 
     def run_step(self, i: int, parameter_inputs):
+        """
+        Run a step in the active workflow
+        i int: index of step to run in the active workflow
+        parameter_inputs: Each dictionary has the same shape as a WorkflowStep.parameter_values
+        dictionary, but with the parameter values obtained from the UI instead of default values.
+        """
         if not self._run_lock:
             self._worker: GeneratorWorker = create_worker(self._run_step_async, i, parameter_inputs)
             self._worker.yielded.connect(self._on_step_processed)
@@ -94,7 +111,15 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             self._worker.finished.connect(self._on_run_step_finished)
             self._worker.start()
 
-    def run_step_sweep(self, i: int, parameter_inputs, ui_inputs, type):
+    def run_step_sweep(self, i: int, parameter_inputs, ui_inputs: List[str], type: str):
+        """
+        Run a step in the active workflow as a sweep
+        i: index of step to run in the active workflow
+        parameter_inputs: Each dictionary has the same shape as a WorkflowStep.parameter_values
+        dictionary, but with the parameter values obtained from the UI instead of default values.
+        ui_inputs List[str]: inputs for the sweep values from the sweep UI
+        type str: type of sweep, either "normal" or "grid"
+        """
         if not self._run_lock:
             if parameter_inputs:
                 parameter_inputs_2, length = self._parse_inputs(copy.deepcopy(parameter_inputs), ui_inputs)
@@ -229,6 +254,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self._worker.finished.disconnect()
 
     def _parse_inputs(self, parameter_inputs: dict[str, Any], ui_input: List[str]):
+        """
+        Parse inputs from the UI to create dictionaries to feed into the sweep functions.
+        """
         # test function, get sweep values from ui somehow
         if parameter_inputs:
             dict2 = dict(parameter_inputs)
@@ -257,9 +285,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 if input_text.__contains__(":"):
                     inputs = input_text.split(":")
                     single_item = numpy.arange(float(inputs[0]), float(inputs[2]) + float(inputs[1]), float(inputs[1]))
-                    length = len(single_item)
+                    length = max(len(single_item), length)
                 else:
-                    length = 1
+                    length = max(1, length)
                     single_item = float(input_text)
             dict2[k] = single_item
         return dict2, length
