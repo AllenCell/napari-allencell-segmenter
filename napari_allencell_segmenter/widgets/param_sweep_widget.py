@@ -94,11 +94,13 @@ class ParamSweepWidget(QDialog):
             try:
                 # is it a number?
                 float(i)
+                len_of_list = 1 # single number, so len = 1
             except ValueError:
                 # is it the min:step:max notation?
                 numbers = i.split(":")
                 for j in numbers:
                     try:
+                        # is the notation done with just numbers?
                         float(j)
                     except ValueError:
                         raise ValueError("Please enter a single number or the min:step:max notation for sweeps")
@@ -106,7 +108,7 @@ class ParamSweepWidget(QDialog):
             if norm_checked:
                 # make sure that user has same length sweeps for normal sweeps
                 if numbers:
-                    length_sweep = ((numbers[2] - numbers[0]) / numbers[1]) + 1
+                    length_sweep = ((float(numbers[2]) - float(numbers[0])) / float(numbers[1])) + 1
                     if not len_of_list:
                         len_of_list = length_sweep
                     elif len_of_list != length_sweep:
