@@ -19,7 +19,7 @@ class TestWorkflowStepsController:
         type(self._mock_application).state = PropertyMock(return_value=self._mock_state)
         self._mock_view_manager: MagicMock = create_autospec(ViewManager)
         type(self._mock_application).view_manager = PropertyMock(return_value=self._mock_view_manager)
-        self._model = SegmenterModel()
+        self._model: MagicMock = create_autospec(SegmenterModel)
         type(self._mock_state).segmenter_model = PropertyMock(return_value=self._model)
         self._mock_workflow_engine: MagicMock = create_autospec(WorkflowEngine)
 
@@ -56,3 +56,9 @@ class TestWorkflowStepsController:
         # Assert
         self._mock_workflow_engine.save_workflow_definition.assert_called_once()
         assert self._mock_workflow_engine.save_workflow_definition.call_args[0][1].suffix == ".json"
+
+    @mock.patch("napari_allencell_segmenter.controller.workflow_steps_controller.SegmenterModel", return_value=0)
+    def test_run_all(self, mock_check_output):
+        self._controller.run_all([{"a":0}])
+        self._model.active_workflow.execute_next.assert_called_once()
+        print("test")
