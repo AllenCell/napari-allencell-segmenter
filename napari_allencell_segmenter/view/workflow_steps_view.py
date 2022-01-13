@@ -55,9 +55,10 @@ class WorkflowStepsView(View):  # pragma: no-cover
         # Add all widgets
         self._add_workflow_title()
         self._add_progress_bar()
-        self._add_workflow_steps(WorkflowStepCategory.PRE_PROCESSING)
-        self._add_workflow_steps(WorkflowStepCategory.CORE)
-        self._add_workflow_steps(WorkflowStepCategory.POST_PROCESSING)
+        steps = 0
+        steps = self._add_workflow_steps(WorkflowStepCategory.PRE_PROCESSING, steps)
+        steps = self._add_workflow_steps(WorkflowStepCategory.CORE, steps)
+        steps = self._add_workflow_steps(WorkflowStepCategory.POST_PROCESSING, steps)
         self._layout.addSpacing(20)
         self._layout.addStretch()
         self._add_bottom_buttons()
@@ -113,13 +114,13 @@ class WorkflowStepsView(View):  # pragma: no-cover
                 labels_layout.addStretch()
         self._layout.addWidget(progress_labels)
 
-    def _add_workflow_steps(self, category: WorkflowStepCategory):
+    def _add_workflow_steps(self, category: WorkflowStepCategory, steps: int):
         # Add category label, e.g., "Preprocessing"
         category_label = QLabel(category.value.upper())
         category_label.setObjectName("categoryLabel")
         self._layout.addWidget(category_label)
         # Add a widget for all the steps in this category
-        i = 0
+        i = steps
         for step in filter(lambda step: step.category == category, self._workflow.workflow_definition.steps):
             if i == 0:
                 self._layout.addWidget(WorkflowStepWidget(step, i, steps_view=self, enable_button=True))
@@ -128,6 +129,7 @@ class WorkflowStepsView(View):  # pragma: no-cover
             i = i + 1
 
         self._layout.addSpacing(10)
+        return i
 
     def _add_bottom_buttons(self):
         layout = QHBoxLayout()
