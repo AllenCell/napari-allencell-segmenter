@@ -2,7 +2,7 @@ import numpy
 import warnings
 
 from pathlib import Path
-from typing import Dict, Generator, List, Tuple
+from typing import Dict, Generator, List, Tuple, Any
 from napari.qt.threading import create_worker, GeneratorWorker
 from aicssegmentation.workflow import WorkflowEngine, WorkflowStep, WorkflowDefinition
 from napari_allencell_segmenter.view.workflow_steps_view import WorkflowStepsView
@@ -228,7 +228,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self._worker.yielded.disconnect()
         self._worker.finished.disconnect()
 
-    def _parse_inputs(self, parameter_inputs, ui_input):
+    def _parse_inputs(self, parameter_inputs: dict[str, Any], ui_input: List[str]):
         # test function, get sweep values from ui somehow
         if parameter_inputs:
             dict2 = dict(parameter_inputs)
@@ -249,7 +249,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                             numpy.arange(float(inputs[0]), float(inputs[2]) + float(inputs[1]), float(inputs[1]))
                         )
                     else:
-                        length = 1
+                        length = max(1, length)
                         single_item.append(float(input_text))
             else:
                 input_text = ui_input[i]
