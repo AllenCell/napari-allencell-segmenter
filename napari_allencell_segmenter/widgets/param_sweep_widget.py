@@ -99,7 +99,7 @@ class ParamSweepWidget(QDialog):
                 numbers = i.split(":")
                 for j in numbers:
                     try:
-                        float(i)
+                        float(j)
                     except ValueError:
                         raise ValueError("Please enter a single number or the min:step:max notation for sweeps")
 

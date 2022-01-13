@@ -11,6 +11,7 @@ from napari_allencell_segmenter.controller._interfaces import IWorkflowStepsCont
 from napari_allencell_segmenter.core.controller import Controller
 from napari_allencell_segmenter.model.segmenter_model import SegmenterModel
 from napari_allencell_segmenter.widgets.param_sweep_widget import ParamSweepWidget
+import numpy as np
 
 import copy
 
@@ -186,6 +187,10 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 # one dict entry, multiple parameters as list
                 list1 = list(param_sweep.values())[0][0]
                 list2 = list(param_sweep.values())[0][1]
+                if not isinstance(list1, list) and not isinstance(list1, np.ndarray):
+                    list1 = [list1]
+                if not isinstance(list2, list) and not isinstance(list2, np.ndarray):
+                    list2 = [list2]
                 for x in list1:
                     for y in list2:
                         run_dict = {list(param_original.keys())[0]: [x, y]}
