@@ -76,7 +76,45 @@ class ParamSweepWidget(QDialog):
         for widget in self.children():
             if isinstance(widget, QLineEdit):
                 inputs.append(widget.text())
+
+        self.sanitize_ui_inputs(inputs, self.normal_check.isChecked())
         if self.grid_check.isChecked():
+            # grid search can have differing lengths
             self.controller.run_step_sweep(self.step_number, self._param_set, inputs, "grid")
         elif self.normal_check.isChecked():
+            # normal sweeps have to have the same length arrays
             self.controller.run_step_sweep(self.step_number, self._param_set, inputs, "normal")
+
+    def sanitize_ui_inputs(self, ui_inputs: List[str], norm_checked: bool):
+
+        len_of_list = None
+        for i in ui_inputs:
+        # make sure user has inputted a number or min:step:max notation
+            numbers = None
+            try:
+                # is it a number?
+                float(i)
+            except ValueError:
+                # is it the min:step:max notation?
+                numbers = i.split(":")
+                for j in numbers:
+                    try:
+                        float(i)
+                    except ValueError:
+                        raise ValueError("Please enter a single number or the min:step:max notation for sweeps")
+
+            if norm_checked:
+                # make sure that user has same length sweeps for normal sweeps
+                if numbers:
+                    length_sweep = ((numbers[2] - numbers[0]) / numbers[1]) + 1
+                    if not len_of_list:
+                        len_of_list = length_sweep
+                    elif len_of_list != length_sweep:
+                        raise ValueError("When doing a normal sweep, all sweep lengths must be equal")
+
+
+
+
+
+
+
