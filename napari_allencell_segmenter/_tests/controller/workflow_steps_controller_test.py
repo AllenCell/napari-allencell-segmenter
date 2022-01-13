@@ -9,6 +9,8 @@ from napari_allencell_segmenter.model.channel import Channel
 from napari_allencell_segmenter.model.segmenter_model import SegmenterModel
 from aicssegmentation.workflow import WorkflowEngine, WorkflowStep
 
+import numpy as np
+
 
 class TestWorkflowStepsController:
     def setup_method(self):
@@ -60,5 +62,48 @@ class TestWorkflowStepsController:
     @mock.patch("napari_allencell_segmenter.controller.workflow_steps_controller.SegmenterModel", return_value=0)
     def test_run_all(self, mock_check_output):
         self._controller.run_all([{"a":0}])
-        self._model.active_workflow.execute_next.assert_called_once()
         print("test")
+
+    def test_parse_inputs(self):
+        # test single param sweeps
+        sweep_test = self._controller._parse_inputs({"param": 1}, ["1:1:10"])
+        assert sweep_test[1] == 10
+        assert sweep_test[0]["param"].size == 10
+        assert sweep_test[0]["param"][0] == 1
+        assert sweep_test[0]["param"][9] == 10
+
+        # test single param non-sweeps
+        sweep_test = self._controller._parse_inputs({"param": 1}, ["1"])
+        assert sweep_test[1] == 1
+        assert sweep_test[0]["param"] == 1
+
+        # test single param as list
+        sweep_test = self._controller._parse_inputs({"param": [1]}, ["1"])
+        assert sweep_test[1] == 1
+        assert isinstance(sweep_test[0]["param"], list)
+        assert len(sweep_test[0]["param"]) == 1
+
+        # test two params in list
+        sweep_test = self._controller._parse_inputs({"param-multi":[1, 2]}, ["1:1:10", "1"])
+        assert sweep_test[1] == 10
+        assert isinstance(sweep_test[0]["param-multi"][0], np.ndarray)
+        assert isinstance(sweep_test[0]["param-multi"][1], float)
+
+        # test two params in dict
+        sweep_test = self._controller._parse_inputs({"param1-int": 1, "param2-list":[2]}, ["1:1:10", "1"])
+        assert sweep_test[1] == 10
+        assert isinstance(sweep_test[0]["param1-int"], np.ndarray)
+        assert isinstance(sweep_test[0]["param2-list"], list)
+
+        # test multiple dict keys and musltiple sweeps
+        sweep_test = self._controller._parse_inputs({"param1": 1, "param-single-list": [2], "param-multi-list": [3, 4]}, ["1:1:10", "2", "3", "4"])
+        assert sweep_test[1] == 10
+        assert isinstance(sweep_test[0]["param1"], np.ndarray)
+        assert sweep_test[0]["param1"].size == 10
+        assert sweep_test[0]["param-single-list"] == [2]
+        assert sweep_test[0]["param-multi-list"] == [3, 4]
+
+
+
+
+
