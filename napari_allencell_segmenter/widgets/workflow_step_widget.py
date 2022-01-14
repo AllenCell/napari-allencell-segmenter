@@ -32,6 +32,8 @@ class WorkflowStepWidget(QWidget):
         self.form_rows: List[FormRow] = list()
         self.button = QPushButton(f"Run {step.name}")
         self.button.clicked.connect(lambda: steps_view.btn_run_clicked(self.index))
+        self.sweep = QPushButton(f"Sweep")
+        self.sweep.clicked.connect(lambda: steps_view.btn_sweep_clicked(self.index))
 
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
@@ -50,14 +52,12 @@ class WorkflowStepWidget(QWidget):
         buttons.setStyleSheet("border: none;")
         buttons.setLayout(QHBoxLayout())
 
-        buttonsweep = QPushButton("Sweep")
-        buttonsweep.clicked.connect(lambda: steps_view.btn_sweep_clicked(self.index))
-
-        buttons.layout().addWidget(buttonsweep)
+        buttons.layout().addWidget(self.sweep)
         buttons.layout().addWidget(self.button)
 
         if not enable_button:
             self.button.setDisabled(True)
+            self.sweep.setDisabled(True)
 
         box_contents = QVBoxLayout()
         box_contents.addLayout(Form(self.form_rows, (11, 5, 5, 5)))
@@ -125,9 +125,11 @@ class WorkflowStepWidget(QWidget):
 
     def enable_button(self):
         self.button.setEnabled(True)
+        self.sweep.setEnabled(True)
 
     def disable_button(self):
         self.button.setDisabled(True)
+        self.sweep.setDisabled(True)
 
     def _add_param_rows(
         self, param_name: str, param_data: List[FunctionParameter], default_values: Union[List, str, bool, int, float]

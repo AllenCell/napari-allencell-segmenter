@@ -212,7 +212,6 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 list1 = [list1]
             if not isinstance(list2, list) and not isinstance(list2, np.ndarray):
                 list2 = [list2]
-
             if not isinstance(list1[0], float):
                 list1 = list1[0]
             if not isinstance(list2[0], float):
