@@ -204,16 +204,27 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             # two separate params with different keys
             list1 = list(param_sweep.values())[0]
             list2 = list(param_sweep.values())[1]
+            # if the function expects a nested list
+            nested_list_1 = isinstance(list(param_original.values())[0], list) # first param is a list
+            nested_list_2 = isinstance(list(param_original.values())[1], list) # second param is a list
             # take care of single values
             if not isinstance(list1, list) and not isinstance(list1, np.ndarray):
                 list1 = [list1]
             if not isinstance(list2, list) and not isinstance(list2, np.ndarray):
                 list2 = [list2]
 
+            if not isinstance(list1[0], float):
+                list1 = list1[0]
+            if not isinstance(list2[0], float):
+                list2 = list2[0]
 
             for x in list1:
                 for y in list2:
                     run_dict = dict()
+                    if nested_list_1:
+                        x = [x]
+                    if nested_list_2:
+                        y = [y]
                     run_dict[list(param_original.keys())[0]] = x
                     run_dict[list(param_original.keys())[1]] = y
                     step = self.model.active_workflow.workflow_definition.steps[index]
