@@ -204,10 +204,13 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             # two separate params with different keys
             list1 = list(param_sweep.values())[0]
             list2 = list(param_sweep.values())[1]
+            # take care of single values
             if not isinstance(list1, list) and not isinstance(list1, np.ndarray):
                 list1 = [list1]
             if not isinstance(list2, list) and not isinstance(list2, np.ndarray):
                 list2 = [list2]
+
+
             for x in list1:
                 for y in list2:
                     run_dict = dict()
