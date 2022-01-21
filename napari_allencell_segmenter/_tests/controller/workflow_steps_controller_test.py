@@ -60,9 +60,9 @@ class TestWorkflowStepsController:
         assert self._mock_workflow_engine.save_workflow_definition.call_args[0][1].suffix == ".json"
 
     @mock.patch("napari_allencell_segmenter.controller.workflow_steps_controller.SegmenterModel", return_value=0)
-    def test_run_all(self, mock_check_output):
-        self._controller.run_all([{"a":0}])
-        print("test")
+    def test_run_step_async(self, param):
+        generator = self._controller._run_step_async(2, param)
+        assert self._controller._steps == 2
 
     def test_parse_inputs(self):
         # test single param sweeps

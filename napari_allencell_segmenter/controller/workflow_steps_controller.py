@@ -342,6 +342,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
     def _run_step_async(
         self, index: int, parameter_inputs: List[Dict[str, List]]
     ) -> Generator[Tuple[WorkflowStep, numpy.ndarray], None, None]:
+        # Test for this basic function
 
         step = self.model.active_workflow.workflow_definition.steps[index]
         result = self.model.active_workflow.execute_step(index, parameter_inputs)
