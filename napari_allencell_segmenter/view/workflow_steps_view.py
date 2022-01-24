@@ -214,6 +214,9 @@ class WorkflowStepsView(View):  # pragma: no-cover
     def _get_workflow_step_widgets(self) -> List[WorkflowStepWidget]:
         return self.findChildren(WorkflowStepWidget)
 
+    def get_controller(self):
+        return self._controller
+
     #####################################################################
     # Event handlers
     #####################################################################
@@ -252,6 +255,6 @@ class WorkflowStepsView(View):  # pragma: no-cover
         parameters_for_step = self._get_workflow_step_widgets()[step_index].get_parameter_inputs()
         self._controller.run_step(step_index, parameters_for_step)
 
-    def btn_sweep_clicked(self, step_index: int):
+    def open_sweep_ui(self, step_index: int):
         params_for_step = self._get_workflow_step_widgets()[step_index].get_parameter_inputs()
         self._controller.open_sweep_ui(params_for_step, step_index)
