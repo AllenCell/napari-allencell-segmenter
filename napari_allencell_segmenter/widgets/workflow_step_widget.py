@@ -34,6 +34,7 @@ class WorkflowStepWidget(QWidget):
         self.button.clicked.connect(lambda: steps_view.btn_run_clicked(self.index))
         self.sweep = QPushButton(f"Sweep")
         self.sweep.clicked.connect(lambda: steps_view.btn_sweep_clicked(self.index))
+        self.steps_view = steps_view
 
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
@@ -64,7 +65,7 @@ class WorkflowStepWidget(QWidget):
         box_contents.addWidget(buttons)
 
         step_name = f"<span>{step.step_number}.&nbsp;{step.name}</span>"
-        box = CollapsibleBox(step_name, box_contents)
+        box = CollapsibleBox(step_name, box_contents, self)
 
         layout.addWidget(box)
 
