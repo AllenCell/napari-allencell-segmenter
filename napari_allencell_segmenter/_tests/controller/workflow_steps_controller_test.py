@@ -84,26 +84,23 @@ class TestWorkflowStepsController:
         assert len(sweep_test[0]["param"]) == 1
 
         # test two params in list
-        sweep_test = self._controller._parse_inputs({"param-multi":[1, 2]}, ["1:1:10", "1"])
+        sweep_test = self._controller._parse_inputs({"param-multi": [1, 2]}, ["1:1:10", "1"])
         assert sweep_test[1] == 10
         assert isinstance(sweep_test[0]["param-multi"][0], np.ndarray)
         assert isinstance(sweep_test[0]["param-multi"][1], float)
 
         # test two params in dict
-        sweep_test = self._controller._parse_inputs({"param1-int": 1, "param2-list":[2]}, ["1:1:10", "1"])
+        sweep_test = self._controller._parse_inputs({"param1-int": 1, "param2-list": [2]}, ["1:1:10", "1"])
         assert sweep_test[1] == 10
         assert isinstance(sweep_test[0]["param1-int"], np.ndarray)
         assert isinstance(sweep_test[0]["param2-list"], list)
 
         # test multiple dict keys and musltiple sweeps
-        sweep_test = self._controller._parse_inputs({"param1": 1, "param-single-list": [2], "param-multi-list": [3, 4]}, ["1:1:10", "2", "3", "4"])
+        sweep_test = self._controller._parse_inputs(
+            {"param1": 1, "param-single-list": [2], "param-multi-list": [3, 4]}, ["1:1:10", "2", "3", "4"]
+        )
         assert sweep_test[1] == 10
         assert isinstance(sweep_test[0]["param1"], np.ndarray)
         assert sweep_test[0]["param1"].size == 10
         assert sweep_test[0]["param-single-list"] == [2]
         assert sweep_test[0]["param-multi-list"] == [3, 4]
-
-
-
-
-
