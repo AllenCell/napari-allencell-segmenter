@@ -193,7 +193,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                     list2 = [list2]
                 for x in list1:
                     for y in list2:
-                        run_dict = {list(param_original.keys())[0]: [x, y]}
+                        run_dict = {list(param_original.keys())[0]: [round(x,3), round(y,3)]}
                         step = self.model.active_workflow.workflow_definition.steps[index]
                         print(f"running step {step.name} with parameters {run_dict}")
                         result = self.model.active_workflow.execute_step(index, run_dict)
@@ -221,9 +221,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 for y in list2:
                     run_dict = dict()
                     if nested_list_1:
-                        x = [x]
+                        x = [round(x,3)]
                     if nested_list_2:
-                        y = [y]
+                        y = [round(y,3)]
                     run_dict[list(param_original.keys())[0]] = x
                     run_dict[list(param_original.keys())[1]] = y
                     step = self.model.active_workflow.workflow_definition.steps[index]
