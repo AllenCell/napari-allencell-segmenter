@@ -1,4 +1,4 @@
-from qtpy.QtWidgets import QDialog, QLineEdit, QVBoxLayout, QFrame, QHBoxLayout, QPushButton, QCheckBox, QSizePolicy, QLabel
+from qtpy.QtWidgets import QDialog, QLineEdit, QVBoxLayout, QFrame, QHBoxLayout, QPushButton, QCheckBox, QSizePolicy, QLabel, QMessageBox
 from qtpy.QtCore import Qt
 
 from typing import Dict, Any, List
@@ -103,16 +103,18 @@ class ParamSweepWidget(QDialog):
         inputs = list()
         for widget in self.inputs:
             inputs.append([widget.children()[1].text(), widget.children()[3].text(), widget.children()[2].text()])
+        normal_check: bool = self.normal_check.isChecked()
+        self.sanitize_ui_inputs(inputs, normal_check)
+        retval = self.warn_images_created(inputs, normal_check)
+        if retval == 1024:
+            if not normal_check:
+                # grid search can have differing lengths
+                self.controller.run_step_sweep(self.step_number, self._param_set, inputs, "grid")
+            else:
+                # normal sweeps have to have the same length arrays
+                self.controller.run_step_sweep(self.step_number, self._param_set, inputs, "normal")
 
-        self.sanitize_ui_inputs(inputs, self.normal_check.isChecked())
-        if self.grid_check.isChecked():
-            # grid search can have differing lengths
-            self.controller.run_step_sweep(self.step_number, self._param_set, inputs, "grid")
-        elif self.normal_check.isChecked():
-            # normal sweeps have to have the same length arrays
-            self.controller.run_step_sweep(self.step_number, self._param_set, inputs, "normal")
-
-    def sanitize_ui_inputs(self, ui_inputs: List[str], norm_checked: bool):
+    def sanitize_ui_inputs(self, ui_inputs: List[List[str]], norm_checked: bool):
 
         len_of_list = None
         for i in ui_inputs:
@@ -132,6 +134,23 @@ class ParamSweepWidget(QDialog):
                     len_of_list = length_sweep
                 elif len_of_list != length_sweep:
                     raise ValueError("When doing a normal sweep, all sweep lengths must be equal")
+
+    def warn_images_created(self, ui_input, normal_checked):
+        if normal_checked:
+            # lengths already checked, can use first length
+            length = ((float(ui_input[0][2]) - float(ui_input[0][0])) / float(ui_input[0][1])) + 1
+        else:
+            length = 1
+            for sweeps in ui_input:
+                length = length * (((float(sweeps[2]) - float(sweeps[0])) / float(sweeps[1])) + 1)
+        message = QMessageBox()
+        message.setText(f"{int(length)} result image layers will be created.")
+        message.setWindowTitle("Running Sweep")
+        message.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        return message.exec_()
+
+
+
 
 
 
