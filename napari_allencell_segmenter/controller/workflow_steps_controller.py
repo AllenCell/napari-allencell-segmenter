@@ -193,7 +193,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                     list2 = [list2]
                 for x in list1:
                     for y in list2:
-                        run_dict = {list(param_original.keys())[0]: [round(x,3), round(y,3)]}
+                        run_dict = {list(param_original.keys())[0]: [round(x, 3), round(y, 3)]}
                         step = self.model.active_workflow.workflow_definition.steps[index]
                         print(f"running step {step.name} with parameters {run_dict}")
                         result = self.model.active_workflow.execute_step(index, run_dict)
@@ -205,8 +205,8 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             list1 = list(param_sweep.values())[0]
             list2 = list(param_sweep.values())[1]
             # if the function expects a nested list
-            nested_list_1 = isinstance(list(param_original.values())[0], list) # first param is a list
-            nested_list_2 = isinstance(list(param_original.values())[1], list) # second param is a list
+            nested_list_1 = isinstance(list(param_original.values())[0], list)  # first param is a list
+            nested_list_2 = isinstance(list(param_original.values())[1], list)  # second param is a list
             # take care of single values
             if not isinstance(list1, list) and not isinstance(list1, np.ndarray):
                 list1 = [list1]
@@ -221,9 +221,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 for y in list2:
                     run_dict = dict()
                     if nested_list_1:
-                        x = [round(x,3)]
+                        x = [round(x, 3)]
                     if nested_list_2:
-                        y = [round(y,3)]
+                        y = [round(y, 3)]
                     run_dict[list(param_original.keys())[0]] = x
                     run_dict[list(param_original.keys())[1]] = y
                     step = self.model.active_workflow.workflow_definition.steps[index]
@@ -290,9 +290,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 for value in v:
                     inputs = ui_input[i]
                     i = i + 1
-                    length = len(
-                        numpy.arange(float(inputs[0]), float(inputs[2]) + float(inputs[1]), float(inputs[1]))
-                    )
+                    length = len(numpy.arange(float(inputs[0]), float(inputs[2]) + float(inputs[1]), float(inputs[1])))
                     single_item.append(
                         numpy.arange(float(inputs[0]), float(inputs[2]) + float(inputs[1]), float(inputs[1]))
                     )

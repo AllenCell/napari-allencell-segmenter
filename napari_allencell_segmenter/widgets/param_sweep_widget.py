@@ -1,4 +1,15 @@
-from qtpy.QtWidgets import QDialog, QLineEdit, QVBoxLayout, QFrame, QHBoxLayout, QPushButton, QCheckBox, QSizePolicy, QLabel, QMessageBox
+from qtpy.QtWidgets import (
+    QDialog,
+    QLineEdit,
+    QVBoxLayout,
+    QFrame,
+    QHBoxLayout,
+    QPushButton,
+    QCheckBox,
+    QSizePolicy,
+    QLabel,
+    QMessageBox,
+)
 from qtpy.QtCore import Qt
 
 from typing import Dict, Any, List
@@ -27,7 +38,6 @@ class ParamSweepWidget(QDialog):
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.addWidget(self._create_buttons())
         self.setLayout(Form(rows))
-
 
     def _param_set_to_form_rows(self) -> List[FormRow]:
 
@@ -73,8 +83,7 @@ class ParamSweepWidget(QDialog):
                     self.inputs.append(sweep_inputs)
                     rows.append(FormRow(label=key, widget=sweep_inputs))
 
-
-        rows.append(FormRow("", widget= self._create_buttons()))
+        rows.append(FormRow("", widget=self._create_buttons()))
         return rows
 
     def _create_buttons(self):
@@ -148,13 +157,3 @@ class ParamSweepWidget(QDialog):
         message.setWindowTitle("Running Sweep")
         message.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
         return message.exec_()
-
-
-
-
-
-
-
-
-
-

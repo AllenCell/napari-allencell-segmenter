@@ -50,7 +50,9 @@ class CollapsibleBox(QWidget):
         sweep_button.setIcon(QIcon(QPixmap(str(Directories.get_assets_dir() / "icons/icon-parameter-sweep.svg"))))
         sweep_button.clicked.connect(lambda: step_widget.steps_view.open_sweep_ui(step_widget.index))
         self.expand_button = QPushButton()
-        self.expand_button.setIcon(QIcon(QPixmap(str(Directories.get_assets_dir() / "icons/expand_more_black_24dp.svg"))))
+        self.expand_button.setIcon(
+            QIcon(QPixmap(str(Directories.get_assets_dir() / "icons/expand_more_black_24dp.svg")))
+        )
         self.expand_button.clicked.connect(self.toggle)
 
         # icon = QLabel()
@@ -84,7 +86,9 @@ class CollapsibleBox(QWidget):
             self.content_box.show()
             self.title_box.setObjectName("")
             self.title_box.setStyle(self.title_box.style())
-            self.expand_button.setIcon(QIcon(QPixmap(str(Directories.get_assets_dir() / "icons/expand_less_black_24dp.svg"))))
+            self.expand_button.setIcon(
+                QIcon(QPixmap(str(Directories.get_assets_dir() / "icons/expand_less_black_24dp.svg")))
+            )
 
     def close(self):
         if self.isOpen:
@@ -93,7 +97,8 @@ class CollapsibleBox(QWidget):
             self.title_box.setObjectName("titleBoxClosed")
             self.title_box.setStyle(self.title_box.style())
             self.expand_button.setIcon(
-                QIcon(QPixmap(str(Directories.get_assets_dir() / "icons/expand_more_black_24dp.svg"))))
+                QIcon(QPixmap(str(Directories.get_assets_dir() / "icons/expand_more_black_24dp.svg")))
+            )
 
     def toggle(self):
         if self.isOpen:
