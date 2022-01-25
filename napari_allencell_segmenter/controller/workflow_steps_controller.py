@@ -275,7 +275,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self._worker.yielded.disconnect()
         self._worker.finished.disconnect()
 
-    def _parse_inputs(self, parameter_inputs: dict[str, Any], ui_input: List[str]):
+    def _parse_inputs(self, parameter_inputs: dict[str, Any], ui_input: List[List[str]]):
         """
         Parse inputs from the UI to create dictionaries to feed into the sweep functions.
         """
@@ -288,29 +288,19 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             if isinstance(v, list):
                 single_item = list()
                 for value in v:
-                    input_text = ui_input[i]
+                    inputs = ui_input[i]
                     i = i + 1
-                    if input_text.__contains__(":"):
-                        inputs = input_text.split(":")
-                        length = len(
-                            numpy.arange(float(inputs[0]), float(inputs[2]) + float(inputs[1]), float(inputs[1]))
-                        )
-                        single_item.append(
-                            numpy.arange(float(inputs[0]), float(inputs[2]) + float(inputs[1]), float(inputs[1]))
-                        )
-                    else:
-                        length = max(1, length)
-                        single_item.append(float(input_text))
+                    length = len(
+                        numpy.arange(float(inputs[0]), float(inputs[2]) + float(inputs[1]), float(inputs[1]))
+                    )
+                    single_item.append(
+                        numpy.arange(float(inputs[0]), float(inputs[2]) + float(inputs[1]), float(inputs[1]))
+                    )
             else:
-                input_text = ui_input[i]
+                inputs = ui_input[i]
                 i = i + 1
-                if input_text.__contains__(":"):
-                    inputs = input_text.split(":")
-                    single_item = numpy.arange(float(inputs[0]), float(inputs[2]) + float(inputs[1]), float(inputs[1]))
-                    length = max(len(single_item), length)
-                else:
-                    length = max(1, length)
-                    single_item = float(input_text)
+                single_item = numpy.arange(float(inputs[0]), float(inputs[2]) + float(inputs[1]), float(inputs[1]))
+                length = max(len(single_item), length)
             dict2[k] = single_item
         return dict2, length
 

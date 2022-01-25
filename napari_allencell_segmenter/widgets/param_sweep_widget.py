@@ -1,4 +1,5 @@
-from qtpy.QtWidgets import QDialog, QLineEdit, QVBoxLayout, QFrame, QHBoxLayout, QPushButton, QCheckBox
+from qtpy.QtWidgets import QDialog, QLineEdit, QVBoxLayout, QFrame, QHBoxLayout, QPushButton, QCheckBox, QSizePolicy, QLabel
+from qtpy.QtCore import Qt
 
 from typing import Dict, Any, List
 from napari_allencell_segmenter.widgets.form import Form, FormRow
@@ -15,6 +16,7 @@ class ParamSweepWidget(QDialog):
 
     def __init__(self, param_set: Dict[str, Any], step_number, controller):
         super().__init__()
+        self.inputs = list()
         self.controller = controller
         self.step_number = step_number
         self._param_set = param_set
@@ -26,27 +28,53 @@ class ParamSweepWidget(QDialog):
         self.layout.addWidget(self._create_buttons())
         self.setLayout(Form(rows))
 
+
     def _param_set_to_form_rows(self) -> List[FormRow]:
+
         rows = list()
+        checks = QFrame()
+        checks.setLayout(QHBoxLayout())
+        checks.layout().addWidget(self.normal_check)
+        checks.layout().addWidget(self.grid_check)
+        rows.append(FormRow("", widget=checks))
+
+        header = QFrame()
+        header.setLayout(QHBoxLayout())
+        label = QLabel("min")
+        label.setAlignment(Qt.AlignCenter)
+        header.layout().addWidget(label)
+        label = QLabel("max")
+        label.setAlignment(Qt.AlignCenter)
+        header.layout().addWidget(label)
+        label = QLabel("step")
+        label.setAlignment(Qt.AlignCenter)
+        header.layout().addWidget(label)
+        rows.append(FormRow("", widget=header))
+
         if self._param_set:
             for key, value in self._param_set.items():
                 if isinstance(value, list):
                     i = 1
                     for _ in value:
-                        rows.append(FormRow(label=f"{key} {i}", widget=QLineEdit()))
+                        sweep_inputs = QFrame()
+                        sweep_inputs.setLayout(QHBoxLayout())
+                        sweep_inputs.layout().addWidget(QLineEdit())
+                        sweep_inputs.layout().addWidget(QLineEdit())
+                        sweep_inputs.layout().addWidget(QLineEdit())
+                        self.inputs.append(sweep_inputs)
+                        rows.append(FormRow(label=f"{key} {i}", widget=sweep_inputs))
                         i = i + 1
                 else:
-                    rows.append(FormRow(label=key, widget=QLineEdit()))
+                    sweep_inputs = QFrame()
+                    sweep_inputs.setLayout(QHBoxLayout())
+                    sweep_inputs.layout().addWidget(QLineEdit())
+                    sweep_inputs.layout().addWidget(QLineEdit())
+                    sweep_inputs.layout().addWidget(QLineEdit())
+                    self.inputs.append(sweep_inputs)
+                    rows.append(FormRow(label=key, widget=sweep_inputs))
 
-            checks = QFrame()
-            checks.setLayout(QHBoxLayout())
-            checks.layout().addWidget(self.normal_check)
-            checks.layout().addWidget(self.grid_check)
-            rows.append(FormRow("", widget=checks))
 
-        button = QPushButton("start sweep")
-        button.clicked.connect(self._run_sweep)
-        rows.append(FormRow(label="", widget=button))
+        rows.append(FormRow("", widget= self._create_buttons()))
         return rows
 
     def _create_buttons(self):
@@ -63,7 +91,7 @@ class ParamSweepWidget(QDialog):
         """
         buttons = QFrame()
         buttons.setLayout(QHBoxLayout())
-        run_sweep = QPushButton("Open output directory")
+        run_sweep = QPushButton("Start Sweep")
         run_sweep.clicked.connect(self._run_sweep)
         close_button = QPushButton("Close")
         close_button.clicked.connect(self.close)
@@ -73,9 +101,8 @@ class ParamSweepWidget(QDialog):
 
     def _run_sweep(self):
         inputs = list()
-        for widget in self.children():
-            if isinstance(widget, QLineEdit):
-                inputs.append(widget.text())
+        for widget in self.inputs:
+            inputs.append([widget.children()[1].text(), widget.children()[3].text(), widget.children()[2].text()])
 
         self.sanitize_ui_inputs(inputs, self.normal_check.isChecked())
         if self.grid_check.isChecked():
@@ -89,30 +116,22 @@ class ParamSweepWidget(QDialog):
 
         len_of_list = None
         for i in ui_inputs:
-        # make sure user has inputted a number or min:step:max notation
-            numbers = None
-            try:
-                # is it a number?
-                float(i)
-                len_of_list = 1 # single number, so len = 1
-            except ValueError:
-                # is it the min:step:max notation?
-                numbers = i.split(":")
-                for j in numbers:
-                    try:
-                        # is the notation done with just numbers?
-                        float(j)
-                    except ValueError:
-                        raise ValueError("Please enter a single number or the min:step:max notation for sweeps")
+            # make sure user has inputted a number or min:step:max notation
+            for j in i:
+                try:
+                    # is the notation done with just numbers?
+                    float(j)
+                except ValueError:
+                    raise ValueError("Please enter a single number or the min:step:max notation for sweeps")
 
             if norm_checked:
                 # make sure that user has same length sweeps for normal sweeps
-                if numbers:
-                    length_sweep = ((float(numbers[2]) - float(numbers[0])) / float(numbers[1])) + 1
-                    if not len_of_list:
-                        len_of_list = length_sweep
-                    elif len_of_list != length_sweep:
-                        raise ValueError("When doing a normal sweep, all sweep lengths must be equal")
+
+                length_sweep = ((float(i[2]) - float(i[0])) / float(i[1])) + 1
+                if not len_of_list:
+                    len_of_list = length_sweep
+                elif len_of_list != length_sweep:
+                    raise ValueError("When doing a normal sweep, all sweep lengths must be equal")
 
 
 
