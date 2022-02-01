@@ -290,14 +290,15 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 for value in v:
                     inputs = ui_input[i]
                     i = i + 1
-                    length = len(numpy.arange(float(inputs[0]), float(inputs[2]) + float(inputs[1]), float(inputs[1])))
-                    single_item.append(
-                        numpy.arange(float(inputs[0]), float(inputs[2]) + float(inputs[1]), float(inputs[1]))
-                    )
+                    length = len(numpy.arange(float(inputs[0]), float(inputs[2]), float(inputs[1])))
+                    values_to_run = numpy.arange(float(inputs[0]), float(inputs[2]), float(inputs[1]))
+                    if values_to_run[len(values_to_run) - 1] + float(inputs[1]) <= float(inputs[2]):
+                        values_to_run = numpy.append(values_to_run, values_to_run[len(values_to_run) - 1] + float(inputs[1]))
+                    single_item.append(values_to_run)
             else:
                 inputs = ui_input[i]
                 i = i + 1
-                single_item = numpy.arange(float(inputs[0]), float(inputs[2]) + float(inputs[1]), float(inputs[1]))
+                single_item = numpy.arange(float(inputs[0]), float(inputs[2]), float(inputs[1]))
                 length = max(len(single_item), length)
             dict2[k] = single_item
         return dict2, length
