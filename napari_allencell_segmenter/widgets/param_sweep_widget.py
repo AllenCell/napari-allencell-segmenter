@@ -184,7 +184,12 @@ class ParamSweepWidget(QDialog):
         return length
 
     def get_sweep_len(self, min, step, max):
-        return ((max - min) / step) + 1
+        i = min
+        count = 0
+        while i <= max:
+            i = i + step
+            count = count + 1
+        return count
 
     def grab_ui_values(self):
         inputs = list()
