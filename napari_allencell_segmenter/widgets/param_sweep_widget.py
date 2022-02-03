@@ -10,6 +10,7 @@ from qtpy.QtWidgets import (
     QSizePolicy,
     QLabel,
     QMessageBox,
+    QProgressBar
 )
 from qtpy.QtCore import Qt
 
@@ -29,37 +30,28 @@ class ParamSweepWidget(QDialog):
     def __init__(self, param_set: Dict[str, Any], step_number, controller):
         super().__init__()
         self.live_count = None
+        self.progress_bar = None
         self.inputs = list()
         self.controller = controller
         self.step_number = step_number
         self._param_set = param_set
-        rows = self._param_set_to_form_rows()
+        rows = self._create_sweep_ui()
         self.layout = QVBoxLayout()
+
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.addWidget(self._create_buttons())
         self.setLayout(Form(rows))
         self.setWindowTitle("Parameter Sweep")
 
 
-    def _param_set_to_form_rows(self) -> List[FormRow]:
-
+    def _create_sweep_ui(self) -> List[FormRow]:
         rows = list()
+        # add ui elements in order
+        rows.append(FormRow("", widget=self.create_sweep_headers()))
 
-        header = QFrame()
-        header.setLayout(QHBoxLayout())
-        label = QLabel("min")
-        label.setAlignment(Qt.AlignCenter)
-        header.layout().addWidget(label)
-        label = QLabel("max")
-        label.setAlignment(Qt.AlignCenter)
-        header.layout().addWidget(label)
-        label = QLabel("step size")
-        label.setAlignment(Qt.AlignCenter)
-        header.layout().addWidget(label)
-        rows.append(FormRow("", widget=header))
-
-        default_params = self.controller.model.active_workflow.workflow_definition.steps[self.step_number].function.parameters
-
+        # convert parameter set to form rows
+        default_params = self.controller.model.active_workflow.workflow_definition.steps[
+            self.step_number].function.parameters
         if self._param_set:
             for key, value in self._param_set.items():
                 if isinstance(value, list):
@@ -73,20 +65,20 @@ class ParamSweepWidget(QDialog):
 
                         min_input = QLineEdit()
                         min_input.setText(str(min_value))
-                        min_input.textChanged.connect(self.update_live_count)
+                        min_input.textChanged.connect(self._on_change_textbox)
                         sweep_inputs.layout().addWidget(min_input)
 
                         max_input = QLineEdit()
                         max_input.setText(str(max_value))
-                        max_input.textChanged.connect(self.update_live_count)
+                        max_input.textChanged.connect(self._on_change_textbox)
                         sweep_inputs.layout().addWidget(max_input)
 
                         step_input = QLineEdit()
                         step_input.setText(str(step_size))
-                        step_input.textChanged.connect(self.update_live_count)
+                        step_input.textChanged.connect(self._on_change_textbox)
                         sweep_inputs.layout().addWidget(step_input)
                         self.inputs.append(sweep_inputs)
-                        rows.append(FormRow(label=f"{key} {i}", widget=sweep_inputs))
+                        rows.append(FormRow(f"{key} {i}", widget=sweep_inputs))
                         i = i + 1
                 else:
                     sweep_inputs = QFrame()
@@ -97,25 +89,28 @@ class ParamSweepWidget(QDialog):
 
                     min_input = QLineEdit()
                     min_input.setText(str(min_value))
-                    min_input.textChanged.connect(self.update_live_count)
+                    min_input.textChanged.connect(self._on_change_textbox)
                     sweep_inputs.layout().addWidget(min_input)
 
                     max_input = QLineEdit()
                     max_input.setText(str(max_value))
-                    max_input.textChanged.connect(self.update_live_count)
+                    max_input.textChanged.connect(self._on_change_textbox)
                     sweep_inputs.layout().addWidget(max_input)
 
                     step_input = QLineEdit()
                     step_input.setText(str(step_size))
-                    step_input.textChanged.connect(self.update_live_count)
+                    step_input.textChanged.connect(self._on_change_textbox)
                     sweep_inputs.layout().addWidget(step_input)
                     self.inputs.append(sweep_inputs)
-                    rows.append(FormRow(label=f"{key}", widget=sweep_inputs))
+                    rows.append(FormRow("", widget=sweep_inputs))
+
 
         def_count = self.get_live_count()
         self.live_count = QLabel(f"{def_count} images will be created")
         self.live_count.setAlignment(qtpy.QtCore.Qt.AlignCenter)
+        self.create_progress_bar(bar_len=def_count)
         rows.append(FormRow("", widget=self.live_count))
+        rows.append(FormRow("", widget=self.progress_bar))
         rows.append(FormRow("", widget=self._create_buttons()))
         return rows
 
@@ -145,7 +140,7 @@ class ParamSweepWidget(QDialog):
         inputs = self.grab_ui_values()
         self.sanitize_ui_inputs(inputs)
         if self.warn_images_created(inputs) == 1024:
-            self.controller.run_step_sweep(self.step_number, self._param_set, inputs, "grid")
+            self.controller.run_step_sweep(self.step_number, self._param_set, inputs, "grid", self)
 
 
     def sanitize_ui_inputs(self, ui_inputs: List[List[str]]):
@@ -170,9 +165,8 @@ class ParamSweepWidget(QDialog):
         message.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
         return message.exec_()
 
-    def update_live_count(self):
+    def update_live_count(self, count):
         if self.live_count:
-            count = self.get_live_count()
             self.live_count.setText(f"{count } images will be created")
 
     def get_live_count(self):
@@ -184,6 +178,7 @@ class ParamSweepWidget(QDialog):
         return length
 
     def get_sweep_len(self, min, step, max):
+        #TODO make this more efficient
         i = min
         count = 0
         while i <= max:
@@ -198,4 +193,65 @@ class ParamSweepWidget(QDialog):
             # transform into min, step, max
             inputs.append([widget.children()[1].text(), widget.children()[3].text(), widget.children()[2].text()])
         return inputs
+
+    def create_progress_bar(self, bar_len=10) -> QProgressBar:
+        self.progress_bar = QProgressBar()
+        # initialize progress bar as 10- change every time values are updated
+        self.progress_bar.setRange(0, bar_len)
+        self.progress_bar.setValue(0)
+        self.progress_bar.setTextVisible(False)
+        return self.progress_bar
+
+    def create_sweep_headers(self) -> QFrame:
+        # headers
+        header = QFrame()
+        header.setLayout(QHBoxLayout())
+        label = QLabel("min")
+        label.setAlignment(Qt.AlignCenter)
+        header.layout().addWidget(label)
+        label = QLabel("max")
+        label.setAlignment(Qt.AlignCenter)
+        header.layout().addWidget(label)
+        label = QLabel("step size")
+        label.setAlignment(Qt.AlignCenter)
+        header.layout().addWidget(label)
+        return header
+
+    def update_progress_bar_len(self, new_len):
+        if self.progress_bar:
+            self.progress_bar.setRange(0, new_len)
+            self.progress_bar.setValue(0)
+
+    def _on_change_textbox(self):
+        new_count = self.get_live_count()
+        self.update_live_count(new_count)
+        self.update_progress_bar_len(new_count)
+
+    def increment_progress_bar(self):
+        self.progress_bar.setValue(self.progress_bar.value() + 1)
+
+
+
+
+    # def _add_progress_bar(self):
+    #     num_steps = 10
+    #
+    #     # Progress bar
+    #
+    #
+    #     # Tick marks
+    #
+    #     progress_labels = QLabel()
+    #     progress_labels.setObjectName("progressLabels")
+    #
+    #     labels_layout = QHBoxLayout()
+    #     labels_layout.setContentsMargins(5, 0, 5, 11)
+    #     progress_labels.setLayout(labels_layout)
+    #
+    #     for step in range(0, num_steps + 1):
+    #         tick = QLabel("|")
+    #         labels_layout.addWidget(tick)
+    #         if step < num_steps:
+    #             labels_layout.addStretch()
+    #     self.layout.addWidget(progress_labels)
 
