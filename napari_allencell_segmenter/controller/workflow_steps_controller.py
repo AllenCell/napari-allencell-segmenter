@@ -113,7 +113,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             self._worker.finished.connect(self._on_run_step_finished)
             self._worker.start()
 
-    def run_step_sweep(self, i: int, parameter_inputs, ui_inputs: List[str], type: str, param_sweep_widget = None):
+    def run_step_sweep(self, param_sweep_widget):
         """
         Run a step in the active workflow as a sweep
         i: index of step to run in the active workflow
@@ -123,17 +123,16 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         type str: type of sweep, either "normal" or "grid"
         """
         self.param_sweep_widget = param_sweep_widget
+        i = param_sweep_widget.step_number
+        parameter_inputs = param_sweep_widget.param_set
+        ui_inputs = param_sweep_widget.grab_ui_values()
+
         if not self._run_lock:
             if parameter_inputs:
                 parameter_inputs_2, length = self._parse_inputs(copy.deepcopy(parameter_inputs), ui_inputs)
-                if type == "normal":
-                    self._worker: GeneratorWorker = create_worker(
-                        self._run_step_sweep, i, length, parameter_inputs, parameter_inputs_2
-                    )
-                elif type == "grid":
-                    self._worker: GeneratorWorker = create_worker(
-                        self._run_step_sweep_grid, i, length, parameter_inputs, parameter_inputs_2
-                    )
+                self._worker: GeneratorWorker = create_worker(
+                    self._run_step_sweep_grid, i, length, parameter_inputs, parameter_inputs_2
+                )
                 self._worker.yielded.connect(self._on_step_processed)
                 self._worker.started.connect(self._on_sweep_started)
                 self._worker.finished.connect(self._on_run_step_finished)
