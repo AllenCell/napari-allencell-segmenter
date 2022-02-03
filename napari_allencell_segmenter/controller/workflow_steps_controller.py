@@ -31,6 +31,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self._number_times_run = 0
         # TODO package this differently
         self._current_params = None
+        self.param_sweep_widget = None
 
     @property
     def view(self):
@@ -134,13 +135,13 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                         self._run_step_sweep_grid, i, length, parameter_inputs, parameter_inputs_2
                     )
                 self._worker.yielded.connect(self._on_step_processed)
-                self._worker.started.connect(self._on_run_all_started)
+                self._worker.started.connect(self._on_sweep_started)
                 self._worker.finished.connect(self._on_run_step_finished)
                 self._worker.start()
             else:
                 self._worker: GeneratorWorker = create_worker(self._run_step_async, i, parameter_inputs)
                 self._worker.yielded.connect(self._on_step_processed)
-                self._worker.started.connect(self._on_run_all_started)
+                self._worker.started.connect(self._on_sweep_started)
                 self._worker.finished.connect(self._on_run_step_finished)
                 self._worker.start()
 
@@ -405,6 +406,11 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self._view.set_run_all_in_progress()
         # disable previous step button
 
+    def _on_sweep_started(self):
+        self.param_sweep_widget.set_run_in_progress()
+        self._run_lock = True
+
+
     def _on_run_all_finished(self):
         self._view.reset_run_all()
         self._run_lock = False
@@ -413,6 +419,13 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self._view.reset_run_step()
         self._run_lock = False
 
+    def _on_sweep_finished(self):
+        self.param_sweep_widget.set_run_finished()
+        self._run_lock = False
+
     def open_sweep_ui(self, params, step_number):
         dlg = ParamSweepWidget(params, step_number, self)
         dlg.exec()
+
+    def run_lock(self):
+        return self._run_lock
