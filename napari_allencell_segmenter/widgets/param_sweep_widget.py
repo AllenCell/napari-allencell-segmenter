@@ -128,11 +128,11 @@ class ParamSweepWidget(QDialog):
         """
         buttons = QFrame()
         buttons.setLayout(QHBoxLayout())
-        run_sweep = QPushButton("Start Sweep")
-        run_sweep.clicked.connect(self._run_sweep)
-        close_button = QPushButton("Close")
-        close_button.clicked.connect(self.close)
-        buttons.layout().addWidget(run_sweep)
+        self.run_sweep_button = QPushButton("Start Sweep")
+        self.run_sweep_button.clicked.connect(self._run_sweep)
+        close_button = QPushButton("Cancel")
+        close_button.clicked.connect(self.cancel)
+        buttons.layout().addWidget(self.run_sweep_button)
         buttons.layout().addWidget(close_button)
         return buttons
 
@@ -140,6 +140,7 @@ class ParamSweepWidget(QDialog):
         inputs = self.grab_ui_values()
         self.sanitize_ui_inputs(inputs)
         if self.warn_images_created(inputs) == 1024:
+            self.set_run_in_progress()
             self.controller.run_step_sweep(self.step_number, self._param_set, inputs, "grid", self)
 
 
@@ -229,6 +230,21 @@ class ParamSweepWidget(QDialog):
 
     def increment_progress_bar(self):
         self.progress_bar.setValue(self.progress_bar.value() + 1)
+
+    def set_run_in_progress(self):
+        self.run_sweep_button.setText("Cancel")
+
+    def set_run_finished(self):
+        self.run_sweep_button.setText("Run Sweep")
+        self.run_sweep_button.clicked.connect(self._run_sweep())
+
+    def cancel(self):
+        if self.controller.run_lock():
+            self.controller.cancel_run_all()
+        else:
+            self.close()
+
+
 
 
 
