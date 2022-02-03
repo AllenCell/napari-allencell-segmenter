@@ -1,6 +1,6 @@
 import copy
 from typing import Any, Dict, List, Union
-from PyQt5.QtWidgets import QComboBox, QPushButton, QFrame, QHBoxLayout
+from PyQt5.QtWidgets import QComboBox, QPushButton, QFrame, QHBoxLayout, QProgressBar
 
 from aicssegmentation.workflow import WorkflowStep, FunctionParameter, WidgetType
 from magicgui.widgets import Slider
@@ -181,3 +181,5 @@ class WorkflowStepWidget(QWidget):
         dropdown_row = UiUtils.dropdown_row(param_label, default=default_value, options=param.options, enabled=True)
         dropdown_row.widget.setObjectName(param_name)
         self.form_rows.append(dropdown_row)
+
+

@@ -112,7 +112,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             self._worker.finished.connect(self._on_run_step_finished)
             self._worker.start()
 
-    def run_step_sweep(self, i: int, parameter_inputs, ui_inputs: List[str], type: str):
+    def run_step_sweep(self, i: int, parameter_inputs, ui_inputs: List[str], type: str, param_sweep_widget = None):
         """
         Run a step in the active workflow as a sweep
         i: index of step to run in the active workflow
@@ -121,6 +121,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         ui_inputs List[str]: inputs for the sweep values from the sweep UI
         type str: type of sweep, either "normal" or "grid"
         """
+        self.param_sweep_widget = param_sweep_widget
         if not self._run_lock:
             if parameter_inputs:
                 parameter_inputs_2, length = self._parse_inputs(copy.deepcopy(parameter_inputs), ui_inputs)
@@ -349,6 +350,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         if self._steps == self._max_step_run:
             # most recent step is being reran
             self._number_times_run = self._number_times_run + 1
+
+        if self.param_sweep_widget:
+            self.param_sweep_widget.increment_progress_bar()
 
         # Hide all layers except for most recent
         for layer in self.viewer.get_layers()[:-1]:
