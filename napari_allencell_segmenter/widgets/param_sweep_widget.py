@@ -34,7 +34,7 @@ class ParamSweepWidget(QDialog):
         self.inputs = list()
         self.controller = controller
         self.step_number = step_number
-        self._param_set = param_set
+        self.param_set = param_set
         rows = self._create_sweep_ui()
         self.layout = QVBoxLayout()
 
@@ -52,8 +52,8 @@ class ParamSweepWidget(QDialog):
         # convert parameter set to form rows
         default_params = self.controller.model.active_workflow.workflow_definition.steps[
             self.step_number].function.parameters
-        if self._param_set:
-            for key, value in self._param_set.items():
+        if self.param_set:
+            for key, value in self.param_set.items():
                 if isinstance(value, list):
                     i = 1
                     for _ in value:
@@ -139,14 +139,17 @@ class ParamSweepWidget(QDialog):
     def _run_sweep(self):
         inputs = self.grab_ui_values()
         self.sanitize_ui_inputs(inputs)
-        if self.warn_images_created(inputs) == 1024:
+        if self.get_live_count() > 20:
+            if self.warn_images_created(inputs) == 1024:
+                self.set_run_in_progress()
+                self.controller.run_step_sweep(self)
+        else:
             self.set_run_in_progress()
-            self.controller.run_step_sweep(self.step_number, self._param_set, inputs, "grid", self)
+            self.controller.run_step_sweep(self)
+
 
 
     def sanitize_ui_inputs(self, ui_inputs: List[List[str]]):
-
-        len_of_list = None
         for i in ui_inputs:
             # make sure user has inputted a number or min:step:max notation
             for j in i:
