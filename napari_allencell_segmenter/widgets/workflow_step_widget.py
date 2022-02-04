@@ -181,5 +181,3 @@ class WorkflowStepWidget(QWidget):
         dropdown_row = UiUtils.dropdown_row(param_label, default=default_value, options=param.options, enabled=True)
         dropdown_row.widget.setObjectName(param_name)
         self.form_rows.append(dropdown_row)
-
-

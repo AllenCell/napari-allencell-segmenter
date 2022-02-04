@@ -113,7 +113,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             self._worker.finished.connect(self._on_run_step_finished)
             self._worker.start()
 
-    def run_step_sweep(self, param_sweep_widget):
+    def run_step_sweep(self, param_sweep_widget, ui_inputs):
         """
         Run a step in the active workflow as a sweep
         i: index of step to run in the active workflow
@@ -125,7 +125,6 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self.param_sweep_widget = param_sweep_widget
         i = param_sweep_widget.step_number
         parameter_inputs = param_sweep_widget.param_set
-        ui_inputs = param_sweep_widget.grab_ui_values()
 
         if not self._run_lock:
             if parameter_inputs:
@@ -294,13 +293,18 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                     length = len(numpy.arange(float(inputs[0]), float(inputs[2]), float(inputs[1])))
                     values_to_run = numpy.arange(float(inputs[0]), float(inputs[2]), float(inputs[1]))
                     if values_to_run[len(values_to_run) - 1] + float(inputs[1]) <= float(inputs[2]):
-                        values_to_run = numpy.append(values_to_run, values_to_run[len(values_to_run) - 1] + float(inputs[1]))
+                        values_to_run = numpy.append(
+                            values_to_run, values_to_run[len(values_to_run) - 1] + float(inputs[1])
+                        )
                     single_item.append(values_to_run)
             else:
                 inputs = ui_input[i]
                 i = i + 1
-                single_item = numpy.arange(float(inputs[0]), float(inputs[2]), float(inputs[1]))
-                length = max(len(single_item), length)
+                if not isinstance(inputs, str):
+                    single_item = numpy.arange(float(inputs[0]), float(inputs[2]), float(inputs[1]))
+                    length = max(len(single_item), length)
+                else:
+                    single_item = inputs
             dict2[k] = single_item
         return dict2, length
 
@@ -408,7 +412,6 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
     def _on_sweep_started(self):
         self.param_sweep_widget.set_run_in_progress()
         self._run_lock = True
-
 
     def _on_run_all_finished(self):
         self._view.reset_run_all()
