@@ -68,17 +68,17 @@ class ParamSweepWidget(QDialog):
 
                             min_input = QLineEdit()
                             min_input.setText(str(min_value))
-                            min_input.textChanged.connect(self._on_change_textbox)
+                            min_input.editingFinished.connect(self._on_change_textbox)
                             sweep_inputs.layout().addWidget(min_input)
 
                             max_input = QLineEdit()
                             max_input.setText(str(max_value))
-                            max_input.textChanged.connect(self._on_change_textbox)
+                            max_input.editingFinished.connect(self._on_change_textbox)
                             sweep_inputs.layout().addWidget(max_input)
 
                             step_input = QLineEdit()
                             step_input.setText(str(step_size))
-                            step_input.textChanged.connect(self._on_change_textbox)
+                            step_input.editingFinished.connect(self._on_change_textbox)
                             sweep_inputs.layout().addWidget(step_input)
                             self.inputs.append(sweep_inputs)
                             rows.append(FormRow(f"{key} {i}", widget=sweep_inputs))
@@ -100,17 +100,17 @@ class ParamSweepWidget(QDialog):
 
                         min_input = QLineEdit()
                         min_input.setText(str(min_value))
-                        min_input.textChanged.connect(self._on_change_textbox)
+                        min_input.editingFinished.connect(self._on_change_textbox)
                         sweep_inputs.layout().addWidget(min_input)
 
                         max_input = QLineEdit()
                         max_input.setText(str(max_value))
-                        max_input.textChanged.connect(self._on_change_textbox)
+                        max_input.editingFinished.connect(self._on_change_textbox)
                         sweep_inputs.layout().addWidget(max_input)
 
                         step_input = QLineEdit()
                         step_input.setText(str(step_size))
-                        step_input.textChanged.connect(self._on_change_textbox)
+                        step_input.editingFinished.connect(self._on_change_textbox)
                         sweep_inputs.layout().addWidget(step_input)
                         self.inputs.append(sweep_inputs)
                         rows.append(FormRow(key, widget=sweep_inputs))
@@ -141,8 +141,10 @@ class ParamSweepWidget(QDialog):
         buttons.setLayout(QHBoxLayout())
         self.run_sweep_button = QPushButton("Start Sweep")
         self.run_sweep_button.clicked.connect(self._run_sweep)
+        self.run_sweep_button.setAutoDefault(False)
         close_button = QPushButton("Cancel")
         close_button.clicked.connect(self.cancel)
+        close_button.setAutoDefault(False)
         buttons.layout().addWidget(self.run_sweep_button)
         buttons.layout().addWidget(close_button)
         return buttons
