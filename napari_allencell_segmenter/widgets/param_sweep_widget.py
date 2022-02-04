@@ -10,7 +10,8 @@ from qtpy.QtWidgets import (
     QSizePolicy,
     QLabel,
     QMessageBox,
-    QProgressBar
+    QProgressBar,
+    QComboBox,
 )
 from qtpy.QtCore import Qt
 
@@ -43,7 +44,6 @@ class ParamSweepWidget(QDialog):
         self.setLayout(Form(rows))
         self.setWindowTitle("Parameter Sweep")
 
-
     def _create_sweep_ui(self) -> List[FormRow]:
         rows = list()
         # add ui elements in order
@@ -51,16 +51,51 @@ class ParamSweepWidget(QDialog):
 
         # convert parameter set to form rows
         default_params = self.controller.model.active_workflow.workflow_definition.steps[
-            self.step_number].function.parameters
+            self.step_number
+        ].function.parameters
         if self.param_set:
             for key, value in self.param_set.items():
+                # some parameters are in one list, need to separate out for UI
                 if isinstance(value, list):
-                    i = 1
-                    for _ in value:
+                    if not isinstance(value[0], str):
+                        i = 1
+                        for _ in value:
+                            sweep_inputs = QFrame()
+                            sweep_inputs.setLayout(QHBoxLayout())
+                            min_value = default_params[key][i - 1].min_value
+                            max_value = default_params[key][i - 1].max_value
+                            step_size = (max_value - min_value) / 2
+
+                            min_input = QLineEdit()
+                            min_input.setText(str(min_value))
+                            min_input.textChanged.connect(self._on_change_textbox)
+                            sweep_inputs.layout().addWidget(min_input)
+
+                            max_input = QLineEdit()
+                            max_input.setText(str(max_value))
+                            max_input.textChanged.connect(self._on_change_textbox)
+                            sweep_inputs.layout().addWidget(max_input)
+
+                            step_input = QLineEdit()
+                            step_input.setText(str(step_size))
+                            step_input.textChanged.connect(self._on_change_textbox)
+                            sweep_inputs.layout().addWidget(step_input)
+                            self.inputs.append(sweep_inputs)
+                            rows.append(FormRow(f"{key} {i}", widget=sweep_inputs))
+                            i = i + 1
+                else:
+                    # most other params are single entries in the param dictionary
+                    # for params that are a dropdown
+                    if default_params[key][0].widget_type.name == "DROPDOWN":
+                        dropdown = QComboBox()
+                        dropdown.addItems(default_params[key][0].options)
+                        self.inputs.append(dropdown)
+                        rows.append(FormRow(key, widget=dropdown))
+                    else:
                         sweep_inputs = QFrame()
                         sweep_inputs.setLayout(QHBoxLayout())
-                        min_value = default_params[key][i - 1].min_value
-                        max_value = default_params[key][i - 1].max_value
+                        min_value = default_params[key][0].min_value
+                        max_value = default_params[key][0].max_value
                         step_size = (max_value - min_value) / 2
 
                         min_input = QLineEdit()
@@ -78,34 +113,10 @@ class ParamSweepWidget(QDialog):
                         step_input.textChanged.connect(self._on_change_textbox)
                         sweep_inputs.layout().addWidget(step_input)
                         self.inputs.append(sweep_inputs)
-                        rows.append(FormRow(f"{key} {i}", widget=sweep_inputs))
-                        i = i + 1
-                else:
-                    sweep_inputs = QFrame()
-                    sweep_inputs.setLayout(QHBoxLayout())
-                    min_value = default_params[key][i - 1].min_value
-                    max_value = default_params[key][i - 1].max_value
-                    step_size = (max_value - min_value) / 2
+                        rows.append(FormRow(key, widget=sweep_inputs))
 
-                    min_input = QLineEdit()
-                    min_input.setText(str(min_value))
-                    min_input.textChanged.connect(self._on_change_textbox)
-                    sweep_inputs.layout().addWidget(min_input)
-
-                    max_input = QLineEdit()
-                    max_input.setText(str(max_value))
-                    max_input.textChanged.connect(self._on_change_textbox)
-                    sweep_inputs.layout().addWidget(max_input)
-
-                    step_input = QLineEdit()
-                    step_input.setText(str(step_size))
-                    step_input.textChanged.connect(self._on_change_textbox)
-                    sweep_inputs.layout().addWidget(step_input)
-                    self.inputs.append(sweep_inputs)
-                    rows.append(FormRow("", widget=sweep_inputs))
-
-
-        def_count = self.get_live_count()
+        def_params_values = self.grab_ui_values(grab_combo=False)
+        def_count = self.get_live_count(def_params_values)
         self.live_count = QLabel(f"{def_count} images will be created")
         self.live_count.setAlignment(qtpy.QtCore.Qt.AlignCenter)
         self.create_progress_bar(bar_len=def_count)
@@ -137,17 +148,15 @@ class ParamSweepWidget(QDialog):
         return buttons
 
     def _run_sweep(self):
-        inputs = self.grab_ui_values()
-        self.sanitize_ui_inputs(inputs)
-        if self.get_live_count() > 20:
-            if self.warn_images_created(inputs) == 1024:
+        inputs = self.grab_ui_values(grab_combo=False)
+        count = self.get_live_count(inputs)
+        if count > 20:
+            if self.warn_images_created(count) == 1024:
                 self.set_run_in_progress()
-                self.controller.run_step_sweep(self)
+                self.controller.run_step_sweep(self, self.grab_ui_values())
         else:
             self.set_run_in_progress()
-            self.controller.run_step_sweep(self)
-
-
+            self.controller.run_step_sweep(self, self.grab_ui_values())
 
     def sanitize_ui_inputs(self, ui_inputs: List[List[str]]):
         for i in ui_inputs:
@@ -159,12 +168,9 @@ class ParamSweepWidget(QDialog):
                 except ValueError:
                     raise ValueError("Please enter a single number or the min:step:max notation for sweeps")
 
-    def warn_images_created(self, ui_input):
-        length = 1
-        for sweeps in ui_input:
-            length = length * self.get_sweep_len(float(sweeps[0]), float(sweeps[1]), float(sweeps[2]))
+    def warn_images_created(self, count):
         message = QMessageBox()
-        message.setText(f"{int(length)} result image layers will be created.")
+        message.setText(f"{int(count)} result image layers will be created.")
         message.setWindowTitle("Running Sweep")
         message.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
         return message.exec_()
@@ -173,8 +179,7 @@ class ParamSweepWidget(QDialog):
         if self.live_count:
             self.live_count.setText(f"{count } images will be created")
 
-    def get_live_count(self):
-        inputs = self.grab_ui_values()
+    def get_live_count(self, inputs):
         self.sanitize_ui_inputs(inputs)
         length = 1
         for sweeps in inputs:
@@ -182,7 +187,7 @@ class ParamSweepWidget(QDialog):
         return length
 
     def get_sweep_len(self, min, step, max):
-        #TODO make this more efficient
+        # TODO make this more efficient
         i = min
         count = 0
         while i <= max:
@@ -190,12 +195,27 @@ class ParamSweepWidget(QDialog):
             count = count + 1
         return count
 
-    def grab_ui_values(self):
+    def grab_ui_values(self, grab_combo=True):
         inputs = list()
         for widget in self.inputs:
-            # ui is min, max, step
-            # transform into min, step, max
-            inputs.append([widget.children()[1].text(), widget.children()[3].text(), widget.children()[2].text()])
+            if grab_combo:
+                # ui is min, max, step
+                # transform into min, step, max
+                try:
+                    # is a set of numbers for sweep
+                    inputs.append(
+                        [widget.children()[1].text(), widget.children()[3].text(), widget.children()[2].text()]
+                    )
+                except IndexError as err:
+                    # is a combobox(string parameters)
+                    inputs.append(widget.currentText())
+            else:
+                try:
+                    inputs.append(
+                        [widget.children()[1].text(), widget.children()[3].text(), widget.children()[2].text()]
+                    )
+                except:
+                    pass
         return inputs
 
     def create_progress_bar(self, bar_len=10) -> QProgressBar:
@@ -227,7 +247,8 @@ class ParamSweepWidget(QDialog):
             self.progress_bar.setValue(0)
 
     def _on_change_textbox(self):
-        new_count = self.get_live_count()
+        inputs = self.grab_ui_values(grab_combo=False)
+        new_count = self.get_live_count(inputs)
         self.update_live_count(new_count)
         self.update_progress_bar_len(new_count)
 
@@ -246,11 +267,6 @@ class ParamSweepWidget(QDialog):
             self.controller.cancel_run_all()
         else:
             self.close()
-
-
-
-
-
 
     # def _add_progress_bar(self):
     #     num_steps = 10
@@ -273,4 +289,3 @@ class ParamSweepWidget(QDialog):
     #         if step < num_steps:
     #             labels_layout.addStretch()
     #     self.layout.addWidget(progress_labels)
-
