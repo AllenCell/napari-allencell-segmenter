@@ -180,11 +180,11 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
     def _run_step_sweep_grid(self, index, length, param_original, param_sweep):
         # either one param, or two params as a list
         if len(param_original) == 1:
-            # There's only one param in this k,v pair- use run_step_sweep
+            # There's only one param- use run_step_sweep
             if not isinstance(list(param_original.values())[0], list):
                 self._run_step_sweep(index, length, param_original, param_sweep)
             else:
-                # one dict entry, multiple parameters as list
+                # multiple unique params in one list
                 list1 = list(param_sweep.values())[0][0]
                 list2 = list(param_sweep.values())[0][1]
                 if not isinstance(list1, list) and not isinstance(list1, np.ndarray):
@@ -207,7 +207,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             # if the function expects a nested list
             nested_list_1 = isinstance(list(param_original.values())[0], list)  # first param is a list
             nested_list_2 = isinstance(list(param_original.values())[1], list)  # second param is a list
-            # take care of single values
+            # shape parameters in the way that aics-segmentation expects them
             if not isinstance(list1, list) and not isinstance(list1, np.ndarray):
                 list1 = [list1]
             if not isinstance(list2, list) and not isinstance(list2, np.ndarray):
@@ -217,6 +217,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             if not isinstance(list2[0], float):
                 list2 = list2[0]
 
+            # loop through all params and sweep
             for x in list1:
                 for y in list2:
                     run_dict = dict()
@@ -235,7 +236,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
 
     def _sweep_grid(self, index, list1, list2, param_original):
         if len(param_original) == 1:
-            # one k-v pair for two params
+            # multiple unique params are in one list
             for x in list1:
                 run_list = list()
                 run_list.append(x)
@@ -250,7 +251,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                     self._current_params = run_dict
                     yield (step, result)
         elif len(param_original) == 2:
-            # two key value pairs for two params
+            # single entries in the param dictionary
             for x in list1:
                 for y in list2:
                     run_dict = dict()
@@ -286,12 +287,14 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         length = 0
         for k, v in parameter_inputs.items():
             if isinstance(v, list):
+                # sometimes multiple unique params are in one list
                 single_item = list()
                 for value in v:
                     inputs = ui_input[i]
                     i = i + 1
                     length = len(numpy.arange(float(inputs[0]), float(inputs[2]), float(inputs[1])))
                     values_to_run = numpy.arange(float(inputs[0]), float(inputs[2]), float(inputs[1]))
+                    # if min=max, just fix parameter
                     if inputs [0] == inputs[2]:
                         numpy.append(values_to_run, inputs[0])
                     elif (values_to_run[len(values_to_run) - 1] + float(inputs[1]) <= float(inputs[2])):
@@ -300,12 +303,15 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                         )
                     single_item.append(values_to_run)
             else:
+                # most params are single entries in the param dictionary
                 inputs = ui_input[i]
                 i = i + 1
                 if not isinstance(inputs, str):
+                    # for typical sweep ranges
                     single_item = numpy.arange(float(inputs[0]), float(inputs[2]), float(inputs[1]))
                     length = max(len(single_item), length)
                 else:
+                    # for string parameters from dropdowns
                     single_item = inputs
             dict2[k] = single_item
         return dict2, length
