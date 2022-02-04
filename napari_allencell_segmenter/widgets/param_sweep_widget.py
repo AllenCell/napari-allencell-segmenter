@@ -55,7 +55,7 @@ class ParamSweepWidget(QDialog):
         ].function.parameters
         if self.param_set:
             for key, value in self.param_set.items():
-                # some parameters are in one list, need to separate out for UI
+                # sometimes multiple unique params are in one list, need to separate out for UI
                 if isinstance(value, list):
                     if not isinstance(value[0], str):
                         i = 1
@@ -84,7 +84,7 @@ class ParamSweepWidget(QDialog):
                             rows.append(FormRow(f"{key} {i}", widget=sweep_inputs))
                             i = i + 1
                 else:
-                    # most other params are single entries in the param dictionary
+                    # most params are single entries in the param dictionary
                     # for params that are a dropdown
                     if default_params[key][0].widget_type.name == "DROPDOWN":
                         dropdown = QComboBox()
@@ -92,6 +92,7 @@ class ParamSweepWidget(QDialog):
                         self.inputs.append(dropdown)
                         rows.append(FormRow(key, widget=dropdown))
                     else:
+                        # for typical sweep params
                         sweep_inputs = QFrame()
                         sweep_inputs.setLayout(QHBoxLayout())
                         min_value = default_params[key][0].min_value
@@ -153,6 +154,7 @@ class ParamSweepWidget(QDialog):
         inputs = self.grab_ui_values(grab_combo=False)
         count = self.get_live_count(inputs)
         if count > 20:
+            # warn if too many images will be generated
             if self.warn_images_created(count) == 1024:
                 self.set_run_in_progress()
                 self.controller.run_step_sweep(self, self.grab_ui_values())
@@ -200,6 +202,7 @@ class ParamSweepWidget(QDialog):
     def grab_ui_values(self, grab_combo=True):
         inputs = list()
         for widget in self.inputs:
+            # grab values from combobox (when calling run_sweep function)
             if grab_combo:
                 # ui is min, max, step
                 # transform into min, step, max
@@ -212,6 +215,7 @@ class ParamSweepWidget(QDialog):
                     # is a combobox(string parameters)
                     inputs.append(widget.currentText())
             else:
+                # do not grab values from combobox (for checking inputs and getting size of sweeps)
                 try:
                     inputs.append(
                         [widget.children()[1].text(), widget.children()[3].text(), widget.children()[2].text()]
@@ -222,7 +226,6 @@ class ParamSweepWidget(QDialog):
 
     def create_progress_bar(self, bar_len=10) -> QProgressBar:
         self.progress_bar = QProgressBar()
-        # initialize progress bar as 10- change every time values are updated
         self.progress_bar.setRange(0, bar_len)
         self.progress_bar.setValue(0)
         self.progress_bar.setTextVisible(False)
@@ -249,9 +252,12 @@ class ParamSweepWidget(QDialog):
             self.progress_bar.setValue(0)
 
     def _on_change_textbox(self):
+        # event handler for when textboxes are changed
         inputs = self.grab_ui_values(grab_combo=False)
+
         new_count = self.get_live_count(inputs)
         self.update_live_count(new_count)
+
         self.update_progress_bar_len(new_count)
 
     def increment_progress_bar(self):
@@ -266,28 +272,9 @@ class ParamSweepWidget(QDialog):
 
     def cancel(self):
         if self.controller.run_lock():
+            # if running, cancel
             self.controller.cancel_run_all()
         else:
+            # if not running, close window
             self.close()
 
-    # def _add_progress_bar(self):
-    #     num_steps = 10
-    #
-    #     # Progress bar
-    #
-    #
-    #     # Tick marks
-    #
-    #     progress_labels = QLabel()
-    #     progress_labels.setObjectName("progressLabels")
-    #
-    #     labels_layout = QHBoxLayout()
-    #     labels_layout.setContentsMargins(5, 0, 5, 11)
-    #     progress_labels.setLayout(labels_layout)
-    #
-    #     for step in range(0, num_steps + 1):
-    #         tick = QLabel("|")
-    #         labels_layout.addWidget(tick)
-    #         if step < num_steps:
-    #             labels_layout.addStretch()
-    #     self.layout.addWidget(progress_labels)
