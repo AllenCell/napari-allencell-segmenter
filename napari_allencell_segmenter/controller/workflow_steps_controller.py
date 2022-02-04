@@ -295,9 +295,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                     length = len(numpy.arange(float(inputs[0]), float(inputs[2]), float(inputs[1])))
                     values_to_run = numpy.arange(float(inputs[0]), float(inputs[2]), float(inputs[1]))
                     # if min=max, just fix parameter
-                    if inputs [0] == inputs[2]:
+                    if inputs[0] == inputs[2]:
                         numpy.append(values_to_run, inputs[0])
-                    elif (values_to_run[len(values_to_run) - 1] + float(inputs[1]) <= float(inputs[2])):
+                    elif values_to_run[len(values_to_run) - 1] + float(inputs[1]) <= float(inputs[2]):
                         values_to_run = numpy.append(
                             values_to_run, values_to_run[len(values_to_run) - 1] + float(inputs[1])
                         )

@@ -277,4 +277,3 @@ class ParamSweepWidget(QDialog):
         else:
             # if not running, close window
             self.close()
-
