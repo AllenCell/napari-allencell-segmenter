@@ -134,13 +134,14 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 )
                 self._worker.yielded.connect(self._on_step_processed)
                 self._worker.started.connect(self._on_sweep_started)
-                self._worker.finished.connect(self._on_run_step_finished)
+                self._worker.finished.connect(self.on_sweep_finished)
+                self._sweep_step = 0
                 self._worker.start()
             else:
                 self._worker: GeneratorWorker = create_worker(self._run_step_async, i, parameter_inputs)
                 self._worker.yielded.connect(self._on_step_processed)
                 self._worker.started.connect(self._on_sweep_started)
-                self._worker.finished.connect(self._on_run_step_finished)
+                self._worker.finished.connect(self.on_sweep_finished)
                 self._worker.start()
 
     def _run_step_sweep(self, index, length, param_original, param_sweep):
@@ -352,6 +353,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         yield (step, result)
 
     def _on_step_processed(self, processed_args: Tuple[WorkflowStep, numpy.ndarray]):
+        self._sweep_step = self._sweep_step + 1
         if self._steps < self._max_step_run:
             # should not be able to get here
             raise RuntimeError("Should not be able to run steps before current step")
@@ -364,7 +366,8 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             self._number_times_run = self._number_times_run + 1
 
         if self.param_sweep_widget:
-            self.param_sweep_widget.increment_progress_bar()
+            if self.run_lock:
+                self.param_sweep_widget.set_progress_bar(self._sweep_step)
 
         # Hide all layers except for most recent
         for layer in self.viewer.get_layers()[:-1]:
@@ -429,7 +432,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self._view.reset_run_step()
         self._run_lock = False
 
-    def _on_sweep_finished(self):
+    def on_sweep_finished(self):
         self.param_sweep_widget.set_run_finished()
         self._run_lock = False
 

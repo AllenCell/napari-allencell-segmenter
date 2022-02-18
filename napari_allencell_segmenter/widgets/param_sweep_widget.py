@@ -261,17 +261,24 @@ class ParamSweepWidget(QDialog):
         self.update_progress_bar_len(new_count)
 
     def increment_progress_bar(self):
-        self.progress_bar.setValue(self.progress_bar.value() + 1)
+        if self.controller.run_lock:
+            self.progress_bar.setValue(self.progress_bar.value() + 1)
+
+    def reset_progress_bar(self):
+        self.progress_bar.setValue(0)
+
+    def set_progress_bar(self, val:int):
+        self.progress_bar.setValue(val)
 
     def set_run_in_progress(self):
         self.run_sweep_button.setText("Cancel")
 
     def set_run_finished(self):
         self.run_sweep_button.setText("Run Sweep")
-        self.run_sweep_button.clicked.connect(self._run_sweep())
+        self.run_sweep_button.clicked.connect(self._run_sweep)
 
     def cancel(self):
-        if self.controller.run_lock():
+        if self.controller.run_lock:
             # if running, cancel
             self.controller.cancel_run_all()
         else:
