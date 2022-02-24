@@ -210,7 +210,7 @@ class ParamSweepWidget(QDialog):
 
     def grab_ui_values(self, grab_combo=True):
         inputs = list()
-        for widget in self.inputs.items():
+        for widget in self.inputs.values():
             # grab values from combobox (when calling run_sweep function)
             if grab_combo:
                 # ui is min, max, step
