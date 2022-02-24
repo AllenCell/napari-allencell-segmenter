@@ -85,10 +85,11 @@ class ParamSweepWidget(QDialog):
 
                             reset_button = QPushButton("reset")
                             reset_button.setStyleSheet("border: none;")
-                            reset_button.clicked.connect(partial(lambda val: self._reset_row_to_default(key, val), i))
+                            # pass the key and value as values for calling function later on
+                            reset_button.clicked.connect(partial(lambda k,val: self._reset_row_to_default(k, val), key,i))
                             sweep_inputs.layout().addWidget(reset_button)
 
-
+                            # store the index of this parameter in its list appended to the parameter key
                             self.inputs[key + str(i)] = sweep_inputs
                             rows.append(FormRow(f"{key} {i}", widget=sweep_inputs))
                             i = i + 1
@@ -123,6 +124,11 @@ class ParamSweepWidget(QDialog):
                         step_input.editingFinished.connect(self._on_change_textbox)
                         sweep_inputs.layout().addWidget(step_input)
                         self.inputs[key] = sweep_inputs
+
+                        reset_button = QPushButton("reset")
+                        reset_button.setStyleSheet("border: none;")
+                        reset_button.clicked.connect(lambda: self._reset_row_to_default(key))
+                        sweep_inputs.layout().addWidget(reset_button)
                         rows.append(FormRow(key, widget=sweep_inputs))
 
         def_params_values = self.grab_ui_values(grab_combo=False)
