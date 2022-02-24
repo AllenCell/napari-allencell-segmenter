@@ -17,6 +17,7 @@ from qtpy.QtCore import Qt
 
 from typing import Dict, Any, List
 from napari_allencell_segmenter.widgets.form import Form, FormRow
+from functools import partial
 
 
 class ParamSweepWidget(QDialog):
@@ -32,7 +33,8 @@ class ParamSweepWidget(QDialog):
         super().__init__()
         self.live_count = None
         self.progress_bar = None
-        self.inputs = list()
+        self.inputs = dict()
+        self.default_sweep_values = dict()
         self.controller = controller
         self.step_number = step_number
         self.param_set = param_set
@@ -80,7 +82,14 @@ class ParamSweepWidget(QDialog):
                             step_input.setText(str(step_size))
                             step_input.editingFinished.connect(self._on_change_textbox)
                             sweep_inputs.layout().addWidget(step_input)
-                            self.inputs.append(sweep_inputs)
+
+                            reset_button = QPushButton("reset")
+                            reset_button.setStyleSheet("border: none;")
+                            reset_button.clicked.connect(partial(lambda val: self._reset_row_to_default(key, val), i))
+                            sweep_inputs.layout().addWidget(reset_button)
+
+
+                            self.inputs[key + str(i)] = sweep_inputs
                             rows.append(FormRow(f"{key} {i}", widget=sweep_inputs))
                             i = i + 1
                 else:
@@ -89,7 +98,7 @@ class ParamSweepWidget(QDialog):
                     if default_params[key][0].widget_type.name == "DROPDOWN":
                         dropdown = QComboBox()
                         dropdown.addItems(default_params[key][0].options)
-                        self.inputs.append(dropdown)
+                        self.inputs[key] = dropdown
                         rows.append(FormRow(key, widget=dropdown))
                     else:
                         # for typical sweep params
@@ -113,7 +122,7 @@ class ParamSweepWidget(QDialog):
                         step_input.setText(str(step_size))
                         step_input.editingFinished.connect(self._on_change_textbox)
                         sweep_inputs.layout().addWidget(step_input)
-                        self.inputs.append(sweep_inputs)
+                        self.inputs[key] = sweep_inputs
                         rows.append(FormRow(key, widget=sweep_inputs))
 
         def_params_values = self.grab_ui_values(grab_combo=False)
@@ -201,7 +210,7 @@ class ParamSweepWidget(QDialog):
 
     def grab_ui_values(self, grab_combo=True):
         inputs = list()
-        for widget in self.inputs:
+        for widget in self.inputs.items():
             # grab values from combobox (when calling run_sweep function)
             if grab_combo:
                 # ui is min, max, step
@@ -284,3 +293,29 @@ class ParamSweepWidget(QDialog):
         else:
             # if not running, close window
             self.close()
+
+    def _reset_row_to_default(self, key_of_row: str, list_index = None):
+        default_param_set = self.controller.model.active_workflow.workflow_definition.steps[
+            self.step_number
+        ].function.parameters
+
+        if list_index:
+            input_boxes = self.inputs[key_of_row + str(list_index)].children()
+        else:
+            input_boxes = self.inputs[key_of_row].children()
+
+        if list_index:
+            default_params = default_param_set[key_of_row][list_index - 1]
+        else:
+            default_params = default_param_set[key_of_row][0]
+
+        # reset min value
+        input_boxes[1].setText(str(default_params.min_value))
+        # reset max value
+        input_boxes[2].setText(str(default_params.max_value))
+        # reset step_size value
+        input_boxes[3].setText(str((default_params.max_value - default_params.min_value) / 2))
+
+        updated_values = self.grab_ui_values(grab_combo=False)
+        self.update_live_count(self.get_live_count(updated_values))
+
