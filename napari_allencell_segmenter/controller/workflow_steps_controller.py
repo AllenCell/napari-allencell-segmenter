@@ -366,8 +366,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             self._number_times_run = self._number_times_run + 1
 
         if self.param_sweep_widget:
-            if self.run_lock:
-                self.param_sweep_widget.set_progress_bar(self._sweep_step)
+            self.param_sweep_widget.set_progress_bar(self._sweep_step)
 
         # Hide all layers except for most recent
         for layer in self.viewer.get_layers()[:-1]:
