@@ -12,6 +12,7 @@ from napari_allencell_segmenter.core.controller import Controller
 from napari_allencell_segmenter.model.segmenter_model import SegmenterModel
 from napari_allencell_segmenter.widgets.param_sweep_widget import ParamSweepWidget
 import numpy as np
+from qtpy.QtWidgets import QMessageBox
 
 import copy
 
@@ -108,11 +109,25 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         dictionary, but with the parameter values obtained from the UI instead of default values.
         """
         if not self._run_lock:
-            self._worker: GeneratorWorker = create_worker(self._run_step_async, i, parameter_inputs)
-            self._worker.yielded.connect(self._on_step_processed)
-            self._worker.started.connect(self._on_run_all_started)
-            self._worker.finished.connect(self._on_run_step_finished)
-            self._worker.start()
+            selected_image = self.viewer.get_active_layer()
+            cont = True
+            if int(selected_image.name[:1]) != i:
+                # checking order of run
+                if i == 0:
+                    response = self.warn_box( f"You have selected {selected_image.name} as the input layer. You will run this segmentation"
+                    f" out of order. \nTo run the segmentation in order, please select the starting image as the input layer for this step. \n Would you still like"
+                     " to continue?", "Run segmentation out of order")
+                else:
+                    response = self.warn_box(
+                    f"You have selected {selected_image.name} as the input layer. You will run this segmentation"
+                    f" out of order. To run the segmentation in order, please select a layer that is the output of {self.model.active_workflow.workflow_definition.steps[i - 1].name}.\n Would you like to continue?", "Run segmentation out of order")
+                cont = (response == 1024)
+            if cont:
+                self._worker: GeneratorWorker = create_worker(self._run_step_async, i, parameter_inputs)
+                self._worker.yielded.connect(self._on_step_processed)
+                self._worker.started.connect(self._on_run_all_started)
+                self._worker.finished.connect(self._on_run_step_finished)
+                self._worker.start()
 
     def run_step_sweep(self, param_sweep_widget, ui_inputs):
         """
@@ -347,10 +362,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
     def _run_step_async(
         self, index: int, parameter_inputs: List[Dict[str, List]]
     ) -> Generator[Tuple[WorkflowStep, numpy.ndarray], None, None]:
-        # Test for this basic function
-
+        selected_image = self.viewer.get_active_layer()
         step = self.model.active_workflow.workflow_definition.steps[index]
-        result = self.model.active_workflow.execute_step(index, parameter_inputs)
+        result = self.model.active_workflow.execute_step(index, parameter_inputs, selected_image)
         self._steps = index
         yield (step, result)
 
@@ -386,6 +400,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             # reset rerun counter
             self._number_times_run = 0
 
+        active_layer = self.viewer.get_active_layer()
         if self._current_params:
             if self._number_times_run == 0:
                 self.viewer.add_image_layer(result, name=f"{step.step_number}: {step.name} | {self._current_params}")
@@ -399,6 +414,8 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 self.viewer.add_image_layer(result, name=f"{step.step_number}: {step.name}")
             else:
                 self.viewer.add_image_layer(result, name=f"{step.step_number}.{self._number_times_run}: {step.name}")
+
+        self.viewer.set_active_layer(active_layer)
 
     def _on_step_processed_all(self, processed_args: Tuple[WorkflowStep, numpy.ndarray]):
         step, result = processed_args
@@ -444,3 +461,10 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
 
     def run_lock(self):
         return self._run_lock
+
+    def warn_box(self, message, title):
+        box = QMessageBox()
+        box.setText(message)
+        box.setWindowTitle(title)
+        box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        return box.exec_()
