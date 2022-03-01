@@ -32,6 +32,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         # TODO package this differently
         self._current_params = None
         self.param_sweep_widget = None
+        self._sweep_step = None
 
     @property
     def view(self):
@@ -179,6 +180,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             yield (step, result)
 
     def _run_step_sweep_grid(self, index, length, param_original, param_sweep):
+        selected_image = self.viewer.get_active_layer()
         # either one param, or two params as a list
         if len(param_original) == 1:
             # There's only one param- use run_step_sweep
@@ -197,7 +199,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                         run_dict = {list(param_original.keys())[0]: [round(x, 3), round(y, 3)]}
                         step = self.model.active_workflow.workflow_definition.steps[index]
                         print(f"running step {step.name} with parameters {run_dict}")
-                        result = self.model.active_workflow.execute_step(index, run_dict)
+                        result = self.model.active_workflow.execute_step(index, run_dict, selected_image)
                         self._steps = index
                         self._current_params = run_dict
                         yield (step, result)
@@ -353,7 +355,8 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         yield (step, result)
 
     def _on_step_processed(self, processed_args: Tuple[WorkflowStep, numpy.ndarray]):
-        self._sweep_step = self._sweep_step + 1
+        if self._sweep_step:
+            self._sweep_step = self._sweep_step + 1
         if self._steps < self._max_step_run:
             # should not be able to get here
             raise RuntimeError("Should not be able to run steps before current step")
