@@ -86,7 +86,9 @@ class ParamSweepWidget(QDialog):
                             reset_button = QPushButton("reset")
                             reset_button.setStyleSheet("border: none;")
                             # pass the key and value as values for calling function later on
-                            reset_button.clicked.connect(partial(lambda k,val: self._reset_row_to_default(k, val), key,i))
+                            reset_button.clicked.connect(
+                                partial(lambda k, val: self._reset_row_to_default(k, val), key, i)
+                            )
                             sweep_inputs.layout().addWidget(reset_button)
 
                             # store the index of this parameter in its list appended to the parameter key
@@ -282,7 +284,7 @@ class ParamSweepWidget(QDialog):
     def reset_progress_bar(self):
         self.progress_bar.setValue(0)
 
-    def set_progress_bar(self, val:int):
+    def set_progress_bar(self, val: int):
         self.progress_bar.setValue(val)
 
     def set_run_in_progress(self):
@@ -300,7 +302,7 @@ class ParamSweepWidget(QDialog):
             # if not running, close window
             self.close()
 
-    def _reset_row_to_default(self, key_of_row: str, list_index = None):
+    def _reset_row_to_default(self, key_of_row: str, list_index=None):
         default_param_set = self.controller.model.active_workflow.workflow_definition.steps[
             self.step_number
         ].function.parameters
@@ -324,4 +326,3 @@ class ParamSweepWidget(QDialog):
 
         updated_values = self.grab_ui_values(grab_combo=False)
         self.update_live_count(self.get_live_count(updated_values))
-

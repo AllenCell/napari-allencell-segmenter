@@ -114,14 +114,22 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             if int(selected_image.name[:1]) != i:
                 # checking order of run
                 if i == 0:
-                    response = self.warn_box( f"You have selected {selected_image.name} as the input layer. You will run this segmentation"
-                    f" out of order. \nTo run the segmentation in order, please select the starting image as the input layer for this step. \n Would you still like"
-                     " to continue?", "Run segmentation out of order")
+                    response = self.warn_box(
+                        f"You have selected {selected_image.name} as the input layer. You will run this segmentation"
+                        f" out of order. \nTo run the segmentation in order, please select the starting image as the "
+                        f"input layer for this step. "
+                        f"\n Would you still like to continue?",
+                        "Run segmentation out of order",
+                    )
                 else:
                     response = self.warn_box(
-                    f"You have selected {selected_image.name} as the input layer. You will run this segmentation"
-                    f" out of order. To run the segmentation in order, please select a layer that is the output of {self.model.active_workflow.workflow_definition.steps[i - 1].name}.\n Would you like to continue?", "Run segmentation out of order")
-                cont = (response == 1024)
+                        f"You have selected {selected_image.name} as the input layer. You will run this segmentation"
+                        f" out of order. To run the segmentation in order, please select a layer that is the output of "
+                        f"{i}. {self.model.active_workflow.workflow_definition.steps[i - 1].name}."
+                        f"\n Would you like to continue?",
+                        "Run segmentation out of order",
+                    )
+                cont = response == 1024
             if cont:
                 self._worker: GeneratorWorker = create_worker(self._run_step_async, i, parameter_inputs)
                 self._worker.yielded.connect(self._on_step_processed)
