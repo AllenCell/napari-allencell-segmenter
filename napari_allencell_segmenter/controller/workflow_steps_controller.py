@@ -161,6 +161,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 self._worker.start()
 
     def _run_step_sweep(self, index, length, param_original, param_sweep):
+        selected_image = self.viewer.get_active_layer()
         for i in range(length):
             run_dict = dict()
             # loop over sweeps
@@ -189,7 +190,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             # run iteration
             step = self.model.active_workflow.workflow_definition.steps[index]
             print(f"running step {step.name} with parameters {run_dict}")
-            result = self.model.active_workflow.execute_step(index, run_dict)
+            result = self.model.active_workflow.execute_step(index, run_dict, selected_image)
             self._steps = index
             self._current_params = run_dict
             yield (step, result)
@@ -245,36 +246,6 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                         y = [round(y, 3)]
                     run_dict[list(param_original.keys())[0]] = x
                     run_dict[list(param_original.keys())[1]] = y
-                    step = self.model.active_workflow.workflow_definition.steps[index]
-                    print(f"running step {step.name} with parameters {run_dict}")
-                    result = self.model.active_workflow.execute_step(index, run_dict)
-                    self._steps = index
-                    self._current_params = run_dict
-                    yield (step, result)
-
-    def _sweep_grid(self, index, list1, list2, param_original):
-        if len(param_original) == 1:
-            # multiple unique params are in one list
-            for x in list1:
-                run_list = list()
-                run_list.append(x)
-                for y in list2:
-                    run_list.append(y)
-                    run_dict = dict()
-                    run_dict[param_original.keys()[0]] = run_list
-                    step = self.model.active_workflow.workflow_definition.steps[index]
-                    print(f"running step {step.name} with parameters {run_dict}")
-                    result = self.model.active_workflow.execute_step(index, run_dict)
-                    self._steps = index
-                    self._current_params = run_dict
-                    yield (step, result)
-        elif len(param_original) == 2:
-            # single entries in the param dictionary
-            for x in list1:
-                for y in list2:
-                    run_dict = dict()
-                    run_dict[param_original.keys()[0]] = x
-                    run_dict[param_original.keys()[1]] = y
                     step = self.model.active_workflow.workflow_definition.steps[index]
                     print(f"running step {step.name} with parameters {run_dict}")
                     result = self.model.active_workflow.execute_step(index, run_dict)
