@@ -43,3 +43,6 @@ class ViewerAbstraction:
         :param: name: new layer name
         """
         return self._viewer.add_image(image_data, name=name)
+
+    def set_active_layer(self, layer: Layer):
+        self._viewer.layers.selection.active = layer
