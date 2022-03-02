@@ -109,27 +109,37 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         dictionary, but with the parameter values obtained from the UI instead of default values.
         """
         if not self._run_lock:
-            selected_image = self.viewer.get_active_layer()
+            selected_layers = self.viewer.get_active_layer()
             cont = True
-            if int(selected_image.name[:1]) != i:
-                # checking order of run
-                if i == 0:
-                    response = self.warn_box(
-                        f"You have selected {selected_image.name} as the input layer. You will run this segmentation"
-                        f" out of order. \nTo run the segmentation in order, please select the starting image as the "
-                        f"input layer for this step. "
-                        f"\n Would you still like to continue?",
-                        "Run segmentation out of order",
-                    )
-                else:
-                    response = self.warn_box(
-                        f"You have selected {selected_image.name} as the input layer. You will run this segmentation"
-                        f" out of order. To run the segmentation in order, please select a layer that is the output of "
-                        f"{i}. {self.model.active_workflow.workflow_definition.steps[i - 1].name}."
-                        f"\n Would you like to continue?",
-                        "Run segmentation out of order",
-                    )
-                cont = response == 1024
+
+            step_to_run = self.model.active_workflow.workflow_definition.steps[i]
+            if len(step_to_run.parent) != len(selected_layers):
+                # too many or too few images selected as the input layer,
+                # abort run attempt and show warning
+                self.warn_box(f"{step_to_run.name} requires {len(step_to_run.parent)} input images, but you have selected {len(selected_layers)} images.",
+                                         "Wrong number of input images selected", one_option=True)
+                cont = False
+            else:
+                for selected_layer in selected_layers:
+                    if int(selected_layer.name[:1]) not in step_to_run.parent:
+                        # check to see if the correct image input layer is selected.
+                        if i == 0:
+                            response = self.warn_box(
+                                f"You have selected {selected_layer.name} as the input layer. You will run this segmentation"
+                                f" out of order. \nTo run the segmentation in order, please select the starting image as the "
+                                f"input layer for this step. "
+                                f"\n Would you still like to continue?",
+                                "Run segmentation out of order",
+                            )
+                        else:
+                            response = self.warn_box(
+                                f"You have selected {selected_layer.name} as the input layer. You will run this segmentation"
+                                f" out of order. To run the segmentation in order, please select a layer that is the output of "
+                                f"{i}. {self.model.active_workflow.workflow_definition.steps[i - 1].name}."
+                                f"\n Would you like to continue?",
+                                "Run segmentation out of order",
+                            )
+                        cont = response == 1024
             if cont:
                 self._worker: GeneratorWorker = create_worker(self._run_step_async, i, parameter_inputs)
                 self._worker.yielded.connect(self._on_step_processed)
@@ -379,7 +389,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             # reset rerun counter
             self._number_times_run = 0
 
-        active_layer = self.viewer.get_active_layer()
+        active_layer = self.viewer.get_active_layer()[0]
         if self._current_params:
             if self._number_times_run == 0:
                 self.viewer.add_image_layer(result, name=f"{step.step_number}: {step.name} | {self._current_params}")
@@ -441,9 +451,12 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
     def run_lock(self):
         return self._run_lock
 
-    def warn_box(self, message, title):
+    def warn_box(self, message, title, one_option = False):
         box = QMessageBox()
         box.setText(message)
         box.setWindowTitle(title)
-        box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        if one_option:
+            box.setStandardButtons(QMessageBox.Cancel)
+        else:
+            box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
         return box.exec_()
