@@ -49,6 +49,8 @@ class CollapsibleBox(QWidget):
         sweep_button = QPushButton()
         sweep_button.setIcon(QIcon(QPixmap(str(Directories.get_assets_dir() / "icons/icon-parameter-sweep.svg"))))
         sweep_button.clicked.connect(lambda: step_widget.steps_view.open_sweep_ui(step_widget.index))
+        if step_widget.step.function.parameters is None:
+            sweep_button.setEnabled(False)
         self.expand_button = QPushButton()
         self.expand_button.setIcon(
             QIcon(QPixmap(str(Directories.get_assets_dir() / "icons/expand_more_black_24dp.svg")))
