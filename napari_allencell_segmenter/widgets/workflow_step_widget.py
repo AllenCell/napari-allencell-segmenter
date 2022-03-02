@@ -26,7 +26,7 @@ class WorkflowStepWidget(QWidget):
         super().__init__()
         if step is None:
             raise ValueError("step")
-        self._step = step
+        self.step = step
         self.name = step.name
         self.index = index
         self.form_rows: List[FormRow] = list()
@@ -68,7 +68,7 @@ class WorkflowStepWidget(QWidget):
         """
         Returns a new WorkflowStep object with updated parameter values to reflect user input
         """
-        new_step = copy.deepcopy(self._step)
+        new_step = copy.deepcopy(self.step)
         new_step.parameter_values = self.get_parameter_inputs()
         return new_step
 
@@ -76,10 +76,10 @@ class WorkflowStepWidget(QWidget):
         """
         Returns all parameter input values for the as a dictionary {param_name: param_value}
         """
-        if self._step.parameter_values is None:
+        if self.step.parameter_values is None:
             return None
 
-        parameter_inputs = copy.deepcopy(self._step.parameter_values)
+        parameter_inputs = copy.deepcopy(self.step.parameter_values)
 
         for parameter_name in parameter_inputs.keys():
             # If default values for this param came in a list, we need to save values
@@ -99,7 +99,7 @@ class WorkflowStepWidget(QWidget):
                     value = param_row.widget.currentText()
 
                     # Convert for each data datatype
-                    data_type = self._step.function.parameters[name][0].data_type
+                    data_type = self.step.function.parameters[name][0].data_type
                     if data_type == "bool":
                         value = Convert.to_boolean(value)
                     elif data_type == "int":
