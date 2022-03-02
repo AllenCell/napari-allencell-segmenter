@@ -382,7 +382,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         if self._steps > self._max_step_run:
             # enable button for next step
             self._max_step_run = self._steps
-            self._view._get_workflow_step_widgets()[self._steps + 1].enable_button()
+            if self._steps <= len(self.model.active_workflow.workflow_definition.steps):
+                # enable next step button if not on the last step
+                self._view._get_workflow_step_widgets()[self._steps + 1].enable_button()
             # disable button for previous step
             if self._steps - 1 >= 0:
                 self._view._get_workflow_step_widgets()[self._steps - 1].disable_button()
