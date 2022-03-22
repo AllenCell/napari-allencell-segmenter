@@ -38,9 +38,8 @@ class ViewerAbstraction:
         if self._viewer.layers.selection.active:
             return [self._viewer.layers.selection.active]
         else:
-            #two or more layers are selected, return all
+            # two or more layers are selected, return all
             return list(self._viewer.layers.selection._set)
-
 
     def add_image_layer(self, image_data, name: str) -> Layer:
         """

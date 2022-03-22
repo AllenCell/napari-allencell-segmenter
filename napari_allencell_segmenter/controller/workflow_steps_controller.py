@@ -117,10 +117,13 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             if len(step_to_run.parent) != len(selected_layers):
                 # too many or too few images selected as the input layer,
                 # abort run attempt and show warning
-                self.warn_box(f"{step_to_run.name} requires {len(step_to_run.parent)} input images, but you have selected {len(selected_layers)} images."
-                              f"\nPlease select {len(step_to_run.parent)} images by ctrl+clicking.",
-                                         "Wrong number of input images selected", one_option=True)
-                cont = False # continue if user is running steps in order, and correct input steps are selected
+                self.warn_box(
+                    f"{step_to_run.name} requires {len(step_to_run.parent)} input images, but you have selected {len(selected_layers)} images."
+                    f"\nPlease select {len(step_to_run.parent)} images by ctrl+clicking.",
+                    "Wrong number of input images selected",
+                    one_option=True,
+                )
+                cont = False  # continue if user is running steps in order, and correct input steps are selected
             else:
                 # check to see if correct layers were selected to run this segmentation in order
                 # some steps require multiple layers.
@@ -290,7 +293,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                     run_dict[list(param_original.keys())[1]] = y
                     step = self.model.active_workflow.workflow_definition.steps[index]
                     print(f"running step {step.name} with parameters {run_dict}")
-                    result = self.model.active_workflow.execute_step(index, run_dict, selected_image=self.viewer.get_active_layer())
+                    result = self.model.active_workflow.execute_step(
+                        index, run_dict, selected_image=self.viewer.get_active_layer()
+                    )
                     self._steps = index
                     self._current_params = run_dict
                     yield (step, result)
@@ -477,7 +482,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
     def run_lock(self):
         return self._run_lock
 
-    def warn_box(self, message, title, one_option = False):
+    def warn_box(self, message, title, one_option=False):
         box = QMessageBox()
         box.setText(message)
         box.setWindowTitle(title)
