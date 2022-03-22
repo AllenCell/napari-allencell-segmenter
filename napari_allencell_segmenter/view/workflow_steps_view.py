@@ -183,7 +183,6 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self.modal_close_workflow.setText(f"Workflow: {self._workflow.workflow_definition.name}")
         self.modal_close_workflow.setInformativeText(prompt)
         self.modal_close_workflow.setStandardButtons(QMessageBox.Cancel)
-
         # Modal buttons
         self.btn_close_keep = self.modal_close_workflow.addButton("Close workflow", QMessageBox.AcceptRole)
         self.btn_close_keep.clicked.connect(self._btn_close_keep_clicked)

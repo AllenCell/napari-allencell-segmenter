@@ -18,6 +18,7 @@ from qtpy.QtCore import Qt
 from typing import Dict, Any, List
 from napari_allencell_segmenter.widgets.form import Form, FormRow
 from functools import partial
+from napari.qt import get_stylesheet
 
 
 class ParamSweepWidget(QDialog):
@@ -44,6 +45,7 @@ class ParamSweepWidget(QDialog):
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.addWidget(self._create_buttons())
         self.setLayout(Form(rows))
+        self.setStyleSheet(get_stylesheet(self.controller.viewer.get_theme()))
         self.setWindowTitle("Parameter Sweep")
 
     def _create_sweep_ui(self) -> List[FormRow]:
@@ -158,9 +160,11 @@ class ParamSweepWidget(QDialog):
         buttons = QFrame()
         buttons.setLayout(QHBoxLayout())
         self.run_sweep_button = QPushButton("Start Sweep")
+        self.run_sweep_button.setToolTip("Start sweep using the selected napari layer as the input image.")
         self.run_sweep_button.clicked.connect(self._run_sweep)
         self.run_sweep_button.setAutoDefault(False)
         close_button = QPushButton("Cancel")
+        close_button.setToolTip("Cancel an active parameter sweep.")
         close_button.clicked.connect(self.cancel)
         close_button.setAutoDefault(False)
         buttons.layout().addWidget(self.run_sweep_button)
@@ -192,6 +196,7 @@ class ParamSweepWidget(QDialog):
     def warn_images_created(self, count):
         message = QMessageBox()
         message.setText(f"{int(count)} result image layers will be created.")
+        message.setStyleSheet(get_stylesheet(self.controller.viewer.get_theme()))
         message.setWindowTitle("Running Sweep")
         message.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
         return message.exec_()
@@ -228,8 +233,10 @@ class ParamSweepWidget(QDialog):
                     inputs.append(
                         [widget.children()[1].text(), widget.children()[3].text(), widget.children()[2].text()]
                     )
-                except IndexError as err:
+                except IndexError:
                     # is a combobox(string parameters)
+                    inputs.append(widget.currentText())
+                except AttributeError:
                     inputs.append(widget.currentText())
             else:
                 # do not grab values from combobox (for checking inputs and getting size of sweeps)

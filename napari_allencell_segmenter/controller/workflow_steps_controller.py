@@ -13,6 +13,7 @@ from napari_allencell_segmenter.model.segmenter_model import SegmenterModel
 from napari_allencell_segmenter.widgets.param_sweep_widget import ParamSweepWidget
 import numpy as np
 from qtpy.QtWidgets import QMessageBox
+from napari.qt import get_stylesheet
 
 import copy
 
@@ -116,30 +117,53 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             if len(step_to_run.parent) != len(selected_layers):
                 # too many or too few images selected as the input layer,
                 # abort run attempt and show warning
-                self.warn_box(f"{step_to_run.name} requires {len(step_to_run.parent)} input images, but you have selected {len(selected_layers)} images.",
+                self.warn_box(f"{step_to_run.name} requires {len(step_to_run.parent)} input images, but you have selected {len(selected_layers)} images."
+                              f"\nPlease select {len(step_to_run.parent)} images by ctrl+clicking.",
                                          "Wrong number of input images selected", one_option=True)
-                cont = False
+                cont = False # continue if user is running steps in order, and correct input steps are selected
             else:
+                # check to see if correct layers were selected to run this segmentation in order
+                # some steps require multiple layers.
                 for selected_layer in selected_layers:
-                    if int(selected_layer.name[:1]) not in step_to_run.parent:
+
+                    if selected_layer.name[:1].isdigit() and int(selected_layer.name[:1]) not in step_to_run.parent:
                         # check to see if the correct image input layer is selected.
                         if i == 0:
                             response = self.warn_box(
-                                f"You have selected {selected_layer.name} as the input layer. You will run this segmentation"
-                                f" out of order. \nTo run the segmentation in order, please select the starting image as the "
+                                f"You currently have the layer {selected_layer.name} selected in napari which will be used as the input layer. You will run this segmentation"
+                                f" out of order. \nTo run the segmentation in order, please select the starting image (step 0) as the "
                                 f"input layer for this step. "
                                 f"\n Would you still like to continue?",
                                 "Run segmentation out of order",
                             )
                         else:
                             response = self.warn_box(
-                                f"You have selected {selected_layer.name} as the input layer. You will run this segmentation"
+                                f"You currently have the layer {selected_layer.name} selected in napari which will be used as the input layer. You will run this segmentation"
                                 f" out of order. To run the segmentation in order, please select a layer that is the output of "
-                                f"{i}. {self.model.active_workflow.workflow_definition.steps[i - 1].name}."
+                                f"{i}. {self.model.active_workflow.workflow_definition.steps[step_to_run.parent[0] - 1].name}."
                                 f"\n Would you like to continue?",
                                 "Run segmentation out of order",
                             )
                         cont = response == 1024
+                    elif not selected_layer.name[:1].isdigit():
+                        if i == 0:
+                            response = self.warn_box(
+                                f"You currently have the layer {selected_layer.name} selected in napari which will be used as the input layer. You will run this segmentation"
+                                f" out of order. \nTo run the segmentation in order, please select the starting image (step 0) as the "
+                                f"input layer for this step. "
+                                f"\n Would you still like to continue?",
+                                "Run segmentation out of order",
+                            )
+                        else:
+                            response = self.warn_box(
+                                f"You currently have the layer {selected_layer.name} selected in napari which will be used as the input layer. You will run this segmentation"
+                                f" out of order. To run the segmentation in order, please select a layer that is the output of "
+                                f"{i}. {self.model.active_workflow.workflow_definition.steps[step_to_run.parent[0] - 1].name}."
+                                f"\n Would you like to continue?",
+                                "Run segmentation out of order",
+                            )
+                        cont = response == 1024
+
             if cont:
                 self._worker: GeneratorWorker = create_worker(self._run_step_async, i, parameter_inputs)
                 self._worker.yielded.connect(self._on_step_processed)
@@ -249,9 +273,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 list1 = [list1]
             if not isinstance(list2, list) and not isinstance(list2, np.ndarray):
                 list2 = [list2]
-            if not isinstance(list1[0], float):
+            if not isinstance(list1[0], float) and not isinstance(list1[0], str):
                 list1 = list1[0]
-            if not isinstance(list2[0], float):
+            if not isinstance(list2[0], float) and not isinstance(list2[0], str):
                 list2 = list2[0]
 
             # loop through all params and sweep
@@ -266,7 +290,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                     run_dict[list(param_original.keys())[1]] = y
                     step = self.model.active_workflow.workflow_definition.steps[index]
                     print(f"running step {step.name} with parameters {run_dict}")
-                    result = self.model.active_workflow.execute_step(index, run_dict)
+                    result = self.model.active_workflow.execute_step(index, run_dict, selected_image=self.viewer.get_active_layer())
                     self._steps = index
                     self._current_params = run_dict
                     yield (step, result)
@@ -303,7 +327,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                     values_to_run = numpy.arange(float(inputs[0]), float(inputs[2]), float(inputs[1]))
                     # if min=max, just fix parameter
                     if inputs[0] == inputs[2]:
-                        numpy.append(values_to_run, inputs[0])
+                        values_to_run = numpy.append(values_to_run, float(inputs[0]))
                     elif values_to_run[len(values_to_run) - 1] + float(inputs[1]) <= float(inputs[2]):
                         values_to_run = numpy.append(
                             values_to_run, values_to_run[len(values_to_run) - 1] + float(inputs[1])
@@ -358,7 +382,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         yield (step, result)
 
     def _on_step_processed(self, processed_args: Tuple[WorkflowStep, numpy.ndarray]):
-        if self._sweep_step:
+        if self._sweep_step is not None:
             self._sweep_step = self._sweep_step + 1
         if self._steps < self._max_step_run:
             # should not be able to get here
@@ -382,7 +406,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         if self._steps > self._max_step_run:
             # enable button for next step
             self._max_step_run = self._steps
-            if self._steps <= len(self.model.active_workflow.workflow_definition.steps):
+            if self._steps < len(self.model.active_workflow.workflow_definition.steps) - 1:
                 # enable next step button if not on the last step
                 self._view._get_workflow_step_widgets()[self._steps + 1].enable_button()
             # disable button for previous step
@@ -457,6 +481,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         box = QMessageBox()
         box.setText(message)
         box.setWindowTitle(title)
+        box.setStyleSheet(get_stylesheet(self.viewer.get_theme()))
         if one_option:
             box.setStandardButtons(QMessageBox.Cancel)
         else:
