@@ -2,6 +2,7 @@ from qtpy.QtGui import QPixmap, QIcon
 from qtpy.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout, QWidget, QPushButton
 
 from napari_allencell_segmenter.util.directories import Directories
+from napari.qt import get_stylesheet
 
 
 class CollapsibleBox(QWidget):
@@ -48,6 +49,7 @@ class CollapsibleBox(QWidget):
 
         sweep_button = QPushButton()
         sweep_button.setIcon(QIcon(QPixmap(str(Directories.get_assets_dir() / "icons/icon-parameter-sweep.svg"))))
+        sweep_button.setToolTip("Open parameter sweep window")
         sweep_button.clicked.connect(lambda: step_widget.steps_view.open_sweep_ui(step_widget.index))
         if step_widget.step.function.parameters is None:
             sweep_button.setEnabled(False)
@@ -55,6 +57,7 @@ class CollapsibleBox(QWidget):
         self.expand_button.setIcon(
             QIcon(QPixmap(str(Directories.get_assets_dir() / "icons/expand_more_black_24dp.svg")))
         )
+        self.expand_button.setToolTip("Expand to see parameters")
         self.expand_button.clicked.connect(self.toggle)
 
         # icon = QLabel()

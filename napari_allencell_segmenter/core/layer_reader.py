@@ -42,7 +42,7 @@ class LayerReader:
             image_from_layer = [layer.data[i, :, :, :, :, :] for i in range(layer.data.shape[0])]
         else:
             image_from_layer = layer.data
-        img = AICSImage(image_from_layer)  # gives us a 6D image#
+        img = AICSImage(image_from_layer)  # gives us a 6D image
         img.set_scene(0)
 
         index_c = img.dims.order.index("C")

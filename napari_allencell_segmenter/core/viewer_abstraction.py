@@ -52,3 +52,6 @@ class ViewerAbstraction:
 
     def set_active_layer(self, layer: Layer):
         self._viewer.layers.selection.active = layer
+
+    def get_theme(self):
+        return self._viewer.theme
