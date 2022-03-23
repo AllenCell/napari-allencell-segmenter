@@ -123,6 +123,7 @@ class WorkflowThumbnails(QWidget):
             button.setIcon(QIcon(image))
             button.setIconSize(QtCore.QSize(PAGE_CONTENT_WIDTH - 40, 200))
             button.setFixedSize(PAGE_CONTENT_WIDTH, 200)
+            button.setToolTip(workflow.name)
 
             button.setEnabled(False)
             button.setObjectName(workflow.name)
