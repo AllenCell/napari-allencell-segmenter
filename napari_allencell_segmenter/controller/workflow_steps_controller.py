@@ -338,14 +338,14 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 for value in v:
                     inputs = ui_input[i]
                     i = i + 1
-                    length = len(numpy.arange(float(inputs[0]), float(inputs[2]), float(inputs[1])))
                     values_to_run = numpy.arange(float(inputs[0]), float(inputs[2]), float(inputs[1]))
+                    length = max(len(values_to_run), length)
                     # if min=max, just fix parameter
                     if inputs[0] == inputs[2]:
                         values_to_run = numpy.append(values_to_run, float(inputs[0]))
-                    elif values_to_run[len(values_to_run) - 1] + float(inputs[1]) <= float(inputs[2]):
+                    elif values_to_run[-1] + float(inputs[1]) <= float(inputs[2]):
                         values_to_run = numpy.append(
-                            values_to_run, values_to_run[len(values_to_run) - 1] + float(inputs[1])
+                            values_to_run, values_to_run[-1] + float(inputs[1])
                         )
                     single_item.append(values_to_run)
             else:
@@ -356,6 +356,8 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                     # for typical sweep ranges
                     single_item = numpy.arange(float(inputs[0]), float(inputs[2]), float(inputs[1]))
                     length = max(len(single_item), length)
+                    if single_item[-1] + float(inputs[1]) <= float(inputs[2]):
+                        single_item = numpy.append(single_item, single_item[-1] + float(inputs[1]))
                 else:
                     # for string parameters from dropdowns
                     single_item = inputs
