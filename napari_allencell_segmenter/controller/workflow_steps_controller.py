@@ -238,15 +238,25 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             result = self.model.active_workflow.execute_step(index, run_dict, selected_image)
             self._steps = index
             self._current_params = run_dict
-            yield (step, result)
+            return step, result
 
     def _run_step_sweep_grid(self, index, length, param_original, param_sweep):
         selected_image = self.viewer.get_active_layer()
         # either one param, or two params as a list
         if len(param_original) == 1:
-            # There's only one param- use run_step_sweep
             if not isinstance(list(param_original.values())[0], list):
-                self._run_step_sweep(index, length, param_original, param_sweep)
+                # There's only one param being swept
+                selected_image = self.viewer.get_active_layer()
+                run_dict = dict()
+                for i in list(param_sweep.values())[0]:
+                    run_dict[list(param_sweep.keys())[0]] = round(i, 3)
+                    # run iteration
+                    step = self.model.active_workflow.workflow_definition.steps[index]
+                    print(f"running step {step.name} with parameters {run_dict}")
+                    result = self.model.active_workflow.execute_step(index, run_dict, selected_image)
+                    self._steps = index
+                    self._current_params = run_dict
+                    yield (step, result)
             else:
                 # multiple unique params in one list
                 list1 = list(param_sweep.values())[0][0]
