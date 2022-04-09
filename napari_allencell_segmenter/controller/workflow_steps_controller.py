@@ -17,7 +17,7 @@ from napari.qt import get_stylesheet
 
 import copy
 
-
+ssd
 class WorkflowStepsController(Controller, IWorkflowStepsController):
     _worker: GeneratorWorker = None
 
@@ -189,9 +189,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
 
         if not self._run_lock:
             if parameter_inputs:
-                parameter_inputs_2, length = self._parse_inputs(copy.deepcopy(parameter_inputs), ui_inputs)
+                parameter_inputs_2 = self._parse_inputs(copy.deepcopy(parameter_inputs), ui_inputs)
                 self._worker: GeneratorWorker = create_worker(
-                    self._run_step_sweep_grid, i, length, parameter_inputs, parameter_inputs_2
+                    self._run_step_sweep_grid, i, parameter_inputs, parameter_inputs_2
                 )
                 self._worker.yielded.connect(self._on_step_processed)
                 self._worker.started.connect(self._on_sweep_started)
@@ -205,42 +205,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 self._worker.finished.connect(self.on_sweep_finished)
                 self._worker.start()
 
-    def _run_step_sweep(self, index, length, param_original, param_sweep):
-        selected_image = self.viewer.get_active_layer()
-        for i in range(length):
-            run_dict = dict()
-            # loop over sweeps
-            for k, v in param_original.items():
-                # loop over parameters to build dict for this iteration
-                if isinstance(v, list):
-                    run_list = list()
-                    if len(v) == 2:
-                        if isinstance(param_sweep[k][0], numpy.ndarray):
-                            run_list.append(round(param_sweep[k][0][i], 3))
-                        else:
-                            run_list.append(round(param_sweep[k][0], 3))
-                        if isinstance(param_sweep[k][1], numpy.ndarray):
-                            run_list.append(round(param_sweep[k][1][i], 3))
-                        else:
-                            run_list.append(round(param_sweep[k][1], 3))
-                    elif len(v) == 1:
-                        if isinstance(param_sweep[k][0], numpy.ndarray):
-                            run_list.append(round(param_sweep[k][0][i], 3))
-                        else:
-                            run_list.append(round(param_sweep[k][0], 3))
-                    run_dict[k] = run_list
-                else:
-                    # is single entry
-                    run_dict[k] = round(param_sweep[k][0], 3)
-            # run iteration
-            step = self.model.active_workflow.workflow_definition.steps[index]
-            print(f"running step {step.name} with parameters {run_dict}")
-            result = self.model.active_workflow.execute_step(index, run_dict, selected_image)
-            self._steps = index
-            self._current_params = run_dict
-            return step, result
-
-    def _run_step_sweep_grid(self, index, length, param_original, param_sweep):
+    def _run_step_sweep_grid(self, index, param_original, param_sweep):
         selected_image = self.viewer.get_active_layer()
         # either one param, or two params as a list
         if len(param_original) == 1:
@@ -249,13 +214,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 selected_image = self.viewer.get_active_layer()
                 run_dict = dict()
                 for i in list(param_sweep.values())[0]:
-                    run_dict[list(param_sweep.keys())[0]] = round(i, 3)
-                    # run iteration
-                    step = self.model.active_workflow.workflow_definition.steps[index]
-                    print(f"running step {step.name} with parameters {run_dict}")
-                    result = self.model.active_workflow.execute_step(index, run_dict, selected_image)
-                    self._steps = index
-                    self._current_params = run_dict
+
                     yield (step, result)
             else:
                 # multiple unique params in one list
@@ -310,6 +269,16 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                     self._current_params = run_dict
                     yield (step, result)
 
+    def _hadle_sweep_single(self, index, param_sweep):
+        run_dict[list(param_sweep.keys())[0]] = round(i, 3)
+        # run iteration
+        step = self.model.active_workflow.workflow_definition.steps[index]
+        print(f"running step {step.name} with parameters {run_dict}")
+        result = self.model.active_workflow.execute_step(index, run_dict, selected_image)
+        self._steps = index
+        self._current_params = run_dict
+        yield(step, result)
+
     def cancel_run_all(self):
         if self._worker is not None:
             self._worker.quit()
@@ -330,7 +299,6 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         if parameter_inputs:
             dict2 = dict(parameter_inputs)
         i = 0
-        length = 0
         for k, v in parameter_inputs.items():
             if isinstance(v, list):
                 # sometimes multiple unique params are in one list
@@ -339,7 +307,6 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                     inputs = ui_input[i]
                     i = i + 1
                     values_to_run = numpy.arange(float(inputs[0]), float(inputs[2]), float(inputs[1]))
-                    length = max(len(values_to_run), length)
                     # if min=max, just fix parameter
                     if inputs[0] == inputs[2]:
                         values_to_run = numpy.append(values_to_run, float(inputs[0]))
@@ -355,14 +322,13 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 if not isinstance(inputs, str):
                     # for typical sweep ranges
                     single_item = numpy.arange(float(inputs[0]), float(inputs[2]), float(inputs[1]))
-                    length = max(len(single_item), length)
                     if single_item[-1] + float(inputs[1]) <= float(inputs[2]):
                         single_item = numpy.append(single_item, single_item[-1] + float(inputs[1]))
                 else:
                     # for string parameters from dropdowns
                     single_item = inputs
             dict2[k] = single_item
-        return dict2, length
+        return dict2
 
     def _run_all_async(
         self, parameter_inputs: List[Dict[str, List]]
