@@ -14,10 +14,8 @@ from napari_allencell_segmenter.widgets.param_sweep_widget import ParamSweepWidg
 import numpy as np
 from qtpy.QtWidgets import QMessageBox
 from napari.qt import get_stylesheet
-
 import copy
 
-ssd
 class WorkflowStepsController(Controller, IWorkflowStepsController):
     _worker: GeneratorWorker = None
 
@@ -211,10 +209,8 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         if len(param_original) == 1:
             if not isinstance(list(param_original.values())[0], list):
                 # There's only one param being swept
-                selected_image = self.viewer.get_active_layer()
-                run_dict = dict()
-                for i in list(param_sweep.values())[0]:
-
+                for i in range(len(list(param_sweep.values())[0])):
+                    step, result = self._hadle_sweep_single(index, i, param_sweep)
                     yield (step, result)
             else:
                 # multiple unique params in one list
@@ -269,15 +265,20 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                     self._current_params = run_dict
                     yield (step, result)
 
-    def _hadle_sweep_single(self, index, param_sweep):
-        run_dict[list(param_sweep.keys())[0]] = round(i, 3)
+    def _hadle_sweep_single(self, index, sweep_index, param_sweep):
+        # get selected layer from napari
+        selected_image = self.viewer.get_active_layer()
+        # create dictionary for this run of the sweep
+        run_dict = dict()
+        run_dict[list(param_sweep.keys())[0]] = round(list(param_sweep.values())[0][sweep_index], 3)
         # run iteration
         step = self.model.active_workflow.workflow_definition.steps[index]
         print(f"running step {step.name} with parameters {run_dict}")
         result = self.model.active_workflow.execute_step(index, run_dict, selected_image)
+        # update state
         self._steps = index
         self._current_params = run_dict
-        yield(step, result)
+        return step, result
 
     def cancel_run_all(self):
         if self._worker is not None:
