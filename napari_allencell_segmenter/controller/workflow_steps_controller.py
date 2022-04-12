@@ -15,6 +15,7 @@ import numpy as np
 from qtpy.QtWidgets import QMessageBox
 from napari.qt import get_stylesheet
 import copy
+from napari.layers import Image
 
 class WorkflowStepsController(Controller, IWorkflowStepsController):
     _worker: GeneratorWorker = None
@@ -69,7 +70,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self.model.reset()
         self.router.workflow_selection()
 
-    def run_all(self, parameter_inputs: List[Dict[str, List]]) -> None:
+    def run_all(self, parameter_inputs: List[Dict[str, Any]]) -> None:
         """
         Run all steps in the active workflow.
         parameter_inputs List[Dict]: Each dictionary has the same shape as a WorkflowStep.parameter_values
@@ -82,7 +83,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             self._worker.finished.connect(self._on_run_all_finished)
             self._worker.start()
 
-    def run_next_step(self, parameter_inputs: List[Dict[str, List]]) -> None:
+    def run_next_step(self, parameter_inputs: Dict[str, Any]) -> None:
         """
         Run the next step in the active workflow
         parameter_inputs: Each dictionary has the same shape as a WorkflowStep.parameter_values
@@ -95,7 +96,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             self._worker.finished.connect(self._on_run_all_finished)
             self._worker.start()
 
-    def run_step(self, i: int, parameter_inputs: List[Dict[str, List]]) -> None:
+    def run_step(self, i: int, parameter_inputs: Dict[str, Any]) -> None:
         """
         Run a step in the active workflow
         i int: index of step to run in the active workflow
@@ -103,10 +104,10 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         dictionary, but with the parameter values obtained from the UI instead of default values.
         """
         if not self._run_lock:
-            selected_layers = self.viewer.get_active_layer()
-            cont = True
+            selected_layers: List[Image] = self.viewer.get_active_layer()
+            cont: bool = True # continue execution
 
-            step_to_run = self.model.active_workflow.workflow_definition.steps[i]
+            step_to_run: WorkflowStep = self.model.active_workflow.workflow_definition.steps[i]
             if len(step_to_run.parent) != len(selected_layers):
                 # too many or too few images selected as the input layer,
                 # abort run attempt and show warning
@@ -167,22 +168,22 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 self._worker.finished.connect(self._on_run_step_finished)
                 self._worker.start()
 
-    def run_step_sweep(self, param_sweep_widget: ParamSweepWidget, ui_inputs: List[str]) -> None:
+    def run_step_sweep(self, param_sweep_widget: ParamSweepWidget, ui_inputs: List[List[str]]) -> None:
         """
         Run a step in the active workflow as a sweep
         i: index of step to run in the active workflow
         parameter_inputs: Each dictionary has the same shape as a WorkflowStep.parameter_values
         dictionary, but with the parameter values obtained from the UI instead of default values.
-        ui_inputs List[str]: inputs for the sweep values from the sweep UI
+        ui_inputs List[List[str]]: inputs for the sweep values from the sweep UI
         type str: type of sweep, either "normal" or "grid"
         """
         self.param_sweep_widget = param_sweep_widget
-        i = param_sweep_widget.step_number
-        parameter_inputs = param_sweep_widget.param_set
+        i: int = param_sweep_widget.step_number
+        parameter_inputs: Dict[str, Any] = param_sweep_widget.param_set
 
         if not self._run_lock:
             if parameter_inputs:
-                parameter_inputs_2 = self._parse_inputs(copy.deepcopy(parameter_inputs), ui_inputs)
+                parameter_inputs_2: Dict[str, Any] = self._parse_inputs(copy.deepcopy(parameter_inputs), ui_inputs)
                 self._worker: GeneratorWorker = create_worker(
                     self._run_step_sweep_grid, i, parameter_inputs, parameter_inputs_2
                 )
@@ -198,18 +199,17 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 self._worker.finished.connect(self.on_sweep_finished)
                 self._worker.start()
 
-    def _run_step_sweep_grid(self, index: int, param_original, param_sweep) -> Tuple[WorkflowStep, np.ndarray]:
+    def _run_step_sweep_grid(self, index: int, param_original: Dict[str, Any], param_sweep: Dict[str, Any]) -> Tuple[WorkflowStep, np.ndarray]:
         """
         Run sweeps and deliver the result to napari
         """
-        selected_image = self.viewer.get_active_layer()
+        selected_image: Image = self.viewer.get_active_layer()
         # either one param, or two params as a list
         if len(param_original) == 1:
             if not isinstance(list(param_original.values())[0], list):
                 # There's only one param being swept
                 for i in range(len(list(param_sweep.values())[0])):
-                    step, result = self._hadle_sweep_single(index, i, param_sweep)
-                    yield (step, result)
+                    yield self._hadle_sweep_single(index, i, param_sweep)
             else:
                 # multiple unique params in one list
                 list1, list2 = self._setup_params_sweep(list(param_sweep.values())[0][0], list(param_sweep.values())[0][1])
@@ -217,10 +217,10 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 # loop through all params and run sweep
                 for x in list1:
                     for y in list2:
-                        run_dict = {list(param_original.keys())[0]: [round(x, 3), round(y, 3)]}
-                        step = self.model.active_workflow.workflow_definition.steps[index]
+                        run_dict: Dict[str, List[float]] = {list(param_original.keys())[0]: [round(x, 3), round(y, 3)]}
+                        step: WorkflowStep = self.model.active_workflow.workflow_definition.steps[index]
                         print(f"running step {step.name} with parameters {run_dict}")
-                        result = self.model.active_workflow.execute_step(index, run_dict, selected_image)
+                        result: np.ndarray = self.model.active_workflow.execute_step(index, run_dict, selected_image)
                         self._steps = index
                         self._current_params = run_dict
                         yield (step, result)
@@ -231,7 +231,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             # loop through all params and run sweep
             for x in list1:
                 for y in list2:
-                    run_dict = dict()
+                    run_dict: Dict[str, float] = dict()
                     if isinstance(list(param_original.values())[0], list):
                         # first param expects a list
                         x = [round(x, 3)]
@@ -240,9 +240,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                         y = [round(y, 3)]
                     run_dict[list(param_original.keys())[0]] = x
                     run_dict[list(param_original.keys())[1]] = y
-                    step = self.model.active_workflow.workflow_definition.steps[index]
+                    step: WorkflowStep = self.model.active_workflow.workflow_definition.steps[index]
                     print(f"running step {step.name} with parameters {run_dict}")
-                    result = self.model.active_workflow.execute_step(
+                    result: np.ndarray = self.model.active_workflow.execute_step(
                         index, run_dict, selected_image=self.viewer.get_active_layer()
                     )
                     self._steps = index
@@ -265,7 +265,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         # update state
         self._steps = index
         self._current_params = run_dict
-        return step, result
+        return (step, result)
 
     def _setup_params_sweep(self, first_params, second_params):
         """
