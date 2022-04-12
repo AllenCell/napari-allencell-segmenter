@@ -23,16 +23,16 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         super().__init__(application)
         if workflow_engine is None:
             raise ValueError("workflow_engine")
-        self._workflow_engine = workflow_engine
-        self._view = WorkflowStepsView(self)
-        self._run_lock = False  # lock to avoid triggering multiple segmentation / step runs at the same time
-        self._steps = 0  # need this to count steps completed
+        self._workflow_engine: WorkflowEngine = workflow_engine
+        self._view: WorkflowStepsView = WorkflowStepsView(self)
+        self._run_lock: bool = False  # lock to avoid triggering multiple segmentation / step runs at the same time
+        self._steps: int = 0  # need this to count steps completed
         self._max_step_run: int = -1
-        self._number_times_run = 0
+        self._number_times_run: int = 0
         # TODO package this differently
-        self._current_params = None
-        self.param_sweep_widget = None
-        self._sweep_step = None
+        self._current_params: Dict = None
+        self.param_sweep_widget: ParamSweepWidget = None
+        self._sweep_step: int = None
 
     @property
     def view(self):
@@ -42,7 +42,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
     def model(self) -> SegmenterModel:
         return self.state.segmenter_model
 
-    def index(self):
+    def index(self) -> None:
         self.load_view(self._view, self.model)
 
     def save_workflow(self, steps: List[WorkflowStep], output_file_path: str):
@@ -56,7 +56,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         workflow_def = WorkflowDefinition(save_path.name, steps)
         self._workflow_engine.save_workflow_definition(workflow_def, save_path)
 
-    def close_workflow(self):
+    def close_workflow(self) -> None:
         """
         Close the active workflow
         """
@@ -69,7 +69,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self.model.reset()
         self.router.workflow_selection()
 
-    def run_all(self, parameter_inputs: List[Dict[str, List]]):
+    def run_all(self, parameter_inputs: List[Dict[str, List]]) -> None:
         """
         Run all steps in the active workflow.
         parameter_inputs List[Dict]: Each dictionary has the same shape as a WorkflowStep.parameter_values
@@ -81,13 +81,8 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             self._worker.started.connect(self._on_run_all_started)
             self._worker.finished.connect(self._on_run_all_finished)
             self._worker.start()
-        # # test step index
-        # self.run_step(0,parameter_inputs)
-        #
-        # # test step by step
-        # self.run_next_step(parameter_inputs)
 
-    def run_next_step(self, parameter_inputs):
+    def run_next_step(self, parameter_inputs: List[Dict[str, List]]) -> None:
         """
         Run the next step in the active workflow
         parameter_inputs: Each dictionary has the same shape as a WorkflowStep.parameter_values
@@ -100,7 +95,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             self._worker.finished.connect(self._on_run_all_finished)
             self._worker.start()
 
-    def run_step(self, i: int, parameter_inputs):
+    def run_step(self, i: int, parameter_inputs: List[Dict[str, List]]) -> None:
         """
         Run a step in the active workflow
         i int: index of step to run in the active workflow
@@ -172,7 +167,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 self._worker.finished.connect(self._on_run_step_finished)
                 self._worker.start()
 
-    def run_step_sweep(self, param_sweep_widget, ui_inputs):
+    def run_step_sweep(self, param_sweep_widget: ParamSweepWidget, ui_inputs: List[str]) -> None:
         """
         Run a step in the active workflow as a sweep
         i: index of step to run in the active workflow
@@ -203,7 +198,10 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 self._worker.finished.connect(self.on_sweep_finished)
                 self._worker.start()
 
-    def _run_step_sweep_grid(self, index, param_original, param_sweep):
+    def _run_step_sweep_grid(self, index: int, param_original, param_sweep) -> Tuple[WorkflowStep, np.ndarray]:
+        """
+        Run sweeps and deliver the result to napari
+        """
         selected_image = self.viewer.get_active_layer()
         # either one param, or two params as a list
         if len(param_original) == 1:
@@ -215,6 +213,8 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             else:
                 # multiple unique params in one list
                 list1, list2 = self._setup_params_sweep(list(param_sweep.values())[0][0], list(param_sweep.values())[0][1])
+
+                # loop through all params and run sweep
                 for x in list1:
                     for y in list2:
                         run_dict = {list(param_original.keys())[0]: [round(x, 3), round(y, 3)]}
@@ -228,7 +228,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             # two separate params with different keys
             list1, list2 = self._setup_params_sweep(list(param_sweep.values())[0], list(param_sweep.values())[1])
 
-            # loop through all params and sweep
+            # loop through all params and run sweep
             for x in list1:
                 for y in list2:
                     run_dict = dict()
@@ -250,6 +250,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                     yield (step, result)
 
     def _hadle_sweep_single(self, index, sweep_index, param_sweep):
+        """
+        Run a step in a sweep
+        """
         # get selected layer from napari
         selected_image = self.viewer.get_active_layer()
         # create dictionary for this run of the sweep
@@ -265,6 +268,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         return step, result
 
     def _setup_params_sweep(self, first_params, second_params):
+        """
+        Format parameters in a way that aics-segmentation expects them
+        """
         # shape parameters in the way that aics-segmentation expects them
         if not isinstance(first_params, list) and not isinstance(first_params, np.ndarray):
             first_params = [first_params]
