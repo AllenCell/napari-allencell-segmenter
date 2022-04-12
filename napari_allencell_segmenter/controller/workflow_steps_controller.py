@@ -214,12 +214,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                     yield (step, result)
             else:
                 # multiple unique params in one list
-                list1 = list(param_sweep.values())[0][0]
-                list2 = list(param_sweep.values())[0][1]
-                if not isinstance(list1, list) and not isinstance(list1, np.ndarray):
-                    list1 = [list1]
-                if not isinstance(list2, list) and not isinstance(list2, np.ndarray):
-                    list2 = [list2]
+                list1, list2 = self._setup_params_sweep(list(param_sweep.values())[0][0], list(param_sweep.values())[0][1])
                 for x in list1:
                     for y in list2:
                         run_dict = {list(param_original.keys())[0]: [round(x, 3), round(y, 3)]}
@@ -231,28 +226,17 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                         yield (step, result)
         else:
             # two separate params with different keys
-            list1 = list(param_sweep.values())[0]
-            list2 = list(param_sweep.values())[1]
-            # if the function expects a nested list
-            nested_list_1 = isinstance(list(param_original.values())[0], list)  # first param is a list
-            nested_list_2 = isinstance(list(param_original.values())[1], list)  # second param is a list
-            # shape parameters in the way that aics-segmentation expects them
-            if not isinstance(list1, list) and not isinstance(list1, np.ndarray):
-                list1 = [list1]
-            if not isinstance(list2, list) and not isinstance(list2, np.ndarray):
-                list2 = [list2]
-            if not isinstance(list1[0], float) and not isinstance(list1[0], str):
-                list1 = list1[0]
-            if not isinstance(list2[0], float) and not isinstance(list2[0], str):
-                list2 = list2[0]
+            list1, list2 = self._setup_params_sweep(list(param_sweep.values())[0], list(param_sweep.values())[1])
 
             # loop through all params and sweep
             for x in list1:
                 for y in list2:
                     run_dict = dict()
-                    if nested_list_1:
+                    if isinstance(list(param_original.values())[0], list):
+                        # first param expects a list
                         x = [round(x, 3)]
-                    if nested_list_2:
+                    if isinstance(list(param_original.values())[1], list):
+                        # second param expects a list
                         y = [round(y, 3)]
                     run_dict[list(param_original.keys())[0]] = x
                     run_dict[list(param_original.keys())[1]] = y
@@ -279,6 +263,18 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self._steps = index
         self._current_params = run_dict
         return step, result
+
+    def _setup_params_sweep(self, first_params, second_params):
+        # shape parameters in the way that aics-segmentation expects them
+        if not isinstance(first_params, list) and not isinstance(first_params, np.ndarray):
+            first_params = [first_params]
+        if not isinstance(second_params, list) and not isinstance(second_params, np.ndarray):
+            second_params = [second_params]
+        if not isinstance(first_params[0], float) and not isinstance(first_params[0], str):
+            first_params = first_params[0]
+        if not isinstance(second_params[0], float) and not isinstance(second_params[0], str):
+            second_params = second_params[0]
+        return first_params, second_params
 
     def cancel_run_all(self):
         if self._worker is not None:
