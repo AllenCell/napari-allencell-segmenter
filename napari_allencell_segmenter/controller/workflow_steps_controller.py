@@ -17,6 +17,7 @@ from napari.qt import get_stylesheet
 import copy
 from napari.layers import Image
 
+
 class WorkflowStepsController(Controller, IWorkflowStepsController):
     _worker: GeneratorWorker = None
 
@@ -105,7 +106,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         """
         if not self._run_lock:
             selected_layers: List[Image] = self.viewer.get_active_layer()
-            cont: bool = True # continue execution
+            cont: bool = True  # continue execution
 
             step_to_run: WorkflowStep = self.model.active_workflow.workflow_definition.steps[i]
             if len(step_to_run.parent) != len(selected_layers):
@@ -199,7 +200,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 self._worker.finished.connect(self.on_sweep_finished)
                 self._worker.start()
 
-    def _run_step_sweep_grid(self, index: int, param_original: Dict[str, Any], param_sweep: Dict[str, Any]) -> Tuple[WorkflowStep, np.ndarray]:
+    def _run_step_sweep_grid(
+        self, index: int, param_original: Dict[str, Any], param_sweep: Dict[str, Any]
+    ) -> Tuple[WorkflowStep, np.ndarray]:
         """
         Run sweeps and deliver the result to napari
         """
@@ -212,8 +215,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                     yield self._hadle_sweep_single(index, i, param_sweep)
             else:
                 # multiple unique params in one list
-                list1, list2 = self._setup_params_sweep(list(param_sweep.values())[0][0], list(param_sweep.values())[0][1])
-
+                list1, list2 = self._setup_params_sweep(
+                    list(param_sweep.values())[0][0], list(param_sweep.values())[0][1]
+                )
                 # loop through all params and run sweep
                 for x in list1:
                     for y in list2:
@@ -249,25 +253,27 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                     self._current_params = run_dict
                     yield (step, result)
 
-    def _hadle_sweep_single(self, index, sweep_index, param_sweep):
+    def _hadle_sweep_single(
+        self, index: int, sweep_index: int, param_sweep: Dict[str, Any]
+    ) -> Tuple[WorkflowStep, np.ndarray]:
         """
-        Run a step in a sweep
+        Run a step in a sweep that contains one parameter
         """
         # get selected layer from napari
-        selected_image = self.viewer.get_active_layer()
+        selected_image: Image = self.viewer.get_active_layer()
         # create dictionary for this run of the sweep
-        run_dict = dict()
+        run_dict: Dict[str, Any] = dict()
         run_dict[list(param_sweep.keys())[0]] = round(list(param_sweep.values())[0][sweep_index], 3)
         # run iteration
-        step = self.model.active_workflow.workflow_definition.steps[index]
+        step: WorkflowStep = self.model.active_workflow.workflow_definition.steps[index]
         print(f"running step {step.name} with parameters {run_dict}")
-        result = self.model.active_workflow.execute_step(index, run_dict, selected_image)
+        result: np.ndarray = self.model.active_workflow.execute_step(index, run_dict, selected_image)
         # update state
         self._steps = index
         self._current_params = run_dict
         return (step, result)
 
-    def _setup_params_sweep(self, first_params, second_params):
+    def _setup_params_sweep(self, first_params: Any, second_params: Any) -> Tuple[List, List]:
         """
         Format parameters in a way that aics-segmentation expects them
         """
@@ -283,6 +289,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         return first_params, second_params
 
     def cancel_run_all(self):
+        """
+        Cancel running all steps
+        """
         if self._worker is not None:
             self._worker.quit()
 
@@ -294,18 +303,19 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self._worker.yielded.disconnect()
         self._worker.finished.disconnect()
 
-    def _parse_inputs(self, parameter_inputs: dict[str, Any], ui_input: List[List[str]]):
+    def _parse_inputs(self, parameter_inputs: dict[str, Any], ui_input: List[List[str]]) -> Dict[str, Any]:
         """
-        Parse inputs from the UI to create dictionaries to feed into the sweep functions.
+        Parse inputs from the UI to create run dictionaries to feed into the sweep functions.
+        #TODO test this to see if single values are still in list or not for type
         """
         # test function, get sweep values from ui somehow
         if parameter_inputs:
-            dict2 = dict(parameter_inputs)
+            formatted: Dict[str, Any] = dict(parameter_inputs)
         i = 0
         for k, v in parameter_inputs.items():
             if isinstance(v, list):
                 # sometimes multiple unique params are in one list
-                single_item = list()
+                single_item: List[Any] = list()
                 for value in v:
                     inputs = ui_input[i]
                     i = i + 1
@@ -314,9 +324,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                     if inputs[0] == inputs[2]:
                         values_to_run = numpy.append(values_to_run, float(inputs[0]))
                     elif values_to_run[-1] + float(inputs[1]) <= float(inputs[2]):
-                        values_to_run = numpy.append(
-                            values_to_run, values_to_run[-1] + float(inputs[1])
-                        )
+                        values_to_run = numpy.append(values_to_run, values_to_run[-1] + float(inputs[1]))
                     single_item.append(values_to_run)
             else:
                 # most params are single entries in the param dictionary
@@ -330,12 +338,15 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 else:
                     # for string parameters from dropdowns
                     single_item = inputs
-            dict2[k] = single_item
-        return dict2
+            formatted[k] = single_item
+        return formatted
 
     def _run_all_async(
         self, parameter_inputs: List[Dict[str, List]]
     ) -> Generator[Tuple[WorkflowStep, numpy.ndarray], None, None]:
+        """
+        Run all steps in a workflow.
+        """
         self.model.active_workflow.reset()
 
         with warnings.catch_warnings():
@@ -351,6 +362,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
     def _run_next_step_async(
         self, parameter_inputs: List[Dict[str, List]]
     ) -> Generator[Tuple[WorkflowStep, numpy.ndarray], None, None]:
+        """
+        Run the next available step in the workflow
+        """
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             step = self.model.active_workflow.get_next_step()
@@ -361,6 +375,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
     def _run_step_async(
         self, index: int, parameter_inputs: List[Dict[str, List]]
     ) -> Generator[Tuple[WorkflowStep, numpy.ndarray], None, None]:
+        """
+        Run a specified step in a workflow.
+        """
         selected_image = self.viewer.get_active_layer()
         step = self.model.active_workflow.workflow_definition.steps[index]
         result = self.model.active_workflow.execute_step(index, parameter_inputs, selected_image)
@@ -368,6 +385,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         yield (step, result)
 
     def _on_step_processed(self, processed_args: Tuple[WorkflowStep, numpy.ndarray]):
+        """
+        Function called when a workflow step is processed
+        """
         if self._sweep_step is not None:
             self._sweep_step = self._sweep_step + 1
         if self._steps < self._max_step_run:
@@ -419,6 +439,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self.viewer.set_active_layer(active_layer)
 
     def _on_step_processed_all(self, processed_args: Tuple[WorkflowStep, numpy.ndarray]):
+        """
+        function called when a step from run_all is processed
+        """
         step, result = processed_args
 
         # Update progress
@@ -432,38 +455,65 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             layer.visible = False
 
     def _on_run_all_started(self):
+        """
+        function called when run_all is started
+        """
         self._run_lock = True
         self._view.set_run_all_in_progress()
 
     def _on_run_all_step_started(self):
+        """
+        function called when run_all_step is started
+        """
         self._run_lock = True
         self._view.set_run_all_in_progress()
         # disable previous step button
 
     def _on_sweep_started(self):
+        """
+        Function called when a sweep is started
+        """
         self.param_sweep_widget.set_run_in_progress()
         self._run_lock = True
 
     def _on_run_all_finished(self):
+        """
+        function called when run_all is finished
+        """
         self._view.reset_run_all()
         self._run_lock = False
 
     def _on_run_step_finished(self):
+        """
+        function called by worker when run_step is finished
+        """
         self._view.reset_run_step()
         self._run_lock = False
 
     def on_sweep_finished(self):
+        """
+        function called by worker when a sweep is finished
+        """
         self.param_sweep_widget.set_run_finished()
         self._run_lock = False
 
     def open_sweep_ui(self, params, step_number):
+        """
+        Open the UI for sweeps
+        """
         dlg = ParamSweepWidget(params, step_number, self)
         dlg.exec()
 
     def run_lock(self):
+        """
+        get the status of the run_lock for workflow step executions
+        """
         return self._run_lock
 
-    def warn_box(self, message, title, one_option=False):
+    def warn_box(self, message: str, title: str, one_option=False):
+        """
+        Display a warning box
+        """
         box = QMessageBox()
         box.setText(message)
         box.setWindowTitle(title)
