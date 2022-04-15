@@ -14,7 +14,6 @@ from qtpy.QtWidgets import (
     QComboBox,
 )
 from qtpy.QtCore import Qt
-
 from typing import Dict, Any, List
 from napari_allencell_segmenter.widgets.form import Form, FormRow
 from functools import partial
@@ -32,16 +31,19 @@ class ParamSweepWidget(QDialog):
 
     def __init__(self, param_set: Dict[str, Any], step_number, controller):
         super().__init__()
-        self.live_count = None
-        self.progress_bar = None
-        self.inputs = dict()
-        self.default_sweep_values = dict()
+        # Track UI elements
+        self.live_count: QLabel = None
+        self.progress_bar: QProgressBar = None
+        self.inputs: Dict[str, QFrame] = dict()
+        self.default_sweep_values: Dict = dict()
+        self.layout: QVBoxLayout = QVBoxLayout()
+        # State
         self.controller = controller
-        self.step_number = step_number
-        self.param_set = param_set
-        rows = self._create_sweep_ui()
-        self.layout = QVBoxLayout()
+        self.step_number: int = step_number
+        self.param_set: Dict[str, Any] = param_set
+        rows: List[FormRow] = self._create_sweep_ui()
 
+        # Format UI on init
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.addWidget(self._create_buttons())
         self.setLayout(Form(rows))
@@ -49,12 +51,19 @@ class ParamSweepWidget(QDialog):
         self.setWindowTitle("Parameter Sweep")
 
     def _create_sweep_ui(self) -> List[FormRow]:
-        rows = list()
+        """
+        Populate the sweep widget with this workflow step's parameters and their default values as well as other
+        UI elements needed to run a sweep.
+
+         Params:
+            none
+        """
+        rows: List[FormRow] = list()
         # add ui elements in order
         rows.append(FormRow("", widget=self.create_sweep_headers()))
 
         # convert parameter set to form rows
-        default_params = self.controller.model.active_workflow.workflow_definition.steps[
+        default_params: Dict = self.controller.model.active_workflow.workflow_definition.steps[
             self.step_number
         ].function.parameters
         if self.param_set:
@@ -64,18 +73,20 @@ class ParamSweepWidget(QDialog):
                     if not isinstance(value[0], str):
                         i = 1
                         for _ in value:
-                            sweep_inputs = QFrame()
+                            sweep_inputs: QFrame = QFrame()
                             sweep_inputs.setLayout(QHBoxLayout())
-                            min_value = default_params[key][i - 1].min_value
-                            max_value = default_params[key][i - 1].max_value
-                            step_size = (max_value - min_value) / 2
+                            # get default value
+                            min_value: int = default_params[key][i - 1].min_value
+                            max_value: int = default_params[key][i - 1].max_value
+                            step_size: float = (max_value - min_value) / 2
 
-                            min_input = QLineEdit()
+                            # Create UI Elements and populate with default values
+                            min_input: QLineEdit = QLineEdit()
                             min_input.setText(str(min_value))
                             min_input.editingFinished.connect(self._on_change_textbox)
                             sweep_inputs.layout().addWidget(min_input)
 
-                            max_input = QLineEdit()
+                            max_input: QLineEdit = QLineEdit()
                             max_input.setText(str(max_value))
                             max_input.editingFinished.connect(self._on_change_textbox)
                             sweep_inputs.layout().addWidget(max_input)
@@ -85,7 +96,8 @@ class ParamSweepWidget(QDialog):
                             step_input.editingFinished.connect(self._on_change_textbox)
                             sweep_inputs.layout().addWidget(step_input)
 
-                            reset_button = QPushButton("reset")
+                            # Reset button for row (reset to default values)
+                            reset_button: QPushButton = QPushButton("reset")
                             reset_button.setStyleSheet("border: none;")
                             # pass the key and value as values for calling function later on
                             reset_button.clicked.connect(
@@ -107,45 +119,54 @@ class ParamSweepWidget(QDialog):
                         rows.append(FormRow(key, widget=dropdown))
                     else:
                         # for typical sweep params
-                        sweep_inputs = QFrame()
+                        sweep_inputs: QFrame = QFrame()
                         sweep_inputs.setLayout(QHBoxLayout())
-                        min_value = default_params[key][0].min_value
-                        max_value = default_params[key][0].max_value
-                        step_size = (max_value - min_value) / 2
+                        # get the default values
+                        min_value: int = default_params[key][0].min_value
+                        max_value: int = default_params[key][0].max_value
+                        step_size: float = (max_value - min_value) / 2
 
-                        min_input = QLineEdit()
+                        # Create UI elements and populate with default values
+                        min_input: QLineEdit = QLineEdit()
                         min_input.setText(str(min_value))
                         min_input.editingFinished.connect(self._on_change_textbox)
                         sweep_inputs.layout().addWidget(min_input)
 
-                        max_input = QLineEdit()
+                        max_input: QLineEdit = QLineEdit()
                         max_input.setText(str(max_value))
                         max_input.editingFinished.connect(self._on_change_textbox)
                         sweep_inputs.layout().addWidget(max_input)
 
-                        step_input = QLineEdit()
+                        step_input: QLineEdit = QLineEdit()
                         step_input.setText(str(step_size))
                         step_input.editingFinished.connect(self._on_change_textbox)
                         sweep_inputs.layout().addWidget(step_input)
                         self.inputs[key] = sweep_inputs
 
-                        reset_button = QPushButton("reset")
+                        # Create button to reset back to default values
+                        reset_button: QPushButton = QPushButton("reset")
                         reset_button.setStyleSheet("border: none;")
                         reset_button.clicked.connect(lambda: self._reset_row_to_default(key))
                         sweep_inputs.layout().addWidget(reset_button)
                         rows.append(FormRow(key, widget=sweep_inputs))
 
-        def_params_values = self.grab_ui_values(grab_combo=False)
-        def_count = self.get_live_count(def_params_values)
+        # Grab user input as str
+        def_params_values: List[List[str]] = self.grab_ui_values(grab_combo=False)
+
+        # Display how many images will be create with this sweep
+        def_count: int = self.get_live_count(def_params_values)
         self.live_count = QLabel(f"{def_count} images will be created")
         self.live_count.setAlignment(qtpy.QtCore.Qt.AlignCenter)
+
+        # Create progress bar with length of sweep
         self.create_progress_bar(bar_len=def_count)
+
         rows.append(FormRow("", widget=self.live_count))
         rows.append(FormRow("", widget=self.progress_bar))
         rows.append(FormRow("", widget=self._create_buttons()))
         return rows
 
-    def _create_buttons(self):
+    def _create_buttons(self) -> QFrame:
         """
         Creates buttons for the bottom of the dialog box, one for opening the output folder, and one for
             closing the dialog box
@@ -157,13 +178,13 @@ class ParamSweepWidget(QDialog):
             (QFrame): A QFrame that has two horizontally laid out buttons, first button is Open output directory,
                 second button is close.
         """
-        buttons = QFrame()
+        buttons: QFrame = QFrame()
         buttons.setLayout(QHBoxLayout())
         self.run_sweep_button = QPushButton("Start Sweep")
         self.run_sweep_button.setToolTip("Start sweep using the selected napari layer as the input image.")
         self.run_sweep_button.clicked.connect(self._run_sweep)
         self.run_sweep_button.setAutoDefault(False)
-        close_button = QPushButton("Cancel")
+        close_button: QPushButton = QPushButton("Cancel")
         close_button.setToolTip("Cancel an active parameter sweep.")
         close_button.clicked.connect(self.cancel)
         close_button.setAutoDefault(False)
@@ -171,9 +192,15 @@ class ParamSweepWidget(QDialog):
         buttons.layout().addWidget(close_button)
         return buttons
 
-    def _run_sweep(self):
-        inputs = self.grab_ui_values(grab_combo=False)
-        count = self.get_live_count(inputs)
+    def _run_sweep(self) -> None:
+        """
+        Initiate a sweep (called when run sweep button is pressed) with the values provided in the UI
+
+        Params:
+           none
+        """
+        inputs: List[List[str]] = self.grab_ui_values(grab_combo=False)
+        count: int = self.get_live_count(inputs)
         if count > 20:
             # warn if too many images will be generated
             if self.warn_images_created(count) == 1024:
@@ -183,46 +210,86 @@ class ParamSweepWidget(QDialog):
             self.set_run_in_progress()
             self.controller.run_step_sweep(self, self.grab_ui_values())
 
-    def sanitize_ui_inputs(self, ui_inputs: List[List[str]]):
+    def sanitize_ui_inputs(self, ui_inputs: List[List[str]]) -> None:
+        """
+        Check that all user inputs in the UI (passed as str) can be converted to a valid float
+        Params:
+           ui_inputs (List[List[str]]): inputs recieved from the UI as str
+        """
         for i in ui_inputs:
-            # make sure user has inputted a number or min:step:max notation
             for j in i:
                 try:
-                    # is the notation done with just numbers?
+                    # ensure user input (passed as str) is a valid number
                     float(j)
                 except ValueError:
                     raise ValueError("Please enter a single number or the min:step:max notation for sweeps")
 
-    def warn_images_created(self, count):
-        message = QMessageBox()
+    def warn_images_created(self, count: int) -> None:
+        """
+        Create a popup to warn a user that they will be creating a large number of layers by running a sweep.
+
+        Params:
+           count (int): number of images that user will create for warning
+        """
+        message: QMessageBox = QMessageBox()
         message.setText(f"{int(count)} result image layers will be created.")
         message.setStyleSheet(get_stylesheet(self.controller.viewer.get_theme()))
         message.setWindowTitle("Running Sweep")
         message.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
         return message.exec_()
 
-    def update_live_count(self, count):
+    def update_live_count(self, count: int) -> None:
+        """
+        Update the Live count on the param sweep widget
+
+        Params:
+            count (int): new live count to update with
+        """
         if self.live_count:
             self.live_count.setText(f"{count } images will be created")
 
-    def get_live_count(self, inputs):
+    def get_live_count(self, inputs: List[List[str]]) -> int:
+        """
+        Calculate how many images will be created with the user provided values for this sweep
+
+        Params:
+            inputs (List[List[str]]): user inputs from the paramsweepwidget to calculate how many total result layers
+            will be created
+        """
+        # make sure all user inputs are valid numbers
         self.sanitize_ui_inputs(inputs)
-        length = 1
+        length: int = 1
         for sweeps in inputs:
+            # multiplying the result layers for all parameters will give total result layers
+            # (ex: if param1 creates 5 combinations and param2 creates 5 combinations, there will be
+            # 25 result layers created 5x5=25)
             length = length * self.get_sweep_len(float(sweeps[0]), float(sweeps[1]), float(sweeps[2]))
         return length
 
-    def get_sweep_len(self, min, step, max):
-        # TODO make this more efficient
-        i = min
-        count = 0
+    def get_sweep_len(self, min: float, step: float, max: float) -> int:
+        """
+        Calculate how many result layers will be created for one parameter's sweep values
+
+        Params:
+            min (float): starting range of sweep provided by user
+            step (float): increment value of sweep provided by user
+            max (float): end value of sweep provided by user
+        """
+        i: float = min
+        count: int = 0
         while i <= max:
             i = i + step
             count = count + 1
         return count
 
-    def grab_ui_values(self, grab_combo=True):
-        inputs = list()
+    def grab_ui_values(self, grab_combo=True) -> List[List[str]]:
+        """
+        Update the Live count on the param sweep widget
+
+        Params:
+            count (int): new live count to update with
+        """
+        inputs: List[List[str]] = list()
         for widget in self.inputs.values():
             # grab values from combobox (when calling run_sweep function)
             if grab_combo:
@@ -248,60 +315,120 @@ class ParamSweepWidget(QDialog):
                     pass
         return inputs
 
-    def create_progress_bar(self, bar_len=10) -> QProgressBar:
-        self.progress_bar = QProgressBar()
+    def create_progress_bar(self, bar_len: int = 10) -> QProgressBar:
+        """
+        Create a progress bar with the given length
+
+        Params:
+            bar_len (int): length of progress bar to be created
+        """
+        self.progress_bar: QProgressBar = QProgressBar()
         self.progress_bar.setRange(0, bar_len)
         self.progress_bar.setValue(0)
         self.progress_bar.setTextVisible(False)
         return self.progress_bar
 
-    def create_sweep_headers(self) -> QFrame:
-        # headers
-        header = QFrame()
-        header.setLayout(QHBoxLayout())
-        label = QLabel("min")
-        label.setAlignment(Qt.AlignCenter)
-        header.layout().addWidget(label)
-        label = QLabel("max")
-        label.setAlignment(Qt.AlignCenter)
-        header.layout().addWidget(label)
-        label = QLabel("step size")
-        label.setAlignment(Qt.AlignCenter)
-        header.layout().addWidget(label)
-        return header
+    def update_progress_bar_len(self, new_len: int) -> None:
+        """
+        Update the progress bar so it has the given length
 
-    def update_progress_bar_len(self, new_len):
+        Params:
+            new_len (int): new length to update progress bar
+        """
         if self.progress_bar:
             self.progress_bar.setRange(0, new_len)
             self.progress_bar.setValue(0)
 
-    def _on_change_textbox(self):
-        # event handler for when textboxes are changed
-        inputs = self.grab_ui_values(grab_combo=False)
+    def increment_progress_bar(self) -> None:
+        """
+        Increment the progress bar by one step
 
-        new_count = self.get_live_count(inputs)
-        self.update_live_count(new_count)
-
-        self.update_progress_bar_len(new_count)
-
-    def increment_progress_bar(self):
+        Params:
+            none
+        """
         if self.controller.run_lock:
             self.progress_bar.setValue(self.progress_bar.value() + 1)
 
-    def reset_progress_bar(self):
+    def reset_progress_bar(self) -> None:
+        """
+        Reset the progress bar to 0
+
+        Params:
+            none
+        """
         self.progress_bar.setValue(0)
 
-    def set_progress_bar(self, val: int):
+    def set_progress_bar(self, val: int) -> None:
+        """
+        Set the progress bar to the value provided
+
+        Params:
+            val: value to set the progess bar to
+        """
         self.progress_bar.setValue(val)
 
-    def set_run_in_progress(self):
+    def create_sweep_headers(self) -> QFrame:
+        """
+        Create headers for the sweep UI
+
+        Params:
+            none
+        """
+        # headers
+        header: QFrame = QFrame()
+        header.setLayout(QHBoxLayout())
+        label: QLabel = QLabel("min")
+        label.setAlignment(Qt.AlignCenter)
+        header.layout().addWidget(label)
+        label: QLabel = QLabel("max")
+        label.setAlignment(Qt.AlignCenter)
+        header.layout().addWidget(label)
+        label: QLabel = QLabel("step size")
+        label.setAlignment(Qt.AlignCenter)
+        header.layout().addWidget(label)
+        return header
+
+    def _on_change_textbox(self) -> None:
+        """
+        Event listener called when textboxes in widget are edited
+
+        Params:
+            none
+        """
+        # grab new values
+        inputs: List[List[str]] = self.grab_ui_values(grab_combo=False)
+        # calculate new count
+        new_count: int = self.get_live_count(inputs)
+        # update ui
+        self.update_live_count(new_count)
+        self.update_progress_bar_len(new_count)
+
+    def set_run_in_progress(self) -> None:
+        """
+        function called when a run is in progress
+
+        Params:
+            none
+        """
         self.run_sweep_button.setText("Cancel")
 
-    def set_run_finished(self):
+    def set_run_finished(self) -> None:
+        """
+        function called when a run is finished
+
+        Params:
+            none
+        """
         self.run_sweep_button.setText("Run Sweep")
         self.run_sweep_button.clicked.connect(self._run_sweep)
 
-    def cancel(self):
+    def cancel(self) -> None:
+        """
+        Cancel the current sweep
+
+        Params:
+            none
+        """
         if self.controller.run_lock:
             # if running, cancel
             self.controller.cancel_run_all()
@@ -309,13 +436,20 @@ class ParamSweepWidget(QDialog):
             # if not running, close window
             self.close()
 
-    def _reset_row_to_default(self, key_of_row: str, list_index=None):
-        default_param_set = self.controller.model.active_workflow.workflow_definition.steps[
+    def _reset_row_to_default(self, key_of_row: str, list_index: int = None):
+        """
+        Reset a parameter row to its default values
+
+        Params:
+            key_of_row (str): Name of row in ui to change back to default values
+            list_index (int): index of parameter if there are multiple with the same name
+        """
+        default_param_set: Dict = self.controller.model.active_workflow.workflow_definition.steps[
             self.step_number
         ].function.parameters
 
         if list_index:
-            input_boxes = self.inputs[key_of_row + str(list_index)].children()
+            input_boxes: List = self.inputs[key_of_row + str(list_index)].children()
         else:
             input_boxes = self.inputs[key_of_row].children()
 
@@ -331,5 +465,5 @@ class ParamSweepWidget(QDialog):
         # reset step_size value
         input_boxes[3].setText(str((default_params.max_value - default_params.min_value) / 2))
 
-        updated_values = self.grab_ui_values(grab_combo=False)
+        updated_values: List[List[str]] = self.grab_ui_values(grab_combo=False)
         self.update_live_count(self.get_live_count(updated_values))

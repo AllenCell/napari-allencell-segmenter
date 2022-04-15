@@ -306,7 +306,6 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
     def _parse_inputs(self, parameter_inputs: dict[str, Any], ui_input: List[List[str]]) -> Dict[str, Any]:
         """
         Parse inputs from the UI to create run dictionaries to feed into the sweep functions.
-        #TODO test this to see if single values are still in list or not for type
         """
         # test function, get sweep values from ui somehow
         if parameter_inputs:
