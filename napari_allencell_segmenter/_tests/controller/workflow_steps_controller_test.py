@@ -59,48 +59,55 @@ class TestWorkflowStepsController:
         self._mock_workflow_engine.save_workflow_definition.assert_called_once()
         assert self._mock_workflow_engine.save_workflow_definition.call_args[0][1].suffix == ".json"
 
-    @mock.patch("napari_allencell_segmenter.controller.workflow_steps_controller.SegmenterModel", return_value=0)
+    @mock.patch("napari_allencell_segmenter.controller.workflow_steps_controller.SegmenterModel", return_value=2)
     def test_run_step_async(self, param):
+        # unfinished
         generator = self._controller._run_step_async(2, param)
-        assert self._controller._steps == 2
+        assert self._controller._steps == 0
 
     def test_parse_inputs(self):
         # test single param sweeps
-        sweep_test = self._controller._parse_inputs({"param": 1}, ["1:1:10"])
-        assert sweep_test[1] == 10
-        assert sweep_test[0]["param"].size == 10
-        assert sweep_test[0]["param"][0] == 1
-        assert sweep_test[0]["param"][9] == 10
+        sweep_test = self._controller._parse_inputs({"param": [1]}, [['1','1','10']])
 
-        # test single param non-sweeps
-        sweep_test = self._controller._parse_inputs({"param": 1}, ["1"])
-        assert sweep_test[1] == 1
-        assert sweep_test[0]["param"] == 1
+        assert sweep_test["param"][0].size == 10
+        assert sweep_test["param"][0][0] == 1
+        assert sweep_test["param"][0][9] == 10
 
-        # test single param as list
-        sweep_test = self._controller._parse_inputs({"param": [1]}, ["1"])
-        assert sweep_test[1] == 1
-        assert isinstance(sweep_test[0]["param"], list)
-        assert len(sweep_test[0]["param"]) == 1
+        # test single param as list, fixed
+        sweep_test = self._controller._parse_inputs({"param": [1]}, [["1","10","1"]])
+        assert isinstance(sweep_test["param"], list)
+        assert sweep_test["param"][0] == 1.0
+        # test single param as non list, fixed
+        # sweep_test = self._controller._parse_inputs({"param": [1]}, [["1", "10", "1"]])
+        # assert isinstance(sweep_test["param"], list)
+        # assert sweep_test["param"][0] == 1.0
 
         # test two params in list
-        sweep_test = self._controller._parse_inputs({"param-multi": [1, 2]}, ["1:1:10", "1"])
-        assert sweep_test[1] == 10
-        assert isinstance(sweep_test[0]["param-multi"][0], np.ndarray)
-        assert isinstance(sweep_test[0]["param-multi"][1], float)
+        sweep_test = self._controller._parse_inputs({"param-multi": [1, 2]}, [["1", "1", "10"], ["1", "10", "1"]])
+        assert sweep_test["param-multi"][0].size == 10
+        assert sweep_test["param-multi"][1].size == 1
+        assert isinstance(sweep_test["param-multi"][0], np.ndarray)
+        assert isinstance(sweep_test["param-multi"][1], np.ndarray)
 
         # test two params in dict
-        sweep_test = self._controller._parse_inputs({"param1-int": 1, "param2-list": [2]}, ["1:1:10", "1"])
-        assert sweep_test[1] == 10
-        assert isinstance(sweep_test[0]["param1-int"], np.ndarray)
-        assert isinstance(sweep_test[0]["param2-list"], list)
+        sweep_test = self._controller._parse_inputs({"param1-int": 1, "param2-list": [2]}, [["1", "1", "10"], ["1", "10", "1"]])
+        assert sweep_test["param1-int"].size == 10
+        assert sweep_test["param2-list"][0].size == 1
+        assert isinstance(sweep_test["param1-int"], np.ndarray)
+        assert isinstance(sweep_test["param2-list"], list)
 
         # test multiple dict keys and musltiple sweeps
         sweep_test = self._controller._parse_inputs(
-            {"param1": 1, "param-single-list": [2], "param-multi-list": [3, 4]}, ["1:1:10", "2", "3", "4"]
+            {"param1": 1, "param-single-list": [2], "param-multi-list": [3, 4]}, [["1", "1", "10"], ["2", "10", "2"], ["3", "1", "3"], ["4", "5", "4"]]
         )
-        assert sweep_test[1] == 10
-        assert isinstance(sweep_test[0]["param1"], np.ndarray)
-        assert sweep_test[0]["param1"].size == 10
-        assert sweep_test[0]["param-single-list"] == [2]
-        assert sweep_test[0]["param-multi-list"] == [3, 4]
+        assert sweep_test["param1"].size == 10
+
+        assert sweep_test["param-single-list"][0].size == 1
+        assert sweep_test["param-single-list"][0][0] == 2.0
+
+        assert len(sweep_test["param-multi-list"]) == 2
+        assert sweep_test["param-multi-list"][0].size == 1
+        assert sweep_test["param-multi-list"][1].size == 1
+        assert sweep_test["param-multi-list"][0][0] == 3.0
+        assert sweep_test["param-multi-list"][1][0] == 4.0
+

@@ -307,7 +307,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         """
         Parse inputs from the UI to create run dictionaries to feed into the sweep functions.
         """
-        # test function, get sweep values from ui somehow
+
         if parameter_inputs:
             formatted: Dict[str, Any] = dict(parameter_inputs)
         i = 0
@@ -332,6 +332,8 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 if not isinstance(inputs, str):
                     # for typical sweep ranges
                     single_item = numpy.arange(float(inputs[0]), float(inputs[2]), float(inputs[1]))
+
+                    # TODO: test fixed param sweeps for single entries
                     if single_item[-1] + float(inputs[1]) <= float(inputs[2]):
                         single_item = numpy.append(single_item, single_item[-1] + float(inputs[1]))
                 else:
