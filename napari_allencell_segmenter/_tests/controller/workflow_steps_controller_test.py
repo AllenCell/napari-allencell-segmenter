@@ -77,10 +77,10 @@ class TestWorkflowStepsController:
         sweep_test = self._controller._parse_inputs({"param": [1]}, [["1","10","1"]])
         assert isinstance(sweep_test["param"], list)
         assert sweep_test["param"][0] == 1.0
-        # test single param as non list, fixed
-        # sweep_test = self._controller._parse_inputs({"param": [1]}, [["1", "10", "1"]])
-        # assert isinstance(sweep_test["param"], list)
-        # assert sweep_test["param"][0] == 1.0
+        #test single param as non list, fixed
+        sweep_test = self._controller._parse_inputs({"param": 1}, [["1", "10", "1"]])
+        assert isinstance(sweep_test["param"], list)
+        assert sweep_test["param"][0] == 1.0
 
         # test two params in list
         sweep_test = self._controller._parse_inputs({"param-multi": [1, 2]}, [["1", "1", "10"], ["1", "10", "1"]])
