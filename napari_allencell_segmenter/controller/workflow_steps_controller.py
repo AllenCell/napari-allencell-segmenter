@@ -333,8 +333,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                     # for typical sweep ranges
                     single_item = numpy.arange(float(inputs[0]), float(inputs[2]), float(inputs[1]))
 
-                    # TODO: test fixed param sweeps for single entries
-                    if single_item[-1] + float(inputs[1]) <= float(inputs[2]):
+                    if inputs[0] == inputs[2]:
+                        single_item = [float(inputs[0])]
+                    elif single_item[-1] + float(inputs[1]) <= float(inputs[2]):
                         single_item = numpy.append(single_item, single_item[-1] + float(inputs[1]))
                 else:
                     # for string parameters from dropdowns
