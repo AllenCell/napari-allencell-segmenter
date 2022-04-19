@@ -136,5 +136,25 @@ class TestWorkflowStepsController:
         assert self._controller._steps == 0
         assert np.array_equal(result[1],np.zeros([2,2,2]))
 
+    def test_setup_params_sweep(self):
+        # test int and float
+        assert self._controller._setup_params_sweep(3.0, 4) == ([3.0], 4)
+        # test str
+        assert self._controller._setup_params_sweep("test", "test1") == (["test"], ["test1"])
+        # test int and float in list
+        assert self._controller._setup_params_sweep([3.0], [4]) == ([3.0], 4)
+        # test str in list
+        assert self._controller._setup_params_sweep(["test"], ["test1"]) == (["test"], ["test1"])
+        # test nested list
+        assert self._controller._setup_params_sweep([[3.0]], [[4]]) == ([3.0], [4])
+        # test numpy array
+        result = self._controller._setup_params_sweep(np.arange(1,2,1), np.arange(1.0,3.0,1.0))
+        assert result[0] == 1
+        assert np.array_equal(result[1], np.arange(1.0,3.0,1.0))
+
+
+
+
+
 
 

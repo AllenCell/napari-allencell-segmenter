@@ -259,6 +259,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
     def _handle_sweep_single(
         self, index: int, sweep_index: int, param_sweep: Dict[str, Any]
     ) -> Tuple[WorkflowStep, np.ndarray]:
+        #! tested
         """
         Run a step in a sweep that contains one parameter
         """
@@ -280,6 +281,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         """
         Format parameters in a way that aics-segmentation expects them
         """
+        # ! tested
         # shape parameters in the way that aics-segmentation expects them
         if not isinstance(first_params, list) and not isinstance(first_params, np.ndarray):
             first_params = [first_params]
