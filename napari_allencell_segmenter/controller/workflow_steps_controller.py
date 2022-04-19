@@ -45,9 +45,11 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         return self.state.segmenter_model
 
     def index(self) -> None:
+        #!tested
         self.load_view(self._view, self.model)
 
     def save_workflow(self, steps: List[WorkflowStep], output_file_path: str):
+        # !tested
         """
         Save the current workflow as a .json file for future use
         """
@@ -59,6 +61,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self._workflow_engine.save_workflow_definition(workflow_def, save_path)
 
     def close_workflow(self) -> None:
+        # !tested
         """
         Close the active workflow
         """
@@ -212,7 +215,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             if not isinstance(list(param_original.values())[0], list):
                 # There's only one param being swept
                 for i in range(len(list(param_sweep.values())[0])):
-                    yield self._hadle_sweep_single(index, i, param_sweep)
+                    yield self._handle_sweep_single(index, i, param_sweep)
             else:
                 # multiple unique params in one list
                 list1, list2 = self._setup_params_sweep(
@@ -253,7 +256,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                     self._current_params = run_dict
                     yield (step, result)
 
-    def _hadle_sweep_single(
+    def _handle_sweep_single(
         self, index: int, sweep_index: int, param_sweep: Dict[str, Any]
     ) -> Tuple[WorkflowStep, np.ndarray]:
         """
@@ -304,6 +307,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self._worker.finished.disconnect()
 
     def _parse_inputs(self, parameter_inputs: dict[str, Any], ui_input: List[List[str]]) -> Dict[str, Any]:
+        # !tested
         """
         Parse inputs from the UI to create run dictionaries to feed into the sweep functions.
         """
@@ -377,6 +381,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
     def _run_step_async(
         self, index: int, parameter_inputs: List[Dict[str, List]]
     ) -> Generator[Tuple[WorkflowStep, numpy.ndarray], None, None]:
+        # !tested
         """
         Run a specified step in a workflow.
         """
