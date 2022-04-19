@@ -7,7 +7,9 @@ from napari_allencell_segmenter.core.state import State
 from napari_allencell_segmenter.core.view_manager import ViewManager
 from napari_allencell_segmenter.model.channel import Channel
 from napari_allencell_segmenter.model.segmenter_model import SegmenterModel
-from aicssegmentation.workflow import WorkflowEngine, WorkflowStep
+from napari_allencell_segmenter.core.viewer_abstraction import ViewerAbstraction
+from ..mocks import MockLayer
+from aicssegmentation.workflow import WorkflowEngine, WorkflowStep, WorkflowDefinition
 
 import numpy as np
 
@@ -16,6 +18,7 @@ class TestWorkflowStepsController:
     def setup_method(self):
         self._mock_application: MagicMock = create_autospec(IApplication)
         self._mock_router: MagicMock = create_autospec(IRouter)
+        self._mock_viewer: MagicMock = create_autospec(ViewerAbstraction)
         type(self._mock_application).router = PropertyMock(return_value=self._mock_router)
         self._mock_state: MagicMock = create_autospec(State)
         type(self._mock_application).state = PropertyMock(return_value=self._mock_state)
@@ -110,4 +113,28 @@ class TestWorkflowStepsController:
         assert sweep_test["param-multi-list"][1].size == 1
         assert sweep_test["param-multi-list"][0][0] == 3.0
         assert sweep_test["param-multi-list"][1][0] == 4.0
+
+    def test_handle_sweep_single(self):
+        # arrange
+        active_layer = MockLayer(name="test-layer", ndim=3)
+        self._controller.viewer.get_active_layer.return_value = [active_layer]
+        workflows = [
+            create_autospec(WorkflowDefinition),
+            create_autospec(WorkflowDefinition),
+            create_autospec(WorkflowDefinition),
+        ]
+        type(self._mock_workflow_engine).workflow_definitions = PropertyMock(return_value=workflows)
+        self._model.active_workflow.execute_step.return_value = np.zeros([2,2,2])
+        test_dict = {"test_param": [0]}
+        result_dict = {"test_param": 0}
+
+        # act
+        result = self._controller._handle_sweep_single(0, 0, test_dict)
+
+        # assert
+        assert self._controller._current_params == {"test_param" : round(list(test_dict.values())[0][0], 3)}
+        assert self._controller._steps == 0
+        assert np.array_equal(result[1],np.zeros([2,2,2]))
+
+
 
