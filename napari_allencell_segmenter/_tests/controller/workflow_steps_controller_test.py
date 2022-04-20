@@ -136,6 +136,7 @@ class TestWorkflowStepsController:
         assert self._controller._current_params == {"test_param" : round(list(test_dict.values())[0][0], 3)}
         assert self._controller._steps == 0
         assert np.array_equal(result[1],np.zeros([2,2,2]))
+        self._controller.model.active_workflow.execute_step.assert_called_once_with(0, result_dict, [active_layer])
 
     def test_setup_params_sweep(self):
         # test int and float
