@@ -394,6 +394,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         yield (step, result)
 
     def _on_step_processed(self, processed_args: Tuple[WorkflowStep, numpy.ndarray]):
+        #! tested
         """
         Function called when a workflow step is processed
         """
@@ -451,6 +452,8 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         """
         function called when a step from run_all is processed
         """
+        # ! tested
+        #
         step, result = processed_args
 
         # Update progress
@@ -467,21 +470,15 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         """
         function called when run_all is started
         """
+        # ! tested
         self._run_lock = True
         self._view.set_run_all_in_progress()
-
-    def _on_run_all_step_started(self):
-        """
-        function called when run_all_step is started
-        """
-        self._run_lock = True
-        self._view.set_run_all_in_progress()
-        # disable previous step button
 
     def _on_sweep_started(self):
         """
         Function called when a sweep is started
         """
+        # ! tested
         self.param_sweep_widget.set_run_in_progress()
         self._run_lock = True
 
@@ -489,6 +486,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         """
         function called when run_all is finished
         """
+        # ! tested
         self._view.reset_run_all()
         self._run_lock = False
 
@@ -496,6 +494,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         """
         function called by worker when run_step is finished
         """
+        # ! tested
         self._view.reset_run_step()
         self._run_lock = False
 
@@ -503,6 +502,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         """
         function called by worker when a sweep is finished
         """
+        # ! tested
         self.param_sweep_widget.set_run_finished()
         self._run_lock = False
 

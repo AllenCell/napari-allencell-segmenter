@@ -207,6 +207,63 @@ class TestWorkflowStepsController:
         self._controller.view.set_progress_bar.assert_called_once_with(0)
         self._controller.param_sweep_widget.set_progress_bar.assert_called_once_with(3)
 
+    def test_on_step_processed_all(self):
+        # arrange
+        test_step = create_autospec(WorkflowStep)
+        test_step.step_number = 1
+        test_step.name = "test"
+        test_array = np.zeros([2, 2, 2])
+
+        # act
+        self._controller._on_step_processed_all((test_step, test_array))
+
+        # assert
+        self._controller.view.increment_progress_bar.assert_called_once()
+        self._controller.viewer.add_image_layer.assert_called_once_with(test_array, name=f"{test_step.step_number}: {test_step.name}")
+
+    def test_on_run_all_started(self):
+        self._controller._on_run_all_started()
+
+        assert self._controller._run_lock
+        self._controller._view.set_run_all_in_progress.assert_called_once()
+
+    def test_on_sweep_started(self):
+        self._controller.param_sweep_widget = create_autospec(ParamSweepWidget)
+
+        self._controller._on_sweep_started()
+
+        assert self._controller._run_lock
+        self._controller.param_sweep_widget.set_run_in_progress.assert_called_once()
+
+    def test_on_run_all_finished(self):
+        self._controller._on_run_all_finished()
+
+        self._controller._view.reset_run_all.assert_called_once()
+        assert not self._controller._run_lock
+
+    def test_on_run_step_finished(self):
+        self._controller._on_run_step_finished()
+
+        self._controller._view.reset_run_step.assert_called_once()
+        assert not self._controller._run_lock
+
+    def test_on_sweep_finished(self):
+        self._controller.param_sweep_widget = create_autospec(ParamSweepWidget)
+
+        self._controller.on_sweep_finished()
+
+        self._controller.param_sweep_widget.set_run_finished.assert_called_once()
+        assert not self._controller._run_lock
+
+    def test_open_sweep_ui(self):
+        self._controller.open_sweep_ui({"test_param": 1}, 1)
+        ParamSweepWidget.assert_called_once()
+
+
+
+
+
+
 
 
 
