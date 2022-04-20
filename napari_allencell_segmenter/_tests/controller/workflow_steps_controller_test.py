@@ -8,6 +8,7 @@ from napari_allencell_segmenter.core.view_manager import ViewManager
 from napari_allencell_segmenter.model.channel import Channel
 from napari_allencell_segmenter.model.segmenter_model import SegmenterModel
 from napari_allencell_segmenter.core.viewer_abstraction import ViewerAbstraction
+from napari_allencell_segmenter.widgets.param_sweep_widget import ParamSweepWidget
 from ..mocks import MockLayer
 from aicssegmentation.workflow import WorkflowEngine, WorkflowStep, WorkflowDefinition
 
@@ -152,20 +153,64 @@ class TestWorkflowStepsController:
         assert result[0] == 1
         assert np.array_equal(result[1], np.arange(1.0,3.0,1.0))
 
-    def test_on_step_processed(self):
+    def test_on_step_processed_first_run(self):
+        # Test when first step being ran for first time (no sweep)
         # arrange
         test_step = create_autospec(WorkflowStep)
         test_step.step_number = 1
         test_step.name = "test"
         test_array = np.zeros([2,2,2])
-        self._controller._sweep_step = 1
+        layers = [MockLayer("test", ndim=3), MockLayer("test2", ndim=3), MockLayer("test3", ndim=3)]
+        self._controller.viewer.layers = layers
 
         # act
         self._controller._on_step_processed((test_step, test_array))
 
         # assert
-        assert self._controller._sweep_step == 2
-        assert self._controller.viewer.add_image_layer.assert_called_once()
+        # assert self._controller._sweep_step == 3
+        self._controller.viewer.add_image_layer.assert_called_once_with(test_array, name="1: test")
+        self._controller.view.set_progress_bar.assert_called_once_with(0)
+
+    def test_on_step_processed_rerun(self):
+        test_step = create_autospec(WorkflowStep)
+        test_step.step_number = 1
+        test_step.name = "test"
+        test_array = np.zeros([2, 2, 2])
+        self._controller._max_step_run = 0
+        layers = [MockLayer("test", ndim=3), MockLayer("test2", ndim=3), MockLayer("test3", ndim=3)]
+        self._controller.viewer.layers = layers
+
+        # act
+        self._controller._on_step_processed((test_step, test_array))
+
+        # assert
+        assert self._controller._number_times_run == 1
+        self._controller.viewer.add_image_layer.assert_called_once_with(test_array, name="1.1: test")
+        self._controller.view.set_progress_bar.assert_called_once_with(0)
+
+    def test_on_step_processed_sweep_run(self):
+        test_step = create_autospec(WorkflowStep)
+        test_step.step_number = 1
+        test_step.name = "test"
+        test_array = np.zeros([2, 2, 2])
+        self._controller._sweep_step = 2
+        self._controller.param_sweep_widget = create_autospec(ParamSweepWidget)
+        layers = [MockLayer("test", ndim=3), MockLayer("test2", ndim=3), MockLayer("test3", ndim=3)]
+        self._controller.viewer.layers = layers
+
+        # act
+        self._controller._on_step_processed((test_step, test_array))
+
+        assert self._controller._sweep_step == 3
+        self._controller.viewer.add_image_layer.assert_called_once_with(test_array, name="1: test")
+        self._controller.view.set_progress_bar.assert_called_once_with(0)
+        self._controller.param_sweep_widget.set_progress_bar.assert_called_once_with(3)
+
+
+
+
+
+
 
 
 

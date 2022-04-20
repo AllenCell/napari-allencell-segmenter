@@ -12,3 +12,4 @@ class MockLayer(NamedTuple):
     data: numpy.ndarray = numpy.ones((4, 75, 100, 100))
     ndim: int = 4
     source: Source = None
+    visible: bool = True
