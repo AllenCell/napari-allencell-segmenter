@@ -1,6 +1,6 @@
 import pytest
 from unittest import mock
-from unittest.mock import MagicMock, create_autospec, PropertyMock
+from unittest.mock import MagicMock, create_autospec, PropertyMock, patch
 from napari_allencell_segmenter.controller.workflow_steps_controller import WorkflowStepsController
 from napari_allencell_segmenter.core._interfaces import IApplication, IRouter
 from napari_allencell_segmenter.core.state import State
@@ -9,7 +9,8 @@ from napari_allencell_segmenter.model.channel import Channel
 from napari_allencell_segmenter.model.segmenter_model import SegmenterModel
 from napari_allencell_segmenter.core.viewer_abstraction import ViewerAbstraction
 from napari_allencell_segmenter.widgets.param_sweep_widget import ParamSweepWidget
-from ..mocks import MockLayer
+from napari.qt.threading import create_worker, GeneratorWorker
+from ..mocks import MockLayer, MockWorker
 from aicssegmentation.workflow import WorkflowEngine, WorkflowStep, WorkflowDefinition
 
 import numpy as np
@@ -39,6 +40,18 @@ class TestWorkflowStepsController:
         # Assert
         self._mock_view_manager.load_view.assert_called_once_with(self._controller.view, self._model)
 
+    @pytest.mark.parametrize("filepath", ["/path/to/workflow.json", "/path/to/workflow.xml", "/path/to/workflow"])
+    def test_save_workflow(self, filepath):
+        # Arrange
+        steps = [create_autospec(WorkflowStep), create_autospec(WorkflowStep), create_autospec(WorkflowStep)]
+
+        # Act
+        self._controller.save_workflow(steps, filepath)
+
+        # Assert
+        self._mock_workflow_engine.save_workflow_definition.assert_called_once()
+        assert self._mock_workflow_engine.save_workflow_definition.call_args[0][1].suffix == ".json"
+
     def test_close_workflow(self):
         # Arrange
         channel = Channel(0, "Brightfield")
@@ -51,17 +64,22 @@ class TestWorkflowStepsController:
         self._controller.model.selected_channel == None
         self._mock_router.workflow_selection.assert_called_once()
 
-    @pytest.mark.parametrize("filepath", ["/path/to/workflow.json", "/path/to/workflow.xml", "/path/to/workflow"])
-    def test_save_workflow(self, filepath):
-        # Arrange
-        steps = [create_autospec(WorkflowStep), create_autospec(WorkflowStep), create_autospec(WorkflowStep)]
+    @mock.patch("napari_allencell_segmenter.controller.workflow_steps_controller.create_worker")
+    def test_run_all(self, mock_create_worker: MagicMock):
+        # arrange
+        self._controller._run_lock = False
+        mock_create_worker.return_value = MockWorker()
 
-        # Act
-        self._controller.save_workflow(steps, filepath)
+        # act
+        self._controller.run_all([{"param_test": 1}])
 
-        # Assert
-        self._mock_workflow_engine.save_workflow_definition.assert_called_once()
-        assert self._mock_workflow_engine.save_workflow_definition.call_args[0][1].suffix == ".json"
+        assert self._controller._worker is not None
+        mock_create_worker.assert_called_once_with(self._controller._run_all_async, [{"param_test": 1}])
+        self._controller._worker.yielded.connect.assert_called_once_with(self._controller._on_step_processed_all)
+        self._controller._worker.started.connect.assert_called_once_with(self._controller._on_run_all_started)
+        self._controller._worker.finished.connect.assert_called_once_with(self._controller._on_run_all_finished)
+        self._controller._worker.start.assert_called_once()
+
 
     @mock.patch("napari_allencell_segmenter.controller.workflow_steps_controller.SegmenterModel", return_value=2)
     def test_run_step_async(self, param):
