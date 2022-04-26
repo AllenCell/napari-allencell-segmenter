@@ -15,16 +15,14 @@ class MockLayer(NamedTuple):
     source: Source = None
     visible: bool = True
 
-class MockWorker():
+
+class MockWorker:
     """
     Custom mock: napari.qt.GeneratorWorker
     """
+
     def __init__(self):
         self.yielded = Mock()
         self.started = Mock()
         self.finished = Mock()
         self.start = Mock()
-
-
-
-
