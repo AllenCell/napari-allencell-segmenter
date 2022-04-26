@@ -45,11 +45,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         return self.state.segmenter_model
 
     def index(self) -> None:
-        #!tested
         self.load_view(self._view, self.model)
 
     def save_workflow(self, steps: List[WorkflowStep], output_file_path: str):
-        # !tested
         """
         Save the current workflow as a .json file for future use
         """
@@ -61,7 +59,6 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self._workflow_engine.save_workflow_definition(workflow_def, save_path)
 
     def close_workflow(self) -> None:
-        # !tested
         """
         Close the active workflow
         """
@@ -116,7 +113,8 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 # too many or too few images selected as the input layer,
                 # abort run attempt and show warning
                 self.warn_box(
-                    f"{step_to_run.name} requires {len(step_to_run.parent)} input images, but you have selected {len(selected_layers)} images."
+                    f"{step_to_run.name} requires {len(step_to_run.parent)} input images, "
+                    f"but you have selected {len(selected_layers)} images."
                     f"\nPlease select {len(step_to_run.parent)} images by ctrl+clicking.",
                     "Wrong number of input images selected",
                     one_option=True,
@@ -131,17 +129,23 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                         # check to see if the correct image input layer is selected.
                         if i == 0:
                             response = self.warn_box(
-                                f"You currently have the layer {selected_layer.name} selected in napari which will be used as the input layer. You will run this segmentation"
-                                f" out of order. \nTo run the segmentation in order, please select the starting image (step 0) as the "
+                                f"You currently have the layer {selected_layer.name} selected in napari which will "
+                                f"be used as the input layer. You will run this segmentation"
+                                f" out of order. \nTo run the segmentation in order, "
+                                f"please select the starting image (step 0) as the "
                                 f"input layer for this step. "
                                 f"\n Would you still like to continue?",
                                 "Run segmentation out of order",
                             )
                         else:
+                            step_required_name = self.model.active_workflow.workflow_definition \
+                                .steps[step_to_run.parent[0] - 1].name
                             response = self.warn_box(
-                                f"You currently have the layer {selected_layer.name} selected in napari which will be used as the input layer. You will run this segmentation"
-                                f" out of order. To run the segmentation in order, please select a layer that is the output of "
-                                f"{i}. {self.model.active_workflow.workflow_definition.steps[step_to_run.parent[0] - 1].name}."
+                                f"You currently have the layer {selected_layer.name} selected in napari which will "
+                                f"be used as the input layer. You will run this segmentation"
+                                f" out of order. To run the segmentation in order, "
+                                f"please select a layer that is the output of "
+                                f"{i}. {step_required_name}."
                                 f"\n Would you like to continue?",
                                 "Run segmentation out of order",
                             )
@@ -149,17 +153,23 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                     elif not selected_layer.name[:1].isdigit():
                         if i == 0:
                             response = self.warn_box(
-                                f"You currently have the layer {selected_layer.name} selected in napari which will be used as the input layer. You will run this segmentation"
-                                f" out of order. \nTo run the segmentation in order, please select the starting image (step 0) as the "
+                                f"You currently have the layer {selected_layer.name} selected in napari which will "
+                                f"be used as the input layer. You will run this segmentation"
+                                f" out of order. \nTo run the segmentation in order, "
+                                f"please select the starting image (step 0) as the "
                                 f"input layer for this step. "
                                 f"\n Would you still like to continue?",
                                 "Run segmentation out of order",
                             )
                         else:
+                            step_required_name = self.model.active_workflow.workflow_definition \
+                                .steps[step_to_run.parent[0] - 1].name
                             response = self.warn_box(
-                                f"You currently have the layer {selected_layer.name} selected in napari which will be used as the input layer. You will run this segmentation"
-                                f" out of order. To run the segmentation in order, please select a layer that is the output of "
-                                f"{i}. {self.model.active_workflow.workflow_definition.steps[step_to_run.parent[0] - 1].name}."
+                                f"You currently have the layer {selected_layer.name} selected in napari which will "
+                                f"be used as the input layer. You will run this segmentation"
+                                f" out of order. To run the segmentation in order, "
+                                f"please select a layer that is the output of "
+                                f"{i}. {step_required_name}."
                                 f"\n Would you like to continue?",
                                 "Run segmentation out of order",
                             )
@@ -259,7 +269,6 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
     def _handle_sweep_single(
         self, index: int, sweep_index: int, param_sweep: Dict[str, Any]
     ) -> Tuple[WorkflowStep, np.ndarray]:
-        #! tested
         """
         Run a step in a sweep that contains one parameter
         """
@@ -281,7 +290,6 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         """
         Format parameters in a way that aics-segmentation expects them
         """
-        # ! tested
         # shape parameters in the way that aics-segmentation expects them
         if not isinstance(first_params, list) and not isinstance(first_params, np.ndarray):
             first_params = [first_params]
@@ -309,7 +317,6 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self._worker.finished.disconnect()
 
     def _parse_inputs(self, parameter_inputs: dict[str, Any], ui_input: List[List[str]]) -> Dict[str, Any]:
-        # !tested
         """
         Parse inputs from the UI to create run dictionaries to feed into the sweep functions.
         """
@@ -383,7 +390,6 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
     def _run_step_async(
         self, index: int, parameter_inputs: List[Dict[str, List]]
     ) -> Generator[Tuple[WorkflowStep, numpy.ndarray], None, None]:
-        # !tested
         """
         Run a specified step in a workflow.
         """
@@ -394,7 +400,6 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         yield (step, result)
 
     def _on_step_processed(self, processed_args: Tuple[WorkflowStep, numpy.ndarray]):
-        #! tested
         """
         Function called when a workflow step is processed
         """
@@ -452,7 +457,6 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         """
         function called when a step from run_all is processed
         """
-        # ! tested
         #
         step, result = processed_args
 
@@ -470,7 +474,6 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         """
         function called when run_all is started
         """
-        # ! tested
         self._run_lock = True
         self._view.set_run_all_in_progress()
 
@@ -478,7 +481,6 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         """
         Function called when a sweep is started
         """
-        # ! tested
         self.param_sweep_widget.set_run_in_progress()
         self._run_lock = True
 
@@ -486,7 +488,6 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         """
         function called when run_all is finished
         """
-        # ! tested
         self._view.reset_run_all()
         self._run_lock = False
 
@@ -494,7 +495,6 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         """
         function called by worker when run_step is finished
         """
-        # ! tested
         self._view.reset_run_step()
         self._run_lock = False
 
@@ -502,7 +502,6 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         """
         function called by worker when a sweep is finished
         """
-        # ! tested
         self.param_sweep_widget.set_run_finished()
         self._run_lock = False
 

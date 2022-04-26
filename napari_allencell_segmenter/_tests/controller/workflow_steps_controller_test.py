@@ -121,7 +121,8 @@ class TestWorkflowStepsController:
 
         self._controller.viewer.get_active_layer.assert_called_once()
         patched_func.assert_called_once_with(
-            f"{workflow_with_parent.name} requires {len(workflow_with_parent.parent)} input images, but you have selected {0} images."
+            f"{workflow_with_parent.name} requires {len(workflow_with_parent.parent)} input images, "
+            f"but you have selected {0} images."
             f"\nPlease select {len(workflow_with_parent.parent)} images by ctrl+clicking.",
             "Wrong number of input images selected",
             one_option=True,
@@ -167,7 +168,8 @@ class TestWorkflowStepsController:
 
         self._controller.viewer.get_active_layer.assert_called_once()
         patched_func.assert_called_once_with(
-            f"You currently have the layer {test_image.name} selected in napari which will be used as the input layer. You will run this segmentation"
+            f"You currently have the layer {test_image.name} selected in napari which will be used as the input layer."
+            f" You will run this segmentation"
             f" out of order. To run the segmentation in order, please select a layer that is the output of "
             f"{1}. {parent.name}."
             f"\n Would you like to continue?",
@@ -203,7 +205,8 @@ class TestWorkflowStepsController:
 
         self._controller.viewer.get_active_layer.assert_called_once()
         patched_func.assert_called_once_with(
-            f"You currently have the layer {test_image.name} selected in napari which will be used as the input layer. You will run this segmentation"
+            f"You currently have the layer {test_image.name} selected in napari which will be used as the input layer. "
+            f"You will run this segmentation"
             f" out of order. \nTo run the segmentation in order, please select the starting image (step 0) as the "
             f"input layer for this step. "
             f"\n Would you still like to continue?",
@@ -240,7 +243,8 @@ class TestWorkflowStepsController:
 
         self._controller.viewer.get_active_layer.assert_called_once()
         patched_func.assert_called_once_with(
-            f"You currently have the layer {test_image.name} selected in napari which will be used as the input layer. You will run this segmentation"
+            f"You currently have the layer {test_image.name} selected in napari which will be used as the input layer. "
+            f"You will run this segmentation"
             f" out of order. \nTo run the segmentation in order, please select the starting image (step 0) as the "
             f"input layer for this step. "
             f"\n Would you still like to continue?",
@@ -328,7 +332,8 @@ class TestWorkflowStepsController:
         param_sweep = {"test_param": [1, 2, 3]}
 
         with patch(
-            "napari_allencell_segmenter.controller.workflow_steps_controller.WorkflowStepsController._handle_sweep_single"
+            "napari_allencell_segmenter.controller.workflow_steps_controller."
+            "WorkflowStepsController._handle_sweep_single"
         ) as patched_func:
             patched_func.return_value = (create_autospec(WorkflowStep), np.zeros([2, 2, 2]))
 

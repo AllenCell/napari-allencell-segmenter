@@ -6,8 +6,6 @@ from qtpy.QtWidgets import (
     QFrame,
     QHBoxLayout,
     QPushButton,
-    QCheckBox,
-    QSizePolicy,
     QLabel,
     QMessageBox,
     QProgressBar,
@@ -311,7 +309,7 @@ class ParamSweepWidget(QDialog):
                     inputs.append(
                         [widget.children()[1].text(), widget.children()[3].text(), widget.children()[2].text()]
                     )
-                except:
+                except Exception:
                     pass
         return inputs
 
