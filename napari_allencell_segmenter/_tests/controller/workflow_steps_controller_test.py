@@ -103,7 +103,7 @@ class TestWorkflowStepsController:
         self._controller._run_lock = False
         mock_create_worker.return_value = MockWorker()
         workflow_with_parent = create_autospec(WorkflowDefinition)
-        workflow_with_parent.parent = [create_autospec(WorkflowDefinition),create_autospec(WorkflowDefinition)]
+        workflow_with_parent.parent = [create_autospec(WorkflowDefinition), create_autospec(WorkflowDefinition)]
         workflow_with_parent.name = "test_workflow_step"
         self._controller.model.active_workflow.workflow_definition.steps = [
             create_autospec(WorkflowDefinition),
@@ -114,7 +114,9 @@ class TestWorkflowStepsController:
         self._controller.viewer.get_theme.return_value = "dark"
 
         # act
-        with patch('napari_allencell_segmenter.controller.workflow_steps_controller.WorkflowStepsController.warn_box') as patched_func:
+        with patch(
+            "napari_allencell_segmenter.controller.workflow_steps_controller.WorkflowStepsController.warn_box"
+        ) as patched_func:
             self._controller.run_step(1, [{"param_test": 1}])
 
         self._controller.viewer.get_active_layer.assert_called_once()
@@ -123,7 +125,6 @@ class TestWorkflowStepsController:
             f"\nPlease select {len(workflow_with_parent.parent)} images by ctrl+clicking.",
             "Wrong number of input images selected",
             one_option=True,
-
         )
         assert self._controller._worker is None
 
@@ -160,7 +161,8 @@ class TestWorkflowStepsController:
 
         # act
         with patch(
-                'napari_allencell_segmenter.controller.workflow_steps_controller.WorkflowStepsController.warn_box') as patched_func:
+            "napari_allencell_segmenter.controller.workflow_steps_controller.WorkflowStepsController.warn_box"
+        ) as patched_func:
             self._controller.run_step(1, [{"param_test": 2}])
 
         self._controller.viewer.get_active_layer.assert_called_once()
@@ -170,7 +172,6 @@ class TestWorkflowStepsController:
             f"{1}. {parent.name}."
             f"\n Would you like to continue?",
             "Run segmentation out of order",
-
         )
         assert self._controller._worker is None
 
@@ -196,7 +197,8 @@ class TestWorkflowStepsController:
 
         # act
         with patch(
-                'napari_allencell_segmenter.controller.workflow_steps_controller.WorkflowStepsController.warn_box') as patched_func:
+            "napari_allencell_segmenter.controller.workflow_steps_controller.WorkflowStepsController.warn_box"
+        ) as patched_func:
             self._controller.run_step(0, [{"param_test": 2}])
 
         self._controller.viewer.get_active_layer.assert_called_once()
@@ -205,7 +207,8 @@ class TestWorkflowStepsController:
             f" out of order. \nTo run the segmentation in order, please select the starting image (step 0) as the "
             f"input layer for this step. "
             f"\n Would you still like to continue?",
-            "Run segmentation out of order",)
+            "Run segmentation out of order",
+        )
 
         assert self._controller._worker is None
 
@@ -231,7 +234,8 @@ class TestWorkflowStepsController:
 
         # act
         with patch(
-                'napari_allencell_segmenter.controller.workflow_steps_controller.WorkflowStepsController.warn_box') as patched_func:
+            "napari_allencell_segmenter.controller.workflow_steps_controller.WorkflowStepsController.warn_box"
+        ) as patched_func:
             self._controller.run_step(0, [{"param_test": 2}])
 
         self._controller.viewer.get_active_layer.assert_called_once()
@@ -240,7 +244,8 @@ class TestWorkflowStepsController:
             f" out of order. \nTo run the segmentation in order, please select the starting image (step 0) as the "
             f"input layer for this step. "
             f"\n Would you still like to continue?",
-            "Run segmentation out of order",)
+            "Run segmentation out of order",
+        )
 
         assert self._controller._worker is None
 
@@ -282,7 +287,7 @@ class TestWorkflowStepsController:
         mock_widget.param_set = None
         self._controller.run_lock = False
 
-        self._controller.run_step_sweep(mock_widget, [['1', '1', '1']])
+        self._controller.run_step_sweep(mock_widget, [["1", "1", "1"]])
 
         assert self._controller._worker is not None
         mock_create_worker.assert_called_once_with(self._controller._run_step_async, mock_widget.step_number, None)
@@ -299,17 +304,39 @@ class TestWorkflowStepsController:
         self._controller.run_lock = False
 
         with patch(
-                'napari_allencell_segmenter.controller.workflow_steps_controller.WorkflowStepsController._parse_inputs') as patched_func:
-            patched_func.return_value = {"test_param" : 1}
-            self._controller.run_step_sweep(mock_widget, [['1', '1', '1']])
+            "napari_allencell_segmenter.controller.workflow_steps_controller.WorkflowStepsController._parse_inputs"
+        ) as patched_func:
+            patched_func.return_value = {"test_param": 1}
+            self._controller.run_step_sweep(mock_widget, [["1", "1", "1"]])
 
         assert self._controller._worker is not None
-        mock_create_worker.assert_called_once_with(self._controller._run_step_sweep_grid, mock_widget.step_number, mock_widget.param_set, {"test_param": 1})
+        mock_create_worker.assert_called_once_with(
+            self._controller._run_step_sweep_grid, mock_widget.step_number, mock_widget.param_set, {"test_param": 1}
+        )
         self._controller._worker.yielded.connect.assert_called_once_with(self._controller._on_step_processed)
         self._controller._worker.started.connect.assert_called_once_with(self._controller._on_sweep_started)
         self._controller._worker.finished.connect.assert_called_once_with(self._controller.on_sweep_finished)
         self._controller._worker.start.assert_called_once()
 
+    def test_run_step_sweep_grid_one_param(self):
+        # selected layer
+        test_image = create_autospec(Image)
+        test_image.name = "2. test_workflow_step"
+        self._controller.viewer.get_active_layer.return_value = [test_image]
+
+        param_original = {"test_param": 0}
+        param_sweep = {"test_param": [1, 2, 3]}
+
+        with patch(
+            "napari_allencell_segmenter.controller.workflow_steps_controller.WorkflowStepsController._handle_sweep_single"
+        ) as patched_func:
+            patched_func.return_value = (create_autospec(WorkflowStep), np.zeros([2, 2, 2]))
+
+            generator = self._controller._run_step_sweep_grid(0, param_original, param_sweep)
+
+        print(next(generator))
+        patched_func.assert_called_once_with({"test_param": 1})
+        print(next(generator))
 
     @mock.patch("napari_allencell_segmenter.controller.workflow_steps_controller.SegmenterModel", return_value=2)
     def test_run_step_async(self, param):
@@ -319,17 +346,17 @@ class TestWorkflowStepsController:
 
     def test_parse_inputs(self):
         # test single param sweeps
-        sweep_test = self._controller._parse_inputs({"param": [1]}, [['1','1','10']])
+        sweep_test = self._controller._parse_inputs({"param": [1]}, [["1", "1", "10"]])
 
         assert sweep_test["param"][0].size == 10
         assert sweep_test["param"][0][0] == 1
         assert sweep_test["param"][0][9] == 10
 
         # test single param as list, fixed
-        sweep_test = self._controller._parse_inputs({"param": [1]}, [["1","10","1"]])
+        sweep_test = self._controller._parse_inputs({"param": [1]}, [["1", "10", "1"]])
         assert isinstance(sweep_test["param"], list)
         assert sweep_test["param"][0] == 1.0
-        #test single param as non list, fixed
+        # test single param as non list, fixed
         sweep_test = self._controller._parse_inputs({"param": 1}, [["1", "10", "1"]])
         assert isinstance(sweep_test["param"], list)
         assert sweep_test["param"][0] == 1.0
@@ -342,7 +369,9 @@ class TestWorkflowStepsController:
         assert isinstance(sweep_test["param-multi"][1], np.ndarray)
 
         # test two params in dict
-        sweep_test = self._controller._parse_inputs({"param1-int": 1, "param2-list": [2]}, [["1", "1", "10"], ["1", "10", "1"]])
+        sweep_test = self._controller._parse_inputs(
+            {"param1-int": 1, "param2-list": [2]}, [["1", "1", "10"], ["1", "10", "1"]]
+        )
         assert sweep_test["param1-int"].size == 10
         assert sweep_test["param2-list"][0].size == 1
         assert isinstance(sweep_test["param1-int"], np.ndarray)
@@ -350,7 +379,8 @@ class TestWorkflowStepsController:
 
         # test multiple dict keys and musltiple sweeps
         sweep_test = self._controller._parse_inputs(
-            {"param1": 1, "param-single-list": [2], "param-multi-list": [3, 4]}, [["1", "1", "10"], ["2", "10", "2"], ["3", "1", "3"], ["4", "5", "4"]]
+            {"param1": 1, "param-single-list": [2], "param-multi-list": [3, 4]},
+            [["1", "1", "10"], ["2", "10", "2"], ["3", "1", "3"], ["4", "5", "4"]],
         )
         assert sweep_test["param1"].size == 10
 
@@ -373,7 +403,7 @@ class TestWorkflowStepsController:
             create_autospec(WorkflowDefinition),
         ]
         type(self._mock_workflow_engine).workflow_definitions = PropertyMock(return_value=workflows)
-        self._model.active_workflow.execute_step.return_value = np.zeros([2,2,2])
+        self._model.active_workflow.execute_step.return_value = np.zeros([2, 2, 2])
         test_dict = {"test_param": [0]}
         result_dict = {"test_param": 0}
 
@@ -381,9 +411,9 @@ class TestWorkflowStepsController:
         result = self._controller._handle_sweep_single(0, 0, test_dict)
 
         # assert
-        assert self._controller._current_params == {"test_param" : round(list(test_dict.values())[0][0], 3)}
+        assert self._controller._current_params == {"test_param": round(list(test_dict.values())[0][0], 3)}
         assert self._controller._steps == 0
-        assert np.array_equal(result[1],np.zeros([2,2,2]))
+        assert np.array_equal(result[1], np.zeros([2, 2, 2]))
         self._controller.model.active_workflow.execute_step.assert_called_once_with(0, result_dict, [active_layer])
 
     def test_setup_params_sweep(self):
@@ -398,9 +428,9 @@ class TestWorkflowStepsController:
         # test nested list
         assert self._controller._setup_params_sweep([[3.0]], [[4]]) == ([3.0], [4])
         # test numpy array
-        result = self._controller._setup_params_sweep(np.arange(1,2,1), np.arange(1.0,3.0,1.0))
+        result = self._controller._setup_params_sweep(np.arange(1, 2, 1), np.arange(1.0, 3.0, 1.0))
         assert result[0] == 1
-        assert np.array_equal(result[1], np.arange(1.0,3.0,1.0))
+        assert np.array_equal(result[1], np.arange(1.0, 3.0, 1.0))
 
     def test_on_step_processed_first_run(self):
         # Test when first step being ran for first time (no sweep)
@@ -408,7 +438,7 @@ class TestWorkflowStepsController:
         test_step = create_autospec(WorkflowStep)
         test_step.step_number = 1
         test_step.name = "test"
-        test_array = np.zeros([2,2,2])
+        test_array = np.zeros([2, 2, 2])
         layers = [MockLayer("test", ndim=3), MockLayer("test2", ndim=3), MockLayer("test3", ndim=3)]
         self._controller.viewer.layers = layers
 
@@ -467,7 +497,9 @@ class TestWorkflowStepsController:
 
         # assert
         self._controller.view.increment_progress_bar.assert_called_once()
-        self._controller.viewer.add_image_layer.assert_called_once_with(test_array, name=f"{test_step.step_number}: {test_step.name}")
+        self._controller.viewer.add_image_layer.assert_called_once_with(
+            test_array, name=f"{test_step.step_number}: {test_step.name}"
+        )
 
     def test_on_run_all_started(self):
         self._controller._on_run_all_started()
@@ -506,26 +538,3 @@ class TestWorkflowStepsController:
     def test_open_sweep_ui(self):
         self._controller.open_sweep_ui({"test_param": 1}, 1)
         ParamSweepWidget.assert_called_once()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
