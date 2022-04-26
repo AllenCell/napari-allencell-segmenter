@@ -138,8 +138,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                                 "Run segmentation out of order",
                             )
                         else:
-                            step_required_name = self.model.active_workflow.workflow_definition \
-                                .steps[step_to_run.parent[0] - 1].name
+                            step_required_name = self.model.active_workflow.workflow_definition.steps[
+                                step_to_run.parent[0] - 1
+                            ].name
                             response = self.warn_box(
                                 f"You currently have the layer {selected_layer.name} selected in napari which will "
                                 f"be used as the input layer. You will run this segmentation"
@@ -162,8 +163,9 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                                 "Run segmentation out of order",
                             )
                         else:
-                            step_required_name = self.model.active_workflow.workflow_definition \
-                                .steps[step_to_run.parent[0] - 1].name
+                            step_required_name = self.model.active_workflow.workflow_definition.steps[
+                                step_to_run.parent[0] - 1
+                            ].name
                             response = self.warn_box(
                                 f"You currently have the layer {selected_layer.name} selected in napari which will "
                                 f"be used as the input layer. You will run this segmentation"
