@@ -2,7 +2,6 @@ from qtpy.QtGui import QPixmap, QIcon
 from qtpy.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout, QWidget, QPushButton
 
 from napari_allencell_segmenter.util.directories import Directories
-from napari.qt import get_stylesheet
 
 
 class CollapsibleBox(QWidget):

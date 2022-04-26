@@ -5,7 +5,6 @@ from napari_allencell_segmenter.core.view import View
 from qtpy.QtWidgets import QMessageBox
 from napari_allencell_segmenter.core._interfaces import IApplication, IRouter
 from napari_allencell_segmenter.core.viewer_abstraction import ViewerAbstraction
-from napari.qt import get_stylesheet
 
 
 class Controller(ABC):
