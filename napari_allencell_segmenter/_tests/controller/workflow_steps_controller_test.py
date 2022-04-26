@@ -12,6 +12,7 @@ from napari_allencell_segmenter.widgets.param_sweep_widget import ParamSweepWidg
 from napari.qt.threading import create_worker, GeneratorWorker
 from ..mocks import MockLayer, MockWorker
 from aicssegmentation.workflow import WorkflowEngine, WorkflowStep, WorkflowDefinition
+from napari.layers import Image
 
 import numpy as np
 
@@ -78,6 +79,235 @@ class TestWorkflowStepsController:
         self._controller._worker.yielded.connect.assert_called_once_with(self._controller._on_step_processed_all)
         self._controller._worker.started.connect.assert_called_once_with(self._controller._on_run_all_started)
         self._controller._worker.finished.connect.assert_called_once_with(self._controller._on_run_all_finished)
+        self._controller._worker.start.assert_called_once()
+
+    @mock.patch("napari_allencell_segmenter.controller.workflow_steps_controller.create_worker")
+    def test_run_next_step(self, mock_create_worker: MagicMock):
+        # arrange
+        self._controller._run_lock = False
+        mock_create_worker.return_value = MockWorker()
+
+        # act
+        self._controller.run_next_step([{"param_test": 1}])
+
+        assert self._controller._worker is not None
+        mock_create_worker.assert_called_once_with(self._controller._run_next_step_async, [{"param_test": 1}])
+        self._controller._worker.yielded.connect.assert_called_once_with(self._controller._on_step_processed)
+        self._controller._worker.started.connect.assert_called_once_with(self._controller._on_run_all_started)
+        self._controller._worker.finished.connect.assert_called_once_with(self._controller._on_run_all_finished)
+        self._controller._worker.start.assert_called_once()
+
+    @mock.patch("napari_allencell_segmenter.controller.workflow_steps_controller.create_worker")
+    def test_run_step_no_images_selected(self, mock_create_worker: MagicMock):
+        # arrange
+        self._controller._run_lock = False
+        mock_create_worker.return_value = MockWorker()
+        workflow_with_parent = create_autospec(WorkflowDefinition)
+        workflow_with_parent.parent = [create_autospec(WorkflowDefinition),create_autospec(WorkflowDefinition)]
+        workflow_with_parent.name = "test_workflow_step"
+        self._controller.model.active_workflow.workflow_definition.steps = [
+            create_autospec(WorkflowDefinition),
+            workflow_with_parent,
+            create_autospec(WorkflowDefinition),
+        ]
+        self._controller.viewer.get_active_layer.return_value = []
+        self._controller.viewer.get_theme.return_value = "dark"
+
+        # act
+        with patch('napari_allencell_segmenter.controller.workflow_steps_controller.WorkflowStepsController.warn_box') as patched_func:
+            self._controller.run_step(1, [{"param_test": 1}])
+
+        self._controller.viewer.get_active_layer.assert_called_once()
+        patched_func.assert_called_once_with(
+            f"{workflow_with_parent.name} requires {len(workflow_with_parent.parent)} input images, but you have selected {0} images."
+            f"\nPlease select {len(workflow_with_parent.parent)} images by ctrl+clicking.",
+            "Wrong number of input images selected",
+            one_option=True,
+
+        )
+        assert self._controller._worker is None
+
+        # assert self._controller._worker is not None
+        # mock_create_worker.assert_called_once_with(self._controller._run_step_async, 1, [{"param_test": 1}])
+        # self._controller._worker.yielded.connect.assert_called_once_with(self._controller._on_step_processed)
+        # self._controller._worker.started.connect.assert_called_once_with(self._controller._on_run_all_started)
+        # self._controller._worker.finished.connect.assert_called_once_with(self._controller._on_run_step_finished)
+        # self._controller._worker.start.assert_called_once()
+
+    @mock.patch("napari_allencell_segmenter.controller.workflow_steps_controller.create_worker")
+    def test_run_step_out_of_order_parent_not_zero(self, mock_create_worker: MagicMock):
+        # arrange
+        self._controller._run_lock = False
+        mock_create_worker.return_value = MockWorker()
+        # step to run
+        workflow_with_parent = create_autospec(WorkflowDefinition)
+        workflow_with_parent.parent = [1]
+        workflow_with_parent.name = "test_workflow_step"
+
+        parent = create_autospec(WorkflowDefinition)
+        parent.parent = [0]
+        parent.name = "test_workflow_step_parent"
+        self._controller.model.active_workflow.workflow_definition.steps = [
+            parent,
+            workflow_with_parent,
+            create_autospec(WorkflowDefinition),
+        ]
+        # selected layer
+        test_image = create_autospec(Image)
+        test_image.name = "2. test_workflow_step"
+        self._controller.viewer.get_active_layer.return_value = [test_image]
+        self._controller.viewer.get_theme.return_value = "dark"
+
+        # act
+        with patch(
+                'napari_allencell_segmenter.controller.workflow_steps_controller.WorkflowStepsController.warn_box') as patched_func:
+            self._controller.run_step(1, [{"param_test": 2}])
+
+        self._controller.viewer.get_active_layer.assert_called_once()
+        patched_func.assert_called_once_with(
+            f"You currently have the layer {test_image.name} selected in napari which will be used as the input layer. You will run this segmentation"
+            f" out of order. To run the segmentation in order, please select a layer that is the output of "
+            f"{1}. {parent.name}."
+            f"\n Would you like to continue?",
+            "Run segmentation out of order",
+
+        )
+        assert self._controller._worker is None
+
+    @mock.patch("napari_allencell_segmenter.controller.workflow_steps_controller.create_worker")
+    def test_run_step_out_of_order_parent_zero(self, mock_create_worker: MagicMock):
+        # arrange
+        self._controller._run_lock = False
+        mock_create_worker.return_value = MockWorker()
+        # step to run
+        workflow_with_parent = create_autospec(WorkflowDefinition)
+        workflow_with_parent.name = "test_workflow_step"
+        workflow_with_parent.parent = [0]
+
+        self._controller.model.active_workflow.workflow_definition.steps = [
+            workflow_with_parent,
+            create_autospec(WorkflowDefinition),
+        ]
+        # selected layer
+        test_image = create_autospec(Image)
+        test_image.name = "1. test_workflow_step"
+        self._controller.viewer.get_active_layer.return_value = [test_image]
+        self._controller.viewer.get_theme.return_value = "dark"
+
+        # act
+        with patch(
+                'napari_allencell_segmenter.controller.workflow_steps_controller.WorkflowStepsController.warn_box') as patched_func:
+            self._controller.run_step(0, [{"param_test": 2}])
+
+        self._controller.viewer.get_active_layer.assert_called_once()
+        patched_func.assert_called_once_with(
+            f"You currently have the layer {test_image.name} selected in napari which will be used as the input layer. You will run this segmentation"
+            f" out of order. \nTo run the segmentation in order, please select the starting image (step 0) as the "
+            f"input layer for this step. "
+            f"\n Would you still like to continue?",
+            "Run segmentation out of order",)
+
+        assert self._controller._worker is None
+
+    @mock.patch("napari_allencell_segmenter.controller.workflow_steps_controller.create_worker")
+    def test_run_step_invalid_layer_selected(self, mock_create_worker: MagicMock):
+        # arrange
+        self._controller._run_lock = False
+        mock_create_worker.return_value = MockWorker()
+        # step to run
+        workflow_with_parent = create_autospec(WorkflowDefinition)
+        workflow_with_parent.name = "test_workflow_step"
+        workflow_with_parent.parent = [0]
+
+        self._controller.model.active_workflow.workflow_definition.steps = [
+            workflow_with_parent,
+            create_autospec(WorkflowDefinition),
+        ]
+        # selected layer
+        test_image = create_autospec(Image)
+        test_image.name = "test_workflow_step"
+        self._controller.viewer.get_active_layer.return_value = [test_image]
+        self._controller.viewer.get_theme.return_value = "dark"
+
+        # act
+        with patch(
+                'napari_allencell_segmenter.controller.workflow_steps_controller.WorkflowStepsController.warn_box') as patched_func:
+            self._controller.run_step(0, [{"param_test": 2}])
+
+        self._controller.viewer.get_active_layer.assert_called_once()
+        patched_func.assert_called_once_with(
+            f"You currently have the layer {test_image.name} selected in napari which will be used as the input layer. You will run this segmentation"
+            f" out of order. \nTo run the segmentation in order, please select the starting image (step 0) as the "
+            f"input layer for this step. "
+            f"\n Would you still like to continue?",
+            "Run segmentation out of order",)
+
+        assert self._controller._worker is None
+
+    @mock.patch("napari_allencell_segmenter.controller.workflow_steps_controller.create_worker")
+    def test_run_step_no_warnings(self, mock_create_worker: MagicMock):
+        # arrange
+        self._controller._run_lock = False
+        mock_create_worker.return_value = MockWorker()
+        # step to run
+        workflow_with_parent = create_autospec(WorkflowDefinition)
+        workflow_with_parent.name = "test_workflow_step"
+        workflow_with_parent.parent = [1]
+
+        self._controller.model.active_workflow.workflow_definition.steps = [
+            workflow_with_parent,
+            create_autospec(WorkflowDefinition),
+        ]
+        # selected layer
+        test_image = create_autospec(Image)
+        test_image.name = "1. test_workflow_step"
+        self._controller.viewer.get_active_layer.return_value = [test_image]
+        self._controller.viewer.get_theme.return_value = "dark"
+
+        # act
+        self._controller.run_step(0, [{"param_test": 2}])
+
+        self._controller.viewer.get_active_layer.assert_called_once()
+        assert self._controller._worker is not None
+        mock_create_worker.assert_called_once_with(self._controller._run_step_async, 0, [{"param_test": 2}])
+        self._controller._worker.yielded.connect.assert_called_once_with(self._controller._on_step_processed)
+        self._controller._worker.started.connect.assert_called_once_with(self._controller._on_run_all_started)
+        self._controller._worker.finished.connect.assert_called_once_with(self._controller._on_run_step_finished)
+        self._controller._worker.start.assert_called_once()
+
+    @mock.patch("napari_allencell_segmenter.controller.workflow_steps_controller.create_worker")
+    def test_run_step_sweep_no_params(self, mock_create_worker):
+        mock_widget = create_autospec(ParamSweepWidget)
+        mock_widget.step_number = 1
+        mock_widget.param_set = None
+        self._controller.run_lock = False
+
+        self._controller.run_step_sweep(mock_widget, [['1', '1', '1']])
+
+        assert self._controller._worker is not None
+        mock_create_worker.assert_called_once_with(self._controller._run_step_async, mock_widget.step_number, None)
+        self._controller._worker.yielded.connect.assert_called_once_with(self._controller._on_step_processed)
+        self._controller._worker.started.connect.assert_called_once_with(self._controller._on_sweep_started)
+        self._controller._worker.finished.connect.assert_called_once_with(self._controller.on_sweep_finished)
+        self._controller._worker.start.assert_called_once()
+
+    @mock.patch("napari_allencell_segmenter.controller.workflow_steps_controller.create_worker")
+    def test_run_step_sweep_with_params(self, mock_create_worker):
+        mock_widget = create_autospec(ParamSweepWidget)
+        mock_widget.step_number = 1
+        mock_widget.param_set = {"test_param": 2}
+        self._controller.run_lock = False
+
+        with patch(
+                'napari_allencell_segmenter.controller.workflow_steps_controller.WorkflowStepsController._parse_inputs') as patched_func:
+            patched_func.return_value = {"test_param" : 1}
+            self._controller.run_step_sweep(mock_widget, [['1', '1', '1']])
+
+        assert self._controller._worker is not None
+        mock_create_worker.assert_called_once_with(self._controller._run_step_sweep_grid, mock_widget.step_number, mock_widget.param_set, {"test_param": 1})
+        self._controller._worker.yielded.connect.assert_called_once_with(self._controller._on_step_processed)
+        self._controller._worker.started.connect.assert_called_once_with(self._controller._on_sweep_started)
+        self._controller._worker.finished.connect.assert_called_once_with(self._controller.on_sweep_finished)
         self._controller._worker.start.assert_called_once()
 
 
