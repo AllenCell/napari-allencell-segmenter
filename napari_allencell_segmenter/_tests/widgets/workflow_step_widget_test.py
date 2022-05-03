@@ -1,3 +1,5 @@
+import copy
+
 from aicssegmentation.workflow import (
     WorkflowEngine,
     WorkflowStep,
@@ -6,8 +8,9 @@ from aicssegmentation.workflow import (
     WidgetType,
     WorkflowStepCategory,
 )
-from PyQt5.QtWidgets import QComboBox
+from PyQt5.QtWidgets import QComboBox, QPushButton
 from napari_allencell_segmenter.widgets.workflow_step_widget import WorkflowStepWidget
+from unittest.mock import MagicMock, create_autospec
 
 
 class TestWorkflowStepWidget:
@@ -17,6 +20,13 @@ class TestWorkflowStepWidget:
         for workflow in engine.workflow_definitions:
             for step in workflow.steps:
                 step_widget = WorkflowStepWidget(step)
+
+    def test_get_workflow_step_with_inputs(self):
+        #! todo test this
+        step_to_use = create_autospec(WorkflowStep)
+        widget = WorkflowStepWidget(step_to_use, 0)
+
+        assert widget.get_workflow_step_with_inputs() == copy.deepcopy(step_to_use)
 
     def test_step_with_no_params(self):
         # Arrange - this step's function has no parameters
@@ -112,3 +122,38 @@ class TestWorkflowStepWidget:
 
         # Assert
         assert parameter_inputs == expected_values
+
+    def test_enable_button(self):
+        step = create_autospec(WorkflowStep)
+        step.button = create_autospec(QPushButton)
+        widget = WorkflowStepWidget(step)
+
+        widget.enable_button()
+
+        assert widget.button.setEnabled.assertCalledOnceWith(True)
+
+    def test_disable_button(self):
+        step = create_autospec(WorkflowStep)
+        step.button = create_autospec(QPushButton)
+        widget = WorkflowStepWidget(step)
+        widget.disable_button()
+
+        assert widget.button.setDisabled.assertCalledOnceWith(False)
+
+    def test_add_param_rows(self):
+        param_data = [FunctionParameter("x", WidgetType.SLIDER, "int", min_value=1, max_value=100, increment=10),
+                      FunctionParameter("y", WidgetType.SLIDER, "int", min_value=1, max_value=10, increment=1),
+                      FunctionParameter("z", WidgetType.DROPDOWN, "int", min_value=1, max_value=1000, increment=100)]
+
+        step = create_autospec(WorkflowStep)
+        widget = WorkflowStepWidget(step)
+        widget._add_param_rows("test_param", param_data, 2.0)
+
+        widget._add_slider.assert_called_with("test_param", "test_param 1", param_data[0], 2.0)
+        widget._add_slider.assert_called_with("test_param", "test_param 2", param_data[1], 2.0)
+        widget._add_dropdown.assert_called_once_with("test_param", "test_param 3", param_data[2], 2.0)
+
+
+
+
+
