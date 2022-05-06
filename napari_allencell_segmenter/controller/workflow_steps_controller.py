@@ -318,7 +318,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
         self._worker.yielded.disconnect()
         self._worker.finished.disconnect()
 
-    def _parse_inputs(self, parameter_inputs: dict[str, Any], ui_input: List[List]) -> Dict[str, Any]:
+    def _parse_inputs(self, parameter_inputs: Dict[str, Any], ui_input: List[List[str]]) -> Dict[str, Any]:
         """
         Parse inputs from the UI to create run dictionaries to feed into the sweep functions.
         """
