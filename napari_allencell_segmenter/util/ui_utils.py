@@ -17,7 +17,7 @@ class UiUtils:
         if options is not None:
             str_options = [str(option) for option in options]
             dropdown.addItems(str_options)
-        if placeholder is None and default is not None:
+        if placeholder is None and default is not None and options is not None:
             default_index = options.index(default)
             dropdown.setCurrentIndex(default_index)
 
