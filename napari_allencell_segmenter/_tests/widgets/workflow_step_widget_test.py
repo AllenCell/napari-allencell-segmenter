@@ -16,7 +16,7 @@ class TestWorkflowStepWidget:
         engine = WorkflowEngine()
         for workflow in engine.workflow_definitions:
             for step in workflow.steps:
-                step_widget = WorkflowStepWidget(step)
+                step_widget = WorkflowStepWidget(step, 0)
 
     def test_step_with_no_params(self):
         # Arrange - this step's function has no parameters
@@ -24,10 +24,10 @@ class TestWorkflowStepWidget:
         step = WorkflowStep(WorkflowStepCategory.PRE_PROCESSING, function, 1, [2])
 
         # Act
-        widget = WorkflowStepWidget(step)
+        widget = WorkflowStepWidget(step, 0)
 
         # Assert
-        assert len(widget.form_rows) == 2
+        assert len(widget.form_rows) == 1
         assert widget.form_rows[0].label == ""
 
     def test_step_with_single_value_per_param(self):
@@ -40,10 +40,10 @@ class TestWorkflowStepWidget:
         step = WorkflowStep(WorkflowStepCategory.PRE_PROCESSING, function, 1, [2], parameter_values)
 
         # Act
-        widget = WorkflowStepWidget(step)
+        widget = WorkflowStepWidget(step, 0)
 
         # Assert
-        assert len(widget.form_rows) == 2
+        assert len(widget.form_rows) == 1
         assert widget.form_rows[0].label == "scaling_param"
         assert isinstance(widget.form_rows[0].widget, QComboBox)
 
@@ -60,10 +60,10 @@ class TestWorkflowStepWidget:
         step = WorkflowStep(WorkflowStepCategory.PRE_PROCESSING, function, 1, [2], parameter_values)
 
         # Act
-        widget = WorkflowStepWidget(step)
+        widget = WorkflowStepWidget(step, 0)
 
         # Assert
-        assert len(widget.form_rows) == 3
+        assert len(widget.form_rows) == 2
         assert widget.form_rows[0].label == "scaling_param 1"
         assert widget.form_rows[1].label == "scaling_param 2"
         assert isinstance(widget.form_rows[0].widget, QComboBox)
@@ -81,7 +81,7 @@ class TestWorkflowStepWidget:
         function = SegmenterFunction("Test", "Test", "my_function_name", "my_module_name", parameters)
         parameter_values = {"x": 5, "y": [1, 2]}
         step = WorkflowStep(WorkflowStepCategory.PRE_PROCESSING, function, 1, [0], parameter_values)
-        widget = WorkflowStepWidget(step)
+        widget = WorkflowStepWidget(step, 0)
 
         # Act
         parameter_inputs = widget.get_parameter_inputs()
@@ -102,7 +102,7 @@ class TestWorkflowStepWidget:
         parameter_values = {"x": 5, "y": [1, 2]}
         expected_values = {"x": 50, "y": [11, 22]}
         step = WorkflowStep(WorkflowStepCategory.PRE_PROCESSING, function, 1, [0], parameter_values)
-        widget = WorkflowStepWidget(step)
+        widget = WorkflowStepWidget(step, 0)
 
         # Act
         widget.form_rows[0].widget.value = 50  # x

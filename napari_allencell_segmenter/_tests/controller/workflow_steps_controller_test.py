@@ -322,27 +322,6 @@ class TestWorkflowStepsController:
         self._controller._worker.finished.connect.assert_called_once_with(self._controller.on_sweep_finished)
         self._controller._worker.start.assert_called_once()
 
-    def test_run_step_sweep_grid_one_param(self):
-        # selected layer
-        test_image = create_autospec(Image)
-        test_image.name = "2. test_workflow_step"
-        self._controller.viewer.get_active_layer.return_value = [test_image]
-
-        param_original = {"test_param": 0}
-        param_sweep = {"test_param": [1, 2, 3]}
-
-        with patch(
-            "napari_allencell_segmenter.controller.workflow_steps_controller."
-            "WorkflowStepsController._handle_sweep_single"
-        ) as patched_func:
-            patched_func.return_value = (create_autospec(WorkflowStep), np.zeros([2, 2, 2]))
-
-            generator = self._controller._run_step_sweep_grid(0, param_original, param_sweep)
-
-        print(next(generator))
-        patched_func.assert_called_once_with({"test_param": 1})
-        print(next(generator))
-
     @mock.patch("napari_allencell_segmenter.controller.workflow_steps_controller.SegmenterModel", return_value=2)
     def test_run_step_async(self, param):
         # unfinished
@@ -539,7 +518,3 @@ class TestWorkflowStepsController:
 
         self._controller.param_sweep_widget.set_run_finished.assert_called_once()
         assert not self._controller._run_lock
-
-    def test_open_sweep_ui(self):
-        self._controller.open_sweep_ui({"test_param": 1}, 1)
-        ParamSweepWidget.assert_called_once()
