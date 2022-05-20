@@ -2,14 +2,14 @@ from typing import List
 
 from aicssegmentation.workflow.workflow_definition import WorkflowDefinition
 from napari.layers.base.base import Layer
-from PyQt5.QtWidgets import (
+from qtpy.QtWidgets import (
     QComboBox,
     QLabel,
     QVBoxLayout,
     QWidget,
 )
-from PyQt5.QtGui import QStandardItem, QStandardItemModel
-from PyQt5 import QtCore
+from qtpy.QtGui import QStandardItem, QStandardItemModel
+from qtpy import QtCore
 
 from napari_allencell_segmenter.model.channel import Channel
 from napari_allencell_segmenter.model.segmenter_model import SegmenterModel

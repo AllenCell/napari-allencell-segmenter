@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QDoubleSpinBox
+from qtpy.QtWidgets import QDoubleSpinBox
 import magicgui.widgets
 
 

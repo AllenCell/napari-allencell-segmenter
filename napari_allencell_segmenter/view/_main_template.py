@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QFrame, QVBoxLayout, QScrollArea, QLabel
-from PyQt5.QtCore import Qt
+from qtpy.QtWidgets import QFrame, QVBoxLayout, QScrollArea, QLabel
+from qtpy.QtCore import Qt
 
 from napari_allencell_segmenter.core.view import ViewTemplate
 from napari_allencell_segmenter._style import Style

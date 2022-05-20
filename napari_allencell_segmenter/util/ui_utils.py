@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QComboBox
+from qtpy.QtWidgets import QComboBox
 
 from napari_allencell_segmenter.widgets.form import FormRow
 
