@@ -1,11 +1,9 @@
-from PyQt5.QtWidgets import QProgressBar, QVBoxLayout, QWidget, QLineEdit, QPushButton, QLabel
-from PyQt5.QtGui import QIntValidator
-from pathlib import Path
+from qtpy.QtWidgets import QProgressBar, QVBoxLayout, QWidget, QLineEdit, QPushButton, QLabel
+from qtpy.QtGui import QIntValidator
 from napari_allencell_segmenter.core.view import View
 from napari_allencell_segmenter.controller._interfaces import IBatchProcessingController
 from napari_allencell_segmenter.widgets.form import Form, FormRow
 from napari_allencell_segmenter.widgets.file_input import FileInput, FileInputMode
-from napari_allencell_segmenter.widgets.batch_complete_dialog import BatchCompleteDialog
 from ._main_template import MainTemplate
 
 
@@ -88,15 +86,6 @@ class BatchProcessingView(View):
             enabled: True to enable the button, false to disable it
         """
         self.btn_run_batch.setEnabled(enabled)
-
-    def open_completion_dialog(self, output_folder: Path):
-        """
-        Open the batch processing completion dialog box
-        Inputs:
-            output_folder (Path): output folder to open when prompted by user
-        """
-        dlg = BatchCompleteDialog(output_folder)
-        dlg.exec()
 
     def set_run_batch_in_progress(self):
         """

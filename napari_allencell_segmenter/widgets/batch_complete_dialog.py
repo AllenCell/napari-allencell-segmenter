@@ -2,7 +2,7 @@ import sys
 import subprocess
 
 from qtpy.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout, QDialog, QPushButton
-from PyQt5.QtCore import Qt
+from qtpy.QtCore import Qt
 from pathlib import Path
 
 

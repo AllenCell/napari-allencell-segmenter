@@ -1,5 +1,5 @@
 import pytest
-from PyQt5.QtWidgets import QLabel, QPushButton, QVBoxLayout
+from qtpy.QtWidgets import QLabel, QPushButton, QVBoxLayout
 
 from napari_allencell_segmenter.widgets.collapsible_box import CollapsibleBox
 from napari_allencell_segmenter.widgets.workflow_step_widget import WorkflowStepWidget

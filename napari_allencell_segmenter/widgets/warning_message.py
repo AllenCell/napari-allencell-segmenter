@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLabel
-from PyQt5.QtGui import QPixmap
+from qtpy.QtWidgets import QWidget, QHBoxLayout, QLabel
+from qtpy.QtGui import QPixmap
 from napari_allencell_segmenter.util.directories import Directories
 
 
