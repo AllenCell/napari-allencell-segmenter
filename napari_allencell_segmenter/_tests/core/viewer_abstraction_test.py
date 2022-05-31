@@ -41,4 +41,4 @@ class TestViewerAbstraction:
         active_layer = self._viewer_abstraction.get_active_layer()
 
         # Assert
-        assert active_layer == expected_layer
+        assert active_layer == [expected_layer]

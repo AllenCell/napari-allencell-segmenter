@@ -55,9 +55,10 @@ class WorkflowStepsView(View):  # pragma: no-cover
         # Add all widgets
         self._add_workflow_title()
         self._add_progress_bar()
-        self._add_workflow_steps(WorkflowStepCategory.PRE_PROCESSING)
-        self._add_workflow_steps(WorkflowStepCategory.CORE)
-        self._add_workflow_steps(WorkflowStepCategory.POST_PROCESSING)
+        steps = 0
+        steps = self._add_workflow_steps(WorkflowStepCategory.PRE_PROCESSING, steps)
+        steps = self._add_workflow_steps(WorkflowStepCategory.CORE, steps)
+        steps = self._add_workflow_steps(WorkflowStepCategory.POST_PROCESSING, steps)
         self._layout.addSpacing(20)
         self._layout.addStretch()
         self._add_bottom_buttons()
@@ -113,17 +114,22 @@ class WorkflowStepsView(View):  # pragma: no-cover
                 labels_layout.addStretch()
         self._layout.addWidget(progress_labels)
 
-    def _add_workflow_steps(self, category: WorkflowStepCategory):
+    def _add_workflow_steps(self, category: WorkflowStepCategory, steps: int):
         # Add category label, e.g., "Preprocessing"
         category_label = QLabel(category.value.upper())
         category_label.setObjectName("categoryLabel")
         self._layout.addWidget(category_label)
-
         # Add a widget for all the steps in this category
+        i = steps
         for step in filter(lambda step: step.category == category, self._workflow.workflow_definition.steps):
-            self._layout.addWidget(WorkflowStepWidget(step))
+            if i == 0:
+                self._layout.addWidget(WorkflowStepWidget(step, i, steps_view=self, enable_button=True))
+            else:
+                self._layout.addWidget(WorkflowStepWidget(step, i, steps_view=self, enable_button=False))
+            i = i + 1
 
         self._layout.addSpacing(10)
+        return i
 
     def _add_bottom_buttons(self):
         layout = QHBoxLayout()
@@ -177,7 +183,6 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self.modal_close_workflow.setText(f"Workflow: {self._workflow.workflow_definition.name}")
         self.modal_close_workflow.setInformativeText(prompt)
         self.modal_close_workflow.setStandardButtons(QMessageBox.Cancel)
-
         # Modal buttons
         self.btn_close_keep = self.modal_close_workflow.addButton("Close workflow", QMessageBox.AcceptRole)
         self.btn_close_keep.clicked.connect(self._btn_close_keep_clicked)
@@ -193,12 +198,23 @@ class WorkflowStepsView(View):  # pragma: no-cover
         self.btn_run_all.clicked.disconnect()
         self.btn_run_all.clicked.connect(self._btn_run_all_clicked)
 
+    def reset_run_step(self):
+        self.btn_run_all.setText("Run all")
+        self.btn_run_all.clicked.disconnect()
+        self.btn_run_all.clicked.connect(self._btn_run_all_clicked)
+
     def increment_progress_bar(self):
         value = self.progress_bar.value()
         self.progress_bar.setValue(value + 1)
 
+    def set_progress_bar(self, i: int):
+        self.progress_bar.setValue(i + 1)
+
     def _get_workflow_step_widgets(self) -> List[WorkflowStepWidget]:
         return self.findChildren(WorkflowStepWidget)
+
+    def get_controller(self):
+        return self._controller
 
     #####################################################################
     # Event handlers
@@ -233,3 +249,11 @@ class WorkflowStepsView(View):  # pragma: no-cover
         if file_path:
             steps = [w.get_workflow_step_with_inputs() for w in self._get_workflow_step_widgets()]
             self._controller.save_workflow(steps, file_path)
+
+    def btn_run_clicked(self, step_index: int):
+        parameters_for_step = self._get_workflow_step_widgets()[step_index].get_parameter_inputs()
+        self._controller.run_step(step_index, parameters_for_step)
+
+    def open_sweep_ui(self, step_index: int):
+        params_for_step = self._get_workflow_step_widgets()[step_index].get_parameter_inputs()
+        self._controller.open_sweep_ui(params_for_step, step_index)
