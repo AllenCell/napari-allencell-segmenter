@@ -1,6 +1,6 @@
 import copy
 from typing import Any, Dict, List, Union
-from qtpy.QtWidgets import QComboBox
+from PyQt5.QtWidgets import QComboBox, QPushButton, QFrame, QHBoxLayout
 
 from aicssegmentation.workflow import WorkflowStep, FunctionParameter, WidgetType
 from magicgui.widgets import Slider
@@ -22,12 +22,17 @@ class WorkflowStepWidget(QWidget):
         step (WorkflowStep): WorkflowStep object for this widget
     """
 
-    def __init__(self, step: WorkflowStep):
+    def __init__(self, step: WorkflowStep, index: int, steps_view=None, enable_button: bool = False):
         super().__init__()
         if step is None:
             raise ValueError("step")
-        self._step = step
+        self.step = step
+        self.name = step.name
+        self.index = index
         self.form_rows: List[FormRow] = list()
+        self.button = QPushButton(f"Run {step.name}")
+        self.button.clicked.connect(lambda: steps_view.btn_run_clicked(self.index))
+        self.steps_view = steps_view
 
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
@@ -42,15 +47,28 @@ class WorkflowStepWidget(QWidget):
                 default_values = step.parameter_values[param_name]
                 self._add_param_rows(param_name, param_data, default_values)
 
+        buttons = QFrame()
+        buttons.setStyleSheet("border: none;")
+        buttons.setLayout(QHBoxLayout())
+
+        buttons.layout().addWidget(self.button)
+
+        if not enable_button:
+            self.button.setDisabled(True)
+        box_contents = QVBoxLayout()
+        box_contents.addLayout(Form(self.form_rows, (11, 5, 5, 5)))
+        box_contents.addWidget(buttons)
+
         step_name = f"<span>{step.step_number}.&nbsp;{step.name}</span>"
-        box = CollapsibleBox(step_name, Form(self.form_rows, (11, 5, 5, 5)))
+        box = CollapsibleBox(step_name, box_contents, self)
+
         layout.addWidget(box)
 
     def get_workflow_step_with_inputs(self) -> WorkflowStep:
         """
         Returns a new WorkflowStep object with updated parameter values to reflect user input
         """
-        new_step = copy.deepcopy(self._step)
+        new_step = copy.deepcopy(self.step)
         new_step.parameter_values = self.get_parameter_inputs()
         return new_step
 
@@ -58,10 +76,10 @@ class WorkflowStepWidget(QWidget):
         """
         Returns all parameter input values for the as a dictionary {param_name: param_value}
         """
-        if self._step.parameter_values is None:
+        if self.step.parameter_values is None:
             return None
 
-        parameter_inputs = copy.deepcopy(self._step.parameter_values)
+        parameter_inputs = copy.deepcopy(self.step.parameter_values)
 
         for parameter_name in parameter_inputs.keys():
             # If default values for this param came in a list, we need to save values
@@ -73,31 +91,39 @@ class WorkflowStepWidget(QWidget):
 
         for param_row in self.form_rows:
             # Grab the current value from the row, along with its param name
-            if isinstance(param_row.widget, QComboBox):
-                # Row contains a dropdown
-                name = param_row.widget.objectName()
-                value = param_row.widget.currentText()
+            if not isinstance(param_row.widget, QFrame):
+                # skip buttons
+                if isinstance(param_row.widget, QComboBox):
+                    # Row contains a dropdown
+                    name = param_row.widget.objectName()
+                    value = param_row.widget.currentText()
 
-                # Convert for each data datatype
-                data_type = self._step.function.parameters[name][0].data_type
-                if data_type == "bool":
-                    value = Convert.to_boolean(value)
-                elif data_type == "int":
-                    value = int(value)
-                elif data_type == "float":
-                    value = float(value)
-            else:
-                # Row contains a Magicgui Slider or FloatSlider
-                name = param_row.widget.native.objectName()
-                value = param_row.widget.get_value()
+                    # Convert for each data datatype
+                    data_type = self.step.function.parameters[name][0].data_type
+                    if data_type == "bool":
+                        value = Convert.to_boolean(value)
+                    elif data_type == "int":
+                        value = int(value)
+                    elif data_type == "float":
+                        value = float(value)
+                else:
+                    # Row contains a Magicgui Slider or FloatSlider
+                    name = param_row.widget.native.objectName()
+                    value = param_row.widget.get_value()
 
-            # Populate self.parameter_inputs
-            if isinstance(parameter_inputs[name], list):
-                parameter_inputs[name].append(value)
-            else:
-                parameter_inputs[name] = value
+                # Populate self.parameter_inputs
+                if isinstance(parameter_inputs[name], list):
+                    parameter_inputs[name].append(value)
+                else:
+                    parameter_inputs[name] = value
 
         return parameter_inputs
+
+    def enable_button(self):
+        self.button.setEnabled(True)
+
+    def disable_button(self):
+        self.button.setDisabled(True)
 
     def _add_param_rows(
         self, param_name: str, param_data: List[FunctionParameter], default_values: Union[List, str, bool, int, float]

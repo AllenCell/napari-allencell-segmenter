@@ -1,5 +1,5 @@
-from qtpy.QtGui import QPixmap
-from qtpy.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout, QWidget
+from qtpy.QtGui import QPixmap, QIcon
+from qtpy.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout, QWidget, QPushButton
 
 from napari_allencell_segmenter.util.directories import Directories
 
@@ -16,7 +16,7 @@ class CollapsibleBox(QWidget):
         isOpen (bool):              Whether the widget is open or collapsed by default
     """
 
-    def __init__(self, title, content_layout, isOpen=False):
+    def __init__(self, title, content_layout, step_widget, isOpen=False):
         super().__init__()
         self._title = title
         # TODO: Refactor to avoid requiring a content_layout argument at object creation:
@@ -24,7 +24,7 @@ class CollapsibleBox(QWidget):
         self._content_layout = content_layout
         self.isOpen = isOpen
 
-        self.title_box = self._create_title_box()
+        self.title_box = self._create_title_box(step_widget)
         self.content_box = self._create_content_box()
 
         layout = QVBoxLayout()
@@ -35,7 +35,7 @@ class CollapsibleBox(QWidget):
         layout.addWidget(self.title_box)
         layout.addWidget(self.content_box)
 
-    def _create_title_box(self):
+    def _create_title_box(self, step_widget):
         title_box = QFrame()
         title_box_layout = QHBoxLayout()
         title_box_layout.setContentsMargins(11, 9, 9, 9)
@@ -45,11 +45,30 @@ class CollapsibleBox(QWidget):
             title_box.setObjectName("titleBoxClosed")
 
         title = QLabel(self._title)
-        icon = QLabel()
-        icon.setPixmap(QPixmap(str(Directories.get_assets_dir() / "icons/gear.svg")))
+
+        sweep_button = QPushButton()
+        sweep_button.setIcon(QIcon(QPixmap(str(Directories.get_assets_dir() / "icons/icon-parameter-sweep.svg"))))
+        sweep_button.setToolTip("Open parameter sweep window")
+        sweep_button.clicked.connect(lambda: step_widget.steps_view.open_sweep_ui(step_widget.index))
+        if step_widget.step.function.parameters is None:
+            sweep_button.setEnabled(False)
+        self.expand_button = QPushButton()
+        self.expand_button.setIcon(
+            QIcon(QPixmap(str(Directories.get_assets_dir() / "icons/expand_more_black_24dp.svg")))
+        )
+        self.expand_button.setToolTip("Expand to see parameters")
+        self.expand_button.clicked.connect(self.toggle)
+
+        # icon = QLabel()
+        # icon.setPixmap(QPixmap(str(Directories.get_assets_dir() / "icons/expand_more_black_24dp.svg")))
         title_box_layout.addWidget(title)
         title_box_layout.addStretch()
-        title_box_layout.addWidget(icon)
+        title_box_layout.addWidget(sweep_button)
+        title_box_layout.addWidget(self.expand_button)
+        # icon = QLabel()
+        # icon.setPixmap(QPixmap(str(Directories.get_assets_dir() / "icons/warning.png")))
+        #
+        # title_box_layout.addWidget(icon)
 
         return title_box
 
@@ -71,6 +90,9 @@ class CollapsibleBox(QWidget):
             self.content_box.show()
             self.title_box.setObjectName("")
             self.title_box.setStyle(self.title_box.style())
+            self.expand_button.setIcon(
+                QIcon(QPixmap(str(Directories.get_assets_dir() / "icons/expand_less_black_24dp.svg")))
+            )
 
     def close(self):
         if self.isOpen:
@@ -78,6 +100,9 @@ class CollapsibleBox(QWidget):
             self.content_box.hide()
             self.title_box.setObjectName("titleBoxClosed")
             self.title_box.setStyle(self.title_box.style())
+            self.expand_button.setIcon(
+                QIcon(QPixmap(str(Directories.get_assets_dir() / "icons/expand_more_black_24dp.svg")))
+            )
 
     def toggle(self):
         if self.isOpen:
@@ -86,6 +111,6 @@ class CollapsibleBox(QWidget):
             self.open()
 
     # Overwrite default QWidget.mousePressEvent() method
-    def mousePressEvent(self, event):
-        if self.title_box.underMouse():
-            self.toggle()
+    # def mousePressEvent(self, event):
+    #     if self.title_box.underMouse():
+    #         self.toggle()

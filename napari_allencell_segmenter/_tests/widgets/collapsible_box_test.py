@@ -2,6 +2,9 @@ import pytest
 from qtpy.QtWidgets import QLabel, QPushButton, QVBoxLayout
 
 from napari_allencell_segmenter.widgets.collapsible_box import CollapsibleBox
+from napari_allencell_segmenter.widgets.workflow_step_widget import WorkflowStepWidget
+from aicssegmentation.workflow import WorkflowStep, SegmenterFunction
+from unittest.mock import MagicMock, create_autospec
 
 
 class TestCollapsibleBox:
@@ -9,8 +12,13 @@ class TestCollapsibleBox:
         layout = QVBoxLayout()
         layout.addWidget(QLabel("This is a label"))
         layout.addWidget(QPushButton("This is a button"))
+        widget = create_autospec(WorkflowStepWidget)
+        step = create_autospec(WorkflowStep)
+        step.function = create_autospec(SegmenterFunction)
+        step.function.parameters = None
+        widget.step = step
 
-        self.collapsible_box = CollapsibleBox("1. Intensity Normalization", layout)
+        self.collapsible_box = CollapsibleBox("1. Intensity Normalization", layout, widget)
 
     def test_open(self):
         # Assert - box should be closed and contents hidden

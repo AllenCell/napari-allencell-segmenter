@@ -53,7 +53,7 @@ class TestWorkflowSelectController:
             create_autospec(WorkflowDefinition),
         ]
         self._mock_viewer.get_layers.return_value = layers
-        self._mock_viewer.get_active_layer.return_value = active_layer
+        self._mock_viewer.get_active_layer.return_value = [active_layer]
         type(self._mock_workflow_engine).workflow_definitions = PropertyMock(return_value=workflows)
         self._mock_layer_reader.get_channels.return_value = channels
 

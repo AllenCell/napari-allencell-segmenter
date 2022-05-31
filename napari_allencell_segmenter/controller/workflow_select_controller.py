@@ -34,7 +34,7 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
         self.model.layers = self._get_3D_layers()
 
         # pre-selection
-        active_layer = self.viewer.get_active_layer()
+        active_layer = self.viewer.get_active_layer()[0]
         if active_layer is not None and active_layer.name in self.model.layers:
             self.model.selected_layer = active_layer
             self.model.channels = self._layer_reader.get_channels(self.model.selected_layer)
@@ -73,7 +73,7 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
 
         self.viewer.add_image_layer(
             channel_data,
-            name="0. "
+            name="0: "
             + self.model.selected_layer.name
             + ": ch["
             + str(self.model.selected_channel.index)
