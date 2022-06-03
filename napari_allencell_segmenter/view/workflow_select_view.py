@@ -167,7 +167,6 @@ class WorkflowSelectView(View):
             self._controller.unselect_layer()
         else:
             self._controller.select_layer(self._combo_layers.itemText(index))
-            print(f"selected layer {self._combo_layers.itemText(index)}") # remove this (test)
 
     def _combo_channels_activated(self, index: int):
         if index == 0:
