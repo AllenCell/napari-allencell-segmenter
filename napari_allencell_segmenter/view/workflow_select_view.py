@@ -36,6 +36,7 @@ class WorkflowSelectView(View):
             raise ValueError("controller")
         self._controller = controller
         self.setObjectName("workflowSelectView")
+        self.layer_list_len = 0
 
     def load(self, model: SegmenterModel):
         self._setup_ui()
@@ -95,7 +96,9 @@ class WorkflowSelectView(View):
             self._load_image_warning.setVisible(True)
             self._combo_layers.setEnabled(False)
         else:
-            self._combo_layers.addItems(layers)
+            # add the layers reversed to match UI sidebar on napari
+            self._combo_layers.addItems(layers.reverse())
+            self.layer_list_len = len(layers)
             if selected_layer is not None:
                 self._combo_layers.setCurrentText(selected_layer.name)
             self._combo_layers.setEnabled(True)
@@ -164,6 +167,7 @@ class WorkflowSelectView(View):
             self._controller.unselect_layer()
         else:
             self._controller.select_layer(self._combo_layers.itemText(index))
+            print(f"selected layer {self._combo_layers.itemText(index)}") # remove this (test)
 
     def _combo_channels_activated(self, index: int):
         if index == 0:
