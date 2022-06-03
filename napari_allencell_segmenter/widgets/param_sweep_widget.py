@@ -112,6 +112,7 @@ class ParamSweepWidget(QDialog):
                     # for params that are a dropdown
                     if default_params[key][0].widget_type.name == "DROPDOWN":
                         dropdown = QComboBox()
+                        dropdown.setStyleSheet("QComboBox { combobox-popup: 0; }")
                         dropdown.addItems(default_params[key][0].options)
                         self.inputs[key] = dropdown
                         rows.append(FormRow(key, widget=dropdown))
