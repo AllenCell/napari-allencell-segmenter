@@ -12,6 +12,7 @@ class UiUtils:
         """
         dropdown = QComboBox()
         dropdown.setDisabled(not enabled)
+        dropdown.setStyleSheet("QComboBox { combobox-popup: 0; }")
         if placeholder is not None:
             dropdown.addItem(placeholder)
         if options is not None:
