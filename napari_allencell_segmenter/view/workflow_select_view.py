@@ -60,10 +60,14 @@ class WorkflowSelectView(View):
         # Dropdowns
         layers_dropdown = UiUtils.dropdown_row("1.", "Select a 3D Napari image layer", enabled=False)
         self._combo_layers = layers_dropdown.widget
+        self._combo_layers.setStyleSheet("QComboBox { combobox-popup: 0; }")
+        self._combo_layers.setMaxVisibleItems(20)
         self._combo_layers.activated.connect(self._combo_layers_activated)
 
         channels_dropdown = UiUtils.dropdown_row("2.", "Select a 3D image data channel", enabled=False)
         self._combo_channels = channels_dropdown.widget
+        self._combo_channels.setStyleSheet("QComboBox { combobox-popup: 0; }")
+        self._combo_channels.setMaxVisibleItems(20)
         self._combo_channels.activated.connect(self._combo_channels_activated)
 
         layer_channel_selections = QWidget()
