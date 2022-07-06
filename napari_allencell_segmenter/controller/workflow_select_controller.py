@@ -35,7 +35,7 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
 
         # pre-selection
         active_layer = None
-        if len(self.viewer.get_active_layer() > 0):
+        if len(self.viewer.get_active_layer()) > 0:
             active_layer = self.viewer.get_active_layer()[0]
 
         if active_layer is not None and active_layer.name in self.model.layers:
