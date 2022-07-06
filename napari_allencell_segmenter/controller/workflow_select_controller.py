@@ -37,7 +37,7 @@ class WorkflowSelectController(Controller, IWorkflowSelectController):
         active_layer = None
         if len(self.viewer.get_active_layer() > 0):
             active_layer = self.viewer.get_active_layer()[0]
-            
+
         if active_layer is not None and active_layer.name in self.model.layers:
             self.model.selected_layer = active_layer
             self.model.channels = self._layer_reader.get_channels(self.model.selected_layer)
