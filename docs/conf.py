@@ -48,9 +48,9 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"napari-allencell-segmenter"
-copyright = u"2015, Jamie Sherman"
-author = u"Jamie Sherman"
+project = "napari-allencell-segmenter"
+copyright = "2015, Jamie Sherman"
+author = "Jamie Sherman"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -225,8 +225,8 @@ latex_documents = [
     (
         master_doc,
         "napari-cookiecutterplugin_name.tex",
-        u"napari-\\{\\{cookiecutter.plugin\\_name\\}\\} Documentation",
-        u"\\{\\{cookiecutter.full\\_name\\}\\}",
+        "napari-\\{\\{cookiecutter.plugin\\_name\\}\\} Documentation",
+        "\\{\\{cookiecutter.full\\_name\\}\\}",
         "manual",
     ),
 ]
@@ -256,7 +256,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "napari-cookiecutterplugin_name", u"napari-allencell-segmenter Documentation", [author], 1)]
+man_pages = [(master_doc, "napari-cookiecutterplugin_name", "napari-allencell-segmenter Documentation", [author], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
@@ -271,7 +271,7 @@ texinfo_documents = [
     (
         master_doc,
         "napari-cookiecutterplugin_name",
-        u"napari-allencell-segmenter Documentation",
+        "napari-allencell-segmenter Documentation",
         author,
         "napari-cookiecutterplugin_name",
         "One line description of project.",

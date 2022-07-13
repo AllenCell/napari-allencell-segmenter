@@ -99,7 +99,9 @@ class WorkflowSelectView(View):
             self._load_image_warning.setVisible(True)
             self._combo_layers.setEnabled(False)
         else:
-            self._combo_layers.addItems(layers)
+            # reverse layer list when adding to combobox
+            # to mimic layer list on napari ui
+            self._combo_layers.addItems(layers[::-1])
             if selected_layer is not None:
                 self._combo_layers.setCurrentText(selected_layer.name)
             self._combo_layers.setEnabled(True)
