@@ -86,7 +86,7 @@ class TestWorkflowSelectView:
         self._view._combo_layers.activated.emit(1)
 
         # Assert
-        self._mock_controller.select_layer.assert_called_with("Layer 1")
+        self._mock_controller.select_layer.assert_called_with("Layer 3")
 
     def test_combo_layers_activated_unselect(self):
         # Arrange
