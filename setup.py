@@ -17,7 +17,7 @@ requirements = [
     "napari>=0.4.9",
     "napari-plugin-engine>=0.1.4",
     "numpy",
-    "aicssegmentation ~= 0.4.1",
+    "aicssegmentation >= 0.5.0",
     "magicgui >= 0.2.9",
     "aicsimageio ~= 4.0.5",
     "opencv-python-headless>=4.5.1",
@@ -54,7 +54,7 @@ dev_requirements = [
     "quilt3>=3.1.12",
     "Sphinx>=2.0.0b1,<3",
     "sphinx_rtd_theme>=0.1.2",
-    "tox>=3.5.2",
+    "tox==3.25.0",
     "twine>=1.13.0",
     "wheel>=0.33.1",
 ]
@@ -119,6 +119,6 @@ setup(
     },
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.rst
-    version="2.0.0-dev0",
+    version="2.1.0-dev0",
     zip_safe=False,
 )
