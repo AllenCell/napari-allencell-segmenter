@@ -17,7 +17,7 @@ requirements = [
     "napari>=0.4.9",
     "napari-plugin-engine>=0.1.4",
     "numpy",
-    "aicssegmentation ~= 0.4.1",
+    "aicssegmentation >= 0.5.2",
     "magicgui >= 0.2.9",
     "aicsimageio ~= 4.0.5",
     "opencv-python-headless>=4.5.1",
