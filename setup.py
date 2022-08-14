@@ -118,10 +118,10 @@ setup(
         ],
     },
     project_urls={
-        "Bug Tracker": "https://github.com/AllenCell/napari-allencell-segmenter/issues"
-        "Documentation": "https://github.com/AllenCell/napari-allencell-segmenter#README.md"
-        "Source Code": "https://github.com/AllenCell/napari-allencell-segmenter"
-        "User Support": "https://github.com/AllenCell/napari-allencell-segmenter/issues"
+        "Bug Tracker": "https://github.com/AllenCell/napari-allencell-segmenter/issues",
+        "Documentation": "https://github.com/AllenCell/napari-allencell-segmenter#README.md",
+        "Source Code": "https://github.com/AllenCell/napari-allencell-segmenter",
+        "User Support": "https://github.com/AllenCell/napari-allencell-segmenter/issues",
     },
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.rst
