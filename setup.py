@@ -19,7 +19,7 @@ requirements = [
     "numpy",
     "aicssegmentation >= 0.5.2",
     "magicgui >= 0.2.9",
-    "aicsimageio ~= 4.0.5",
+    "aicsimageio >= 4.7.0",
     "opencv-python-headless>=4.5.1",
     "importlib-metadata==4.11.4",
 ]
@@ -119,6 +119,6 @@ setup(
     },
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.rst
-    version="2.1.1",
+    version="2.1.2",
     zip_safe=False,
 )
