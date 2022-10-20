@@ -20,7 +20,6 @@ requirements = [
     "aicssegmentation >= 0.5.2",
     "magicgui >= 0.2.9",
     "aicsimageio >= 4.7.0",
-    "xarray == 2022.6.0",
     "opencv-python-headless>=4.5.1",
     "importlib-metadata==4.11.4",
 ]
