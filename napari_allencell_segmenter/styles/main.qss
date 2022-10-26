@@ -58,11 +58,11 @@ QLabel#categoryLabel {
 }
 
 #infoButton {
-    background-color: transparent;
+    background-color: #414852;
 }
 
 #infoButton:hover {
-    background-color: #333941;
+    background-color: #5a626e
 }
 
 QProgressBar {
