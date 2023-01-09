@@ -22,6 +22,7 @@ requirements = [
     "aicsimageio >= 4.7.0",
     "opencv-python-headless>=4.5.1",
     "importlib-metadata==4.11.4",
+    "qtpy",
 ]
 
 test_requirements = [
