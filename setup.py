@@ -20,6 +20,8 @@ requirements = [
     "aicssegmentation >= 0.5.2",
     "magicgui >= 0.2.9",
     "aicsimageio ~= 4.0.9",
+    "qtpy",
+    "skimage",
     "opencv-python-headless>=4.5.1",
 ]
 
