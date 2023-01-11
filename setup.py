@@ -21,8 +21,6 @@ requirements = [
     "magicgui >= 0.2.9",
     "aicsimageio ~= 4.0.9",
     "opencv-python-headless>=4.5.1",
-    "importlib-metadata==4.11.4",
-    "qtpy",
 ]
 
 test_requirements = [
@@ -117,6 +115,12 @@ setup(
         "napari.plugin": [
             "napari-allencell-segmenter = napari_allencell_segmenter",
         ],
+    },
+    project_urls={
+        "Bug Tracker": "https://github.com/AllenCell/napari-allencell-segmenter/issues",
+        "Documentation": "https://github.com/AllenCell/napari-allencell-segmenter#README.md",
+        "Source Code": "https://github.com/AllenCell/napari-allencell-segmenter",
+        "User Support": "https://github.com/AllenCell/napari-allencell-segmenter/issues",
     },
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.rst
