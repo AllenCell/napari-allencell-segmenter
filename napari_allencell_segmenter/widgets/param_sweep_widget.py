@@ -16,6 +16,7 @@ from typing import Dict, Any, List
 from napari_allencell_segmenter.widgets.form import Form, FormRow
 from functools import partial
 from napari.qt import get_stylesheet
+from napari_allencell_segmenter.widgets.warning_message import WarningMessage
 
 
 class ParamSweepWidget(QDialog):
@@ -199,6 +200,11 @@ class ParamSweepWidget(QDialog):
            none
         """
         inputs: List[List[str]] = self.grab_ui_values(grab_combo=False)
+        try:
+            self.sanitize_ui_inputs(inputs)
+        except ValueError:
+            WarningMessage("Please enter valid numbers for sweep parameters.").show()
+
         count: int = self.get_live_count(inputs)
         if count > 20:
             # warn if too many images will be generated
