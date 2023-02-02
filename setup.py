@@ -10,19 +10,19 @@ def read(fname):
     file_path = os.path.join(os.path.dirname(__file__), fname)
     return codecs.open(file_path, encoding="utf-8").read()
 
-
 # Add your dependencies in requirements.txt
 # Note: you can add test-specific requirements in tox.ini
 requirements = [
-    "napari",
-    "napari-plugin-engine",
+    "napari>=0.4.9",
+    "napari-plugin-engine>=0.1.4",
     "numpy",
-    "aicssegmentation >= 0.5.2",
+    "aicssegmentation >= 0.5.0",
     "magicgui >= 0.2.9",
-    "aicsimageio ~= 4.0.9",
-    "qtpy",
+    "aicsimageio ~= 4.0.5",
     "opencv-python-headless>=4.5.1",
+    "importlib-metadata==4.11.4",
 ]
+
 
 test_requirements = [
     "black>=19.10b0",
