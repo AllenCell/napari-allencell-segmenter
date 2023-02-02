@@ -3,7 +3,6 @@ from qtpy.QtGui import QPixmap
 from napari_allencell_segmenter.util.directories import Directories
 
 
-
 class WarningMessage(QWidget):
     """
     Warning message Widget with a yellow warning sign icon on the left.
