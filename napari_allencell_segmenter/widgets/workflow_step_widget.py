@@ -1,11 +1,9 @@
 import copy
 from typing import Any, Dict, List, Union
-from PyQt5.QtWidgets import QComboBox, QPushButton, QFrame, QHBoxLayout
-
 from aicssegmentation.workflow import WorkflowStep, FunctionParameter, WidgetType
 from magicgui.widgets import Slider
 from qtpy.QtCore import Qt
-from qtpy.QtWidgets import QLabel, QVBoxLayout, QWidget
+from qtpy.QtWidgets import QLabel, QVBoxLayout, QWidget, QComboBox, QPushButton, QFrame, QHBoxLayout
 from napari_allencell_segmenter.widgets.collapsible_box import CollapsibleBox
 from napari_allencell_segmenter.widgets.form import Form, FormRow
 from napari_allencell_segmenter.util.ui_utils import UiUtils

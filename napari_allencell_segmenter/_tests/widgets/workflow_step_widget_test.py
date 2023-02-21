@@ -9,7 +9,7 @@ from aicssegmentation.workflow import (
     WidgetType,
     WorkflowStepCategory,
 )
-from PyQt5.QtWidgets import QComboBox, QPushButton
+from qtpy.QtWidgets import QComboBox, QPushButton
 from napari_allencell_segmenter.widgets.workflow_step_widget import WorkflowStepWidget
 from unittest.mock import MagicMock, create_autospec
 
