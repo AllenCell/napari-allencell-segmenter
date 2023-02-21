@@ -3,6 +3,7 @@
 [![License](https://img.shields.io/pypi/l/napari-allencell-segmenter.svg?color=green)](https://github.com/AllenCell/napari-allencell-segmenter/raw/main/LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/napari-allencell-segmenter.svg?color=green)](https://pypi.org/project/napari-allencell-segmenter)
 [![Python Version](https://img.shields.io/pypi/pyversions/napari-allencell-segmenter.svg?color=green)](https://python.org)
+[![Anaconda](https://anaconda.org/conda-forge/napari-allencell-segmenter/badges/version.svg)](https://anaconda.org/conda-forge/napari-allencell-segmenter)
 [![tests](https://github.com/AllenCell/napari-allencell-segmenter/workflows/tests/badge.svg)](https://github.com/AllenCell/napari-allencell-segmenter/actions)
 [![codecov](https://codecov.io/gh/AllenCell/napari-allencell-segmenter/branch/main/graph/badge.svg)](https://codecov.io/gh/AllenCell/napari-allencell-segmenter)
 
