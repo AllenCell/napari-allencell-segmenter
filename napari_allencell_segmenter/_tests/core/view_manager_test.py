@@ -1,6 +1,6 @@
 import pytest
 
-from unittest.mock import MagicMock, create_autospec
+from unittest.mock import MagicMock
 from napari_allencell_segmenter.core.view_manager import ViewManager
 from napari_allencell_segmenter.core.view import View, ViewTemplate
 from qtpy.QtWidgets import QFrame, QVBoxLayout
