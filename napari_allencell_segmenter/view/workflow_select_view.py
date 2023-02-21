@@ -23,7 +23,6 @@ from ._main_template import MainTemplate
 
 
 class WorkflowSelectView(View):
-
     _combo_layers: QComboBox
     _combo_channels: QComboBox
     _load_image_warning: WarningMessage

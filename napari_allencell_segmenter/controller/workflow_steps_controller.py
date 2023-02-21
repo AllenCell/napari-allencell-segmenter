@@ -124,7 +124,6 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
                 # check to see if correct layers were selected to run this segmentation in order
                 # some steps require multiple layers.
                 for selected_layer in selected_layers:
-
                     if selected_layer.name[:1].isdigit() and int(selected_layer.name[:1]) not in step_to_run.parent:
                         # check to see if the correct image input layer is selected.
                         if i == 0:
