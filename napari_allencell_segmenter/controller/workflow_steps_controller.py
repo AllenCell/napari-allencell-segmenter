@@ -330,7 +330,7 @@ class WorkflowStepsController(Controller, IWorkflowStepsController):
             if isinstance(v, list):
                 # sometimes multiple unique params are in one list
                 single_item: List[Any] = list()
-                for value in v:
+                for _ in v:
                     inputs = ui_input[i]
                     i = i + 1
                     values_to_run = numpy.arange(float(inputs[0]), float(inputs[2]), float(inputs[1]))
