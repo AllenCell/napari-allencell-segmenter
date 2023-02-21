@@ -5,6 +5,7 @@ from napari_allencell_segmenter.core.view_manager import ViewManager
 from napari_allencell_segmenter.core.view import View, ViewTemplate
 from qtpy.QtWidgets import QFrame, QVBoxLayout
 
+
 # Custom Mock view implementations because QT doesn't like MagicMock widgets
 class MockViewTemplate1(ViewTemplate):
     load_called = False
