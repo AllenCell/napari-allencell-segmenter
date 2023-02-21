@@ -24,7 +24,6 @@ requirements = [
     "importlib-metadata==4.11.4",
 ]
 
-
 test_requirements = [
     "black>=19.10b0",
     "codecov>=2.0.22",
@@ -75,7 +74,6 @@ extra_requirements = {
         *dev_requirements,
     ],
 }
-
 
 # https://github.com/pypa/setuptools_scm
 use_scm = {"write_to": "napari_allencell_segmenter/_version.py"}
