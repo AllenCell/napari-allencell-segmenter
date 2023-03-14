@@ -111,11 +111,6 @@ setup(
         "Operating System :: OS Independent",
         "License :: OSI Approved :: BSD License",
     ],
-    # entry_points={
-    #     "napari.plugin": [
-    #         "napari-allencell-segmenter = napari_allencell_segmenter",
-    #     ],
-    # },
     project_urls={
         "Bug Tracker": "https://github.com/AllenCell/napari-allencell-segmenter/issues",
         "Documentation": "https://github.com/AllenCell/napari-allencell-segmenter#README.md",
