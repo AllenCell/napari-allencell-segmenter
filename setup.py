@@ -14,8 +14,8 @@ def read(fname):
 # Add your dependencies in requirements.txt
 # Note: you can add test-specific requirements in tox.ini
 requirements = [
-    "napari>=0.4.9",
-    "napari-plugin-engine>=0.1.4",
+    "napari>=0.4.16",
+    "npe2>=0.6.2",
     "numpy",
     "aicssegmentation >= 0.5.0",
     "magicgui >= 0.2.9",
@@ -87,7 +87,7 @@ setup(
     long_description=read("README.md"),
     long_description_content_type="text/markdown",
     packages=find_packages(),
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     install_requires=requirements,
     use_scm_version=use_scm,
     setup_requires=setup_requirements,
@@ -105,17 +105,11 @@ setup(
         "Topic :: Scientific/Engineering :: Bio-Informatics",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Operating System :: OS Independent",
         "License :: OSI Approved :: BSD License",
     ],
-    entry_points={
-        "napari.plugin": [
-            "napari-allencell-segmenter = napari_allencell_segmenter",
-        ],
-    },
     project_urls={
         "Bug Tracker": "https://github.com/AllenCell/napari-allencell-segmenter/issues",
         "Documentation": "https://github.com/AllenCell/napari-allencell-segmenter#README.md",
