@@ -5,6 +5,11 @@ contributions:
     - id: napari-allencell-segmenter.workflow_editor
       title: Workflow Editor
       python_name: napari_allencell_segmenter._dock_widget:WorkflowEditorWidget
+    - id: napari-allencell-segmenter.batch_processing
+      title: Batch Processing
+      python_name: napari_allencell_segmenter._dock_widget:BatchProcessingWidget
   widgets:
     - command: napari-allencell-segmenter.workflow_editor
-      display_name: Wizard
+      display_name: Workflow Editor
+    - command: napari-allencell-segmenter.batch_processing
+      display_name: Batch Processing
