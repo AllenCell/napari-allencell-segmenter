@@ -11,7 +11,7 @@ of the plugin window and the title displayed in the app menu dropdown.
 
 
 class WorkflowEditorWidget(QWidget):  # pragma: no-cover
-    def __init__(self, viewer: 'napari.viewer.Viewer'):
+    def __init__(self, viewer: "napari.viewer.Viewer"):
         super().__init__()
         self._viewer = viewer
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
@@ -22,7 +22,7 @@ class WorkflowEditorWidget(QWidget):  # pragma: no-cover
 
 
 class BatchProcessingWidget(QWidget):
-    def __init__(self, viewer: 'napari.viewer.Viewer'):
+    def __init__(self, viewer: "napari.viewer.Viewer"):
         super().__init__()
         self._viewer = viewer
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.MinimumExpanding)
