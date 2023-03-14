@@ -14,7 +14,7 @@ def read(fname):
 # Add your dependencies in requirements.txt
 # Note: you can add test-specific requirements in tox.ini
 requirements = [
-    "napari>=0.4.9",
+    "napari>=0.4.16",
     "npe2>=0.6.2",
     "numpy",
     "aicssegmentation >= 0.5.0",
