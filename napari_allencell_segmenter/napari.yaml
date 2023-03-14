@@ -1,0 +1,10 @@
+name: napari-allencell-segmenter
+display_name: Segmenter
+contributions:
+  commands:
+    - id: napari-allencell-segmenter.workflow_editor
+      title: Workflow Editor
+      python_name: napari_allencell_segmenter._dock_widget:WorkflowEditorWidget
+  widgets:
+    - command: napari-allencell-segmenter.workflow_editor
+      display_name: Wizard

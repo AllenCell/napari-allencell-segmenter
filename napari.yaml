@@ -1,6 +1,0 @@
-name: napari-allencell-segmenter
-display_name: napari-allencell-segmenter
-contributions:
-  widgets:
-    - command: napari-allencell-segmenter.widget
-      display_name: napari-allencell-segmenter
