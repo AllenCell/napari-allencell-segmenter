@@ -17,11 +17,12 @@ requirements = [
     "napari>=0.4.9",
     "napari-plugin-engine>=0.1.4",
     "numpy",
-    "aicssegmentation >= 0.5.0",
+    "aicssegmentation >= 0.5.3",
     "magicgui >= 0.2.9",
     "aicsimageio ~= 4.0.5",
     "opencv-python-headless>=4.5.1",
     "importlib-metadata==4.11.4",
+    "npe2"
 ]
 
 test_requirements = [
@@ -124,6 +125,6 @@ setup(
     },
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.rst
-    version="2.1.11",
+    version="2.1.12",
     zip_safe=False,
 )
