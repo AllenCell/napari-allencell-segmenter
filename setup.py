@@ -113,8 +113,8 @@ setup(
         "License :: OSI Approved :: BSD License",
     ],
     entry_points={
-        "napari.plugin": [
-            "napari-allencell-segmenter = napari_allencell_segmenter",
+        "napari.manifest": [
+            "napari-allencell-segmenter = napari_allencell_segmenter:napari.yaml"
         ],
     },
     project_urls={
