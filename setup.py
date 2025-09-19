@@ -15,7 +15,7 @@ def read(fname):
 # Note: you can add test-specific requirements in tox.ini
 requirements = [
     "napari>=0.4.9",
-    "napari-plugin-engine>=0.1.4",
+    "npe2",
     "numpy",
     "aicssegmentation >= 0.5.3",
     "magicgui >= 0.2.9",
