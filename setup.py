@@ -25,6 +25,7 @@ requirements = [
     "npe2",
     "itk-core>=5.2.1.post1,<5.3",
     "itkwidgets==0.27.0",
+    "itk-meshtopolydata==0.9.0",
 ]
 
 test_requirements = [
