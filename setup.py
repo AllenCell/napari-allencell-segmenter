@@ -23,9 +23,9 @@ requirements = [
     "opencv-python-headless>=4.5.1",
     "importlib-metadata==4.11.4",
     "npe2",
-    "itk-core>=5.3",
+    "itk-core>=5.3,<5.4",
     "itkwidgets==0.27.0",
-    "itk-meshtopolydata==0.9.0",
+    "itk-meshtopolydata==0.10.0",
 ]
 
 test_requirements = [
