@@ -23,9 +23,11 @@ requirements = [
     "opencv-python-headless>=4.5.1",
     "importlib-metadata==4.11.4",
     "npe2",
+    # the following changes were made to get ci working on 3.9
     "itk-core>=5.3,<5.4",
     "itkwidgets==0.27.0",
     "itk-meshtopolydata==0.10.0",
+    "pydantic==1.10.12",
 ]
 
 test_requirements = [
