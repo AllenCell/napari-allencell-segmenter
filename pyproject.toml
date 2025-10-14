@@ -100,7 +100,7 @@ all = [
 ]
 
 [project.entry-points."napari.manifest"]
-"napari-allencell-segmenter" = "napari_allencell_segmenter:napari.yaml"
+napari-allencell-segmenter = "napari_allencell_segmenter:napari.yaml"
 
 [tool.setuptools_scm]
 write_to = "napari_allencell_segmenter/_version.py"
