@@ -38,6 +38,7 @@ dependencies = [
   "aicsimageio ~= 4.0.5",
   "opencv-python-headless>=4.5.1",
   "importlib-metadata==4.11.4",
+  "pydantic>=1.10.2,<2.0"
 ]
 
 [project.optional-dependencies]

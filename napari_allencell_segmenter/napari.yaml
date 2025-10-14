@@ -4,11 +4,11 @@ contributions:
   commands:
     - id: napari-allencell-segmenter.workflow_editor
       title: Workflow editor
-      python_name: napari_allencell_segmenter._plugin:WorkflowEditorWidget
+      python_name: napari_allencell_segmenter._dock_widget:WorkflowEditorWidget
 
     - id: napari-allencell-segmenter.batch_processing
       title: Batch processing
-      python_name: napari_allencell_segmenter._plugin:BatchProcessingWidget
+      python_name: napari_allencell_segmenter._dock_widget:BatchProcessingWidget
   readers:
   writers:
   sample_data:
