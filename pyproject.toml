@@ -82,3 +82,13 @@ write_to = "napari_allencell_segmenter/_version.py"
 
 [tool.setuptools.packages.find]
 include = ["napari_allencell_segmenter*"]
+
+[project.urls]
+"Bug Tracker" = "https://github.com/AllenCell/napari-allencell-segmenter/issues"
+"Documentation" = "https://github.com/AllenCell/napari-allencell-segmenter#README.md"
+"Source Code" = "https://github.com/AllenCell/napari-allencell-segmenter"
+"User Support" = "https://github.com/AllenCell/napari-allencell-segmenter/issues"
+
+# allow pytest testing on pyqt5
+[tool.pytest]
+qt_api="pyqt5"
