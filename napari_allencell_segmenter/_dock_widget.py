@@ -1,8 +1,6 @@
-# Hook specifications: https://napari.org/docs/dev/plugins/hook_specifications.html
 import napari
 
 from napari_allencell_segmenter.core.application import Application
-from napari_plugin_engine import napari_hook_implementation
 from qtpy.QtWidgets import QWidget, QVBoxLayout, QSizePolicy
 
 """
@@ -28,8 +26,3 @@ class BatchProcessingWidget(QWidget):
         self.setLayout(QVBoxLayout())
         self._application = Application(napari_viewer, self.layout())
         self._application.router.batch_processing()  # Initialize first screen
-
-
-@napari_hook_implementation
-def napari_experimental_provide_dock_widget():  # pragma: no-cover
-    return [(WorkflowEditorWidget, {"name": "Workflow editor"}), (BatchProcessingWidget, {"name": "Batch processing"})]

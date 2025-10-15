@@ -19,7 +19,6 @@ from napari_allencell_segmenter._style import PAGE_CONTENT_WIDTH, Style
 
 
 class WorkflowThumbnails(QWidget):
-
     """
     A widget containing thumbnail images for workflows.
 

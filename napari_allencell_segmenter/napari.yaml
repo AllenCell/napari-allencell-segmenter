@@ -1,0 +1,20 @@
+name: napari-allencell-segmenter
+display_name: Allen Cell Segmenter
+contributions:
+  commands:
+    - id: napari-allencell-segmenter.workflow_editor
+      title: Workflow editor
+      python_name: napari_allencell_segmenter._dock_widget:WorkflowEditorWidget
+
+    - id: napari-allencell-segmenter.batch_processing
+      title: Batch processing
+      python_name: napari_allencell_segmenter._dock_widget:BatchProcessingWidget
+  readers:
+  writers:
+  sample_data:
+  widgets:
+    - command: napari-allencell-segmenter.workflow_editor
+      display_name: Workflow editor
+
+    - command: napari-allencell-segmenter.batch_processing
+      display_name: Batch processing
