@@ -1,2 +1,94 @@
 [tool.black]
 line-length = 120
+
+[build-system]
+requires = ["setuptools>=61", "setuptools_scm>=7"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "napari-allencell-segmenter"
+version = "2.1.12-dev0"  # setuptools_scm will override if tags exist
+description = "A plugin that enables 3D image segmentation provided by Allen Institute for Cell Science"
+readme = "README.md"
+license = { text = "BSD-3" }
+requires-python = ">=3.9"
+authors = [
+  { name = "Allen Institute for Cell Science" }
+]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Science/Research",
+  "Framework :: napari",
+  "Topic :: Scientific/Engineering",
+  "Topic :: Scientific/Engineering :: Visualization",
+  "Topic :: Scientific/Engineering :: Information Analysis",
+  "Topic :: Scientific/Engineering :: Bio-Informatics",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Operating System :: OS Independent",
+  "License :: OSI Approved :: BSD License",
+]
+
+dependencies = [
+  "napari>=0.4.9,<0.6.2",
+  "napari-plugin-engine>=0.1.4",
+  "numpy<2.0.0",
+  "aicssegmentation >= 0.5.3",
+  "magicgui >= 0.2.9",
+  "aicsimageio ~= 4.0.5",
+  "opencv-python-headless>=4.5.1",
+  "importlib-metadata==4.11.4",
+  "npe2",
+  # the following changes were made to get ci working on 3.9
+  "itk-core>=5.3,<5.4",
+  "itkwidgets==0.27.0",
+  "itk-meshtopolydata==0.10.0",
+  "pydantic==1.10.12",
+]
+
+[project.optional-dependencies]
+test = [
+  "black>=19.10b0",
+  "codecov>=2.0.22",
+  "docutils>=0.10,<0.16",
+  "flake8>=3.7.7",
+  "psutil>=5.7.0",
+  "pytest>=4.3.0",
+  "pytest-cov==2.6.1",
+  "pytest-raises>=0.10",
+  "pytest-qt>=3.3.0",
+  "quilt3>=3.1.12",
+]
+dev = [
+  "bumpversion>=0.5.3",
+  "coverage>=5.0a4",
+  "gitchangelog>=3.0.4",
+  "ipython>=7.5.0",
+  "m2r>=0.2.1",
+  "pytest-runner>=4.4",
+  "Sphinx>=2.0.0b1,<3",
+  "sphinx_rtd_theme>=0.1.2",
+  "tox==3.25.0",
+  "twine>=1.13.0",
+  "wheel>=0.33.1",
+]
+setup = ["pytest-runner"]
+
+[project.entry-points."napari.manifest"]
+napari-allencell-segmenter = "napari_allencell_segmenter:napari.yaml"
+
+[tool.setuptools_scm]
+write_to = "napari_allencell_segmenter/_version.py"
+
+[tool.setuptools.packages.find]
+include = ["napari_allencell_segmenter*"]
+
+[project.urls]
+"Bug Tracker" = "https://github.com/AllenCell/napari-allencell-segmenter/issues"
+"Documentation" = "https://github.com/AllenCell/napari-allencell-segmenter#README.md"
+"Source Code" = "https://github.com/AllenCell/napari-allencell-segmenter"
+"User Support" = "https://github.com/AllenCell/napari-allencell-segmenter/issues"
+
+# allow pytest testing on pyqt5
+[tool.pytest]
+qt_api="pyqt5"
