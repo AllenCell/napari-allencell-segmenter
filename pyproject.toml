@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "napari-allencell-segmenter"
-version = "2.1.12-dev0"  # setuptools_scm will override if tags exist
+version = "2.1.13"  # setuptools_scm will override if tags exist
 description = "A plugin that enables 3D image segmentation provided by Allen Institute for Cell Science"
 readme = "README.md"
 license = { text = "BSD-3" }

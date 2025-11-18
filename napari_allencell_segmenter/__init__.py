@@ -5,5 +5,5 @@ except ImportError:
 
 # Do not edit this string manually, always use bumpversion
 # Details in CONTRIBUTING.md
-__version__ = "2.1.12"
+__version__ = "2.1.13"
 
